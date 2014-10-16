@@ -1,0 +1,10 @@
+ArthurHoaro\FeedsApiBundle\Entity\Feed:
+    properties:
+        sitename:
+            - NotBlank: ~
+            - NotNull: ~
+            - Length:
+                min: 2
+                max: 50
+                minMessage: "Your title must be at least  characters length"
+                maxMessage: "Your title name cannot be longer than  characters length"

@@ -1,0 +1,11 @@
+parameters:
+  arthur_hoaro_feeds_api.feed.handler.class: ArthurHoaro\FeedsApiBundle\Handler\FeedHandler
+  arthur_hoaro_feeds_api.feed.class: ArthurHoaro\FeedsApiBundle\Entity\Feed
+services:
+  arthur_hoaro_feeds_api.feed.handler:
+    class: %arthur_hoaro_feeds_api.feed.handler.class%
+    arguments: [@doctrine.orm.entity_manager, %arthur_hoaro_feeds_api.feed.class%, @form.factory]
+
+#    arthur_hoaro_feeds.example:
+#        class: ArthurHoaro\FeedsApiBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
