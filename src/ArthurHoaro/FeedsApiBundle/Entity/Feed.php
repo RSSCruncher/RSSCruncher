@@ -58,13 +58,6 @@ class Feed implements IFeed
     private $enabled = true;
 
     /**
-     * @var boolean
-     *
-     * @ORM\Column(name="banned", type="boolean")
-     */
-    private $banned = true;
-
-    /**
      * Get id
      *
      * @return integer 
@@ -164,22 +157,6 @@ class Feed implements IFeed
     public function getFeedurl()
     {
         return $this->feedurl;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isBanned()
-    {
-        return $this->banned;
-    }
-
-    /**
-     * @param boolean $banned
-     */
-    public function setBanned($banned)
-    {
-        $this->banned = $banned;
     }
 
     /**

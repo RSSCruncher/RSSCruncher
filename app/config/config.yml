@@ -90,3 +90,8 @@ fos_rest:
     routing_loader:
         default_format: json
     disable_csrf_role: ROLE_API
+
+jms_serializer:
+    visitors:
+        json:
+            options: JSON_PRETTY_PRINT

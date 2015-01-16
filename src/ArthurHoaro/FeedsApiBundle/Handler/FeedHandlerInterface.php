@@ -4,7 +4,7 @@ namespace ArthurHoaro\FeedsApiBundle\Handler;
 
 use ArthurHoaro\FeedsApiBundle\Model\IFeed;
 
-interface IFeedHandler {
+interface FeedHandlerInterface {
     /**
      * Get a Feed given the identifier
      *
@@ -15,6 +15,16 @@ interface IFeedHandler {
      * @return IFeed
      */
     public function get($id);
+
+    /**
+     * Get a list of Feed.
+     *
+     * @param int $limit the limit of the result
+     * @param int $offset starting from the offset
+     *
+     * @return array
+     */
+    public function all($limit = 5, $offset = 0);
 
     /**
      * Create a new IFeed.

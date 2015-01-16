@@ -8,7 +8,7 @@ use ArthurHoaro\FeedsApiBundle\Model\IFeed;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\FormFactoryInterface;
 
-class FeedHandler implements FeedHandlerInterface {
+class GenericHandler implements GenericHandlerInterface {
 
     private $formFactory;
 
