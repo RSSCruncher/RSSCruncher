@@ -57,6 +57,12 @@ class Feed implements IFeed
      */
     private $enabled = true;
 
+
+    /**
+    * @ORM\OneToMany(targetEntity="Article", mappedBy="feed")
+    */
+    protected $articles;
+
     /**
      * Get id
      *

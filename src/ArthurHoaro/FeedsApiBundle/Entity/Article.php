@@ -2,6 +2,7 @@
 
 namespace ArthurHoaro\FeedsApiBundle\Entity;
 
+use ArthurHoaro\FeedsApiBundle\Model\IArticle;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="ArthurHoaro\FeedsApiBundle\Entity\ArticleRepository")
  */
-class Article
+class Article implements IArticle
 {
     /**
      * @var integer
@@ -38,35 +39,35 @@ class Article
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="modificationDate", type="datetime")
+     * @ORM\Column(name="modificationDate", type="datetime", nullable=true)
      */
     private $modificationDate;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="summary", type="text")
+     * @ORM\Column(name="summary", type="text", nullable=true)
      */
     private $summary;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="content", type="text")
+     * @ORM\Column(name="content", type="text", nullable=true)
      */
     private $content;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="authorName", type="string", length=255)
+     * @ORM\Column(name="authorName", type="string", length=255, nullable=true)
      */
     private $authorName;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="authorEmail", type="string", length=255)
+     * @ORM\Column(name="authorEmail", type="string", length=255, nullable=true)
      */
     private $authorEmail;
 
@@ -76,6 +77,12 @@ class Article
      * @ORM\Column(name="link", type="text")
      */
     private $link;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Feed", inversedBy="articles")
+     * @ORM\JoinColumn(name="feed_id", referencedColumnName="id")
+     */
+    protected $feed;
 
 
     /**

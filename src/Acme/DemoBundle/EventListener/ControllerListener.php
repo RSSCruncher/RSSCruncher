@@ -2,9 +2,9 @@
 
 namespace Acme\DemoBundle\EventListener;
 
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Acme\DemoBundle\Twig\Extension\DemoExtension;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class ControllerListener
 {

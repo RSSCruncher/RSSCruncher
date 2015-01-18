@@ -3,29 +3,30 @@
 namespace ArthurHoaro\FeedsApiBundle\Handler;
 
 use ArthurHoaro\FeedsApiBundle\Exception\InvalidFormException;
-use ArthurHoaro\FeedsApiBundle\Form\FeedType;
-use ArthurHoaro\FeedsApiBundle\Model\IFeed;
+use ArthurHoaro\FeedsApiBundle\Form\EntityType;
+use ArthurHoaro\FeedsApiBundle\Model\IEntity;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\FormFactoryInterface;
 
 class GenericHandler implements GenericHandlerInterface {
 
-    private $formFactory;
+    protected $formFactory;
 
-    public function __construct(ObjectManager $om, $entityClass, FormFactoryInterface $formFactory)
+    public function __construct(ObjectManager $om, $entityClass, FormFactoryInterface $formFactory, $formTypeClass)
     {
         $this->om = $om;
         $this->entityClass = $entityClass;
         $this->repository = $this->om->getRepository($this->entityClass);
         $this->formFactory = $formFactory;
+        $this->formTypeclass = $formTypeClass;
     }
 
     /**
-     * Get a Feed.
+     * Get a Entity.
      *
      * @param mixed $id
      *
-     * @return IFeed
+     * @return IEntity
      */
     public function get($id)
     {
@@ -33,7 +34,7 @@ class GenericHandler implements GenericHandlerInterface {
     }
 
     /**
-     * Get a list of Feed.
+     * Get a list of Entity.
      *
      * @param int $limit the limit of the result
      * @param int $offset starting from the offset
@@ -46,74 +47,74 @@ class GenericHandler implements GenericHandlerInterface {
     }
 
     /**
-     * Create a new IFeed.
+     * Create a new IEntity.
      *
      * @param array $parameters
      *
-     * @return IFeed
+     * @return IEntity
      */
     public function post(array $parameters)
     {
-        $feed = $this->createFeed(); // factory method create an empty Feed
+        $entity = $this->create(); // factory method create an empty Entity
 
-        // Process form does all the magic, validate and hydrate the Feed Object.
-        return $this->processForm($feed, $parameters, 'POST');
+        // Process form does all the magic, validate and hydrate the Entity Object.
+        return $this->processForm($entity, $parameters, 'POST');
     }
 
     /**
-     * Edit a Feed, or create if not exist.
+     * Edit a Entity, or create if not exist.
      *
-     * @param IFeed $feed
+     * @param IEntity $entity
      * @param array         $parameters
      *
-     * @return IFeed
+     * @return IEntity
      */
-    public function put(IFeed $feed, array $parameters)
+    public function put(IEntity $entity, array $parameters)
     {
-        return $this->processForm($feed, $parameters, 'PUT');
+        return $this->processForm($entity, $parameters, 'PUT');
     }
 
     /**
-     * Partially update a Feed.
+     * Partially update a Entity.
      *
-     * @param IFeed $feed
+     * @param IEntity $entity
      * @param array         $parameters
      *
-     * @return IFeed
+     * @return IEntity
      */
-    public function patch(IFeed $feed, array $parameters)
+    public function patch(IEntity $entity, array $parameters)
     {
-        return $this->processForm($feed, $parameters, 'PATCH');
+        return $this->processForm($entity, $parameters, 'PATCH');
     }
 
     /**
      * Processes the form.
      *
-     * @param IFeed $feed
+     * @param IEntity       $entity
      * @param array         $parameters
      * @param String        $method
      *
-     * @return IFeed
+     * @return IEntity
      *
      * @throws \ArthurHoaro\FeedsApiBundle\Exception\InvalidFormException
      */
-    private function processForm(IFeed $feed, array $parameters, $method = "PUT")
+    protected function processForm(IEntity $entity, array $parameters, $method = "PUT")
     {
-        $form = $this->formFactory->create(new FeedType(), $feed, array('method' => $method));
+        $form = $this->formFactory->create(new $this->formTypeclass(), $entity, array('method' => $method));
         $form->submit($parameters, 'PATCH' !== $method);
         if ($form->isValid()) {
 
-            $feed = $form->getData();
-            $this->om->persist($feed);
-            $this->om->flush($feed);
+            $entity = $form->getData();
+            $this->om->persist($entity);
+            $this->om->flush($entity);
 
-            return $feed;
+            return $entity;
         }
 
         throw new InvalidFormException('Invalid submitted data', $form);
     }
 
-    private function createFeed()
+    protected function create()
     {
         return new $this->entityClass();
     }

@@ -4,15 +4,8 @@ namespace ArthurHoaro\FeedsApiBundle\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 
-interface IArticle
+interface IArticle extends IEntity
 {
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId();
-
     /**
      * Set title
      *

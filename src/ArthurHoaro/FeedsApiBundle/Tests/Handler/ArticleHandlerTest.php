@@ -2,16 +2,16 @@
 
 namespace ArthurHoaro\FeedsApiBundle\Tests\Handler;
 
-use ArthurHoaro\FeedsApiBundle\Entity\Feed;
-use ArthurHoaro\FeedsApiBundle\Form\FeedType;
-use ArthurHoaro\FeedsApiBundle\Handler\FeedHandler;
+use ArthurHoaro\FeedsApiBundle\Entity\Article;
+use ArthurHoaro\FeedsApiBundle\Form\ArticleType;
+use ArthurHoaro\FeedsApiBundle\Handler\ArticleHandler;
 
-class FeedHandlerTest extends \PHPUnit_Framework_TestCase {
-    const FEED_CLASS = 'ArthurHoaro\FeedsApiBundle\Tests\Handler\DummyFeed';
-    const FEED_TYPE_CLASS = 'ArthurHoaro\FeedsApiBundle\Tests\Handler\DummyFeedType';
+class ArticleHandlerTest extends \PHPUnit_Framework_TestCase {
+    const ARTICLE_CLASS = 'ArthurHoaro\FeedsApiBundle\Tests\Handler\DummyArticle';
+    const ARTICLE_TYPE_CLASS = 'ArthurHoaro\FeedsApiBundle\Tests\Handler\DummyArticleType';
 
-    /** @var FeedHandler */
-    protected $feedHandler;
+    /** @var ArticleHandler */
+    protected $articleHandler;
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $om;
     /** @var \PHPUnit_Framework_MockObject_MockObject */
@@ -30,40 +30,40 @@ class FeedHandlerTest extends \PHPUnit_Framework_TestCase {
 
         $this->om->expects($this->any())
             ->method('getRepository')
-            ->with($this->equalTo(static::FEED_CLASS))
+            ->with($this->equalTo(static::ARTICLE_CLASS))
             ->will($this->returnValue($this->repository));
         $this->om->expects($this->any())
             ->method('getClassMetadata')
-            ->with($this->equalTo(static::FEED_CLASS))
+            ->with($this->equalTo(static::ARTICLE_CLASS))
             ->will($this->returnValue($class));
         $class->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue(static::FEED_CLASS));
+            ->will($this->returnValue(static::ARTICLE_CLASS));
     }
 
     public function testGet()
     {
         $id = 1;
-        $feed = $this->getFeed();
+        $article = $this->getArticle();
         $this->repository->expects($this->once())->method('find')
             ->with($this->equalTo($id))
-            ->will($this->returnValue($feed));
-        $this->feedHandler = $this->createFeedHandler($this->om, static::FEED_CLASS, $this->formFactory, static::FEED_TYPE_CLASS);
-        $this->feedHandler->get($id);
+            ->will($this->returnValue($article));
+        $this->articleHandler = $this->createArticleHandler($this->om, static::ARTICLE_CLASS, $this->formFactory, static::ARTICLE_TYPE_CLASS);
+        $this->articleHandler->get($id);
     }
 
-    protected function createFeedHandler($objectManager, $feedClass, $formFactory, $feedTypeClass)
+    protected function createArticleHandler($objectManager, $articleClass, $formFactory, $articleTypeClass)
     {
-        return new FeedHandler($objectManager, $feedClass, $formFactory, $feedTypeClass);
+        return new ArticleHandler($objectManager, $articleClass, $formFactory, $articleTypeClass);
     }
     
-    protected function getFeed()
+    protected function getArticle()
     {
-        $feedClass = static::FEED_CLASS;
-        return new $feedClass();
+        $articleClass = static::ARTICLE_CLASS;
+        return new $articleClass();
     }
 }
 
-class DummyFeed extends Feed {}
+class DummyArticle extends Article {}
 
-class DummyFeedType extends FeedType {}
+class DummyArticleType extends ArticleType {}

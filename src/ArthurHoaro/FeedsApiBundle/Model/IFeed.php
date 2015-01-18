@@ -6,13 +6,7 @@
 
 namespace ArthurHoaro\FeedsApiBundle\Model;
 
-interface IFeed {
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId();
+interface IFeed extends IEntity {
 
     /**
      * Set sitename

@@ -8,3 +8,7 @@ ArthurHoaro\FeedsApiBundle\Entity\Feed:
                 max: 50
                 minMessage: "Your title must be at least  characters length"
                 maxMessage: "Your title name cannot be longer than  characters length"
+ArthurHoaro\FeedsApiBundle\Entity\Article:
+    properties:
+        title:
+            - NotBlank: ~

@@ -2,6 +2,8 @@
 
 namespace ArthurHoaro\FeedsApiBundle\Handler;
 
+use ArthurHoaro\FeedsApiBundle\Model\IEntity;
+
 interface GenericHandlerInterface {
     /**
      * Get a Feed given the identifier
@@ -10,36 +12,36 @@ interface GenericHandlerInterface {
      *
      * @param mixed $id
      *
-     * @return IFeed
+     * @return IEntity
      */
     public function get($id);
 
     /**
-     * Create a new IFeed.
+     * Create a new IEntity.
      *
      * @param array $parameters
      *
-     * @return IFeed
+     * @return IEntity
      */
     public function post(array $parameters);
 
     /**
      * Edit a Feed, or create if not exist.
      *
-     * @param IFeed $feed
+     * @param IEntity $feed
      * @param array         $parameters
      *
-     * @return IFeed
+     * @return IEntity
      */
-    public function put(IFeed $feed, array $parameters);
+    public function put(IEntity $feed, array $parameters);
 
     /**
      * Partially update a Feed.
      *
-     * @param IFeed $feed
+     * @param IEntity $feed
      * @param array         $parameters
      *
-     * @return IFeed
+     * @return IEntity
      */
-    public function patch(IFeed $feed, array $parameters);
+    public function patch(IEntity $feed, array $parameters);
 }

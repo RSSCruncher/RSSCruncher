@@ -1,10 +1,20 @@
 parameters:
-  arthur_hoaro_feeds_api.feed.handler.class: ArthurHoaro\FeedsApiBundle\Handler\FeedHandler
-  arthur_hoaro_feeds_api.feed.class: ArthurHoaro\FeedsApiBundle\Entity\Feed
+  arthur_hoaro_feeds_api.handler.package: ArthurHoaro\FeedsApiBundle\Handler\
+  arthur_hoaro_feeds_api.entity.package: ArthurHoaro\FeedsApiBundle\Entity\
+  arthur_hoaro_feeds_api.type.package: ArthurHoaro\FeedsApiBundle\Form\
+  arthur_hoaro_feeds_api.feed.handler.class: %arthur_hoaro_feeds_api.handler.package%FeedHandler
+  arthur_hoaro_feeds_api.feed.class: %arthur_hoaro_feeds_api.entity.package%Feed
+  arthur_hoaro_feeds_api.feed.type.class: %arthur_hoaro_feeds_api.type.package%FeedType
+  arthur_hoaro_feeds_api.article.handler.class: %arthur_hoaro_feeds_api.handler.package%ArticleHandler
+  arthur_hoaro_feeds_api.article.class: %arthur_hoaro_feeds_api.entity.package%Article
+  arthur_hoaro_feeds_api.article.type.class: %arthur_hoaro_feeds_api.type.package%ArticleType
 services:
   arthur_hoaro_feeds_api.feed.handler:
     class: %arthur_hoaro_feeds_api.feed.handler.class%
-    arguments: [@doctrine.orm.entity_manager, %arthur_hoaro_feeds_api.feed.class%, @form.factory]
+    arguments: [@doctrine.orm.entity_manager, %arthur_hoaro_feeds_api.feed.class%, @form.factory, %arthur_hoaro_feeds_api.feed.type.class%]
+  arthur_hoaro_feeds_api.article.handler:
+    class: %arthur_hoaro_feeds_api.article.handler.class%
+    arguments: [@doctrine.orm.entity_manager, %arthur_hoaro_feeds_api.article.class%, @form.factory, %arthur_hoaro_feeds_api.article.type.class%]
 
 #    arthur_hoaro_feeds.example:
 #        class: ArthurHoaro\FeedsApiBundle\Example
