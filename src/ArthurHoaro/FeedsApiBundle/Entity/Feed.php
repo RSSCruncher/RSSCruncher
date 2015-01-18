@@ -179,5 +179,21 @@ class Feed implements IFeed
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
-    } 
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getArticles()
+    {
+        return $this->articles;
+    }
+
+    /**
+     * @param mixed $articles
+     */
+    public function setArticles($articles)
+    {
+        $this->articles = $articles;
+    }
 }

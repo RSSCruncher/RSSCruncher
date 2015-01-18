@@ -248,4 +248,20 @@ class FeedController extends FOSRestController {
         }
         return $feed;
     }
-} 
+
+    /**
+     *
+     */
+    public function refreshFeedAction($id) {
+        $items = $this->container->get('arthur_hoaro_feeds_api.feed.handler')->refreshFeeds(array($id), $this->container->get('debril.reader'));
+        return $items;
+    }
+
+    /**
+     *
+     */
+    public function refreshFeedsAction($ids) {
+        $items = $this->container->get('arthur_hoaro_feeds_api.feed.handler')->refreshFeeds($ids, $this->container->get('debril.reader'));
+        return $items;
+    }
+}

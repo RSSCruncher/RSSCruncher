@@ -80,7 +80,7 @@ class Article implements IArticle
 
     /**
      * @ORM\ManyToOne(targetEntity="Feed", inversedBy="articles")
-     * @ORM\JoinColumn(name="feed_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="feed_id", referencedColumnName="id", nullable=false)
      */
     protected $feed;
 
@@ -277,5 +277,21 @@ class Article implements IArticle
     public function getLink()
     {
         return $this->link;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFeed()
+    {
+        return $this->feed;
+    }
+
+    /**
+     * @param mixed $feed
+     */
+    public function setFeed($feed)
+    {
+        $this->feed = $feed;
     }
 }

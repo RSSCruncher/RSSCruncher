@@ -98,9 +98,10 @@ class GenericHandler implements GenericHandlerInterface {
      *
      * @throws \ArthurHoaro\FeedsApiBundle\Exception\InvalidFormException
      */
-    protected function processForm(IEntity $entity, array $parameters, $method = "PUT")
+    protected function processForm(IEntity $entity, array $parameters, $method = "PUT", $formType = false)
     {
-        $form = $this->formFactory->create(new $this->formTypeclass(), $entity, array('method' => $method));
+        $formType = ($formType === false) ? $this->formTypeclass : $formType;
+        $form = $this->formFactory->create(new $formType(), $entity, array('method' => $method));
         $form->submit($parameters, 'PATCH' !== $method);
         if ($form->isValid()) {
 

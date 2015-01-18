@@ -26,6 +26,10 @@ class ArticleType extends AbstractType {
             ->add('authorname')
             ->add('authoremail')
             ->add('link')
+            ->add('feed', 'entity', array(
+                    'class' => 'ArthurHoaroFeedsApiBundle:Feed',
+                    'property' => 'id'
+                ))
         ;
     }
 

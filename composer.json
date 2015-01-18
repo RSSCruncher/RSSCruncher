@@ -20,7 +20,8 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "friendsofsymfony/rest-bundle": "dev-master",
         "jms/serializer-bundle": "dev-master",
-        "nelmio/api-doc-bundle": "@dev"
+        "nelmio/api-doc-bundle": "@dev",
+        "debril/rss-atom-bundle": "1.4"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "dev-master",

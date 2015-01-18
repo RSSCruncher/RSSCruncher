@@ -15,15 +15,15 @@ class LoadFeedData implements FixtureInterface {
 
     public function load(ObjectManager $manager)
     {
-        $page = new Feed();
-        $page->setSitename('sitename');
-        $page->setSiteurl('http://siteurl.tld');
-        $page->setFeedname('feedname');
-        $page->setFeedurl('http://feedurl.tld');
+        $feed = new Feed();
+        $feed->setSitename('sitename');
+        $feed->setSiteurl('http://siteurl.tld');
+        $feed->setFeedname('feedname');
+        $feed->setFeedurl('http://feedurl.tld');
 
-        $manager->persist($page);
+        $manager->persist($feed);
         $manager->flush();
 
-        self::$feeds[] = $page;
+        self::$feeds[] = $feed;
     }
 } 

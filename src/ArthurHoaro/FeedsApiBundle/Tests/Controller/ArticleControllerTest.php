@@ -42,12 +42,37 @@ class ArticleControllerTest extends WebTestCase {
         $content = $response->getContent();
 
         $decoded = json_decode($content, true);
-        $this->assertTrue(isset($decoded['id']));
+        $this->assertTrue(!empty($decoded['id']));
 
     }
 
 
     public function testJsonPostArticleAction()
+    {
+        $fixtures = array('ArthurHoaro\FeedsApiBundle\Tests\Fixtures\Entity\LoadArticleData');
+        $this->customSetUp($fixtures);
+        $feeds = LoadArticleData::$feeds;
+        $feedId = $feeds[0]->getId();
+
+        $this->setUp();
+        $this->client->request(
+            'POST',
+            '/api/v1/articles.json',
+            array(),
+            array(),
+            array('CONTENT_TYPE' => 'application/json'),
+            '{"title":"titre32","link":"http://blogofthedeath.com/article32","feed": '. $feedId .',
+                "publicationdate": {
+                    "date": { "year": 2014, "month": 11, "day": 5 },
+                    "time": { "hour": 23, "minute": 11 }
+                }
+            }'
+        );
+
+        $this->assertJsonResponse($this->client->getResponse(), 201, false);
+    }
+
+    public function testJsonPostArticleWithoutFeedAction()
     {
         $this->setUp();
         $this->client->request(
@@ -64,7 +89,7 @@ class ArticleControllerTest extends WebTestCase {
             }'
         );
 
-        $this->assertJsonResponse($this->client->getResponse(), 201, false);
+        $this->assertJsonResponse($this->client->getResponse(), 500, false);
     }
 
     public function testJsonPostArticleActionShouldReturn400WithBadParameters()
@@ -80,6 +105,22 @@ class ArticleControllerTest extends WebTestCase {
         );
 
         $this->assertJsonResponse($this->client->getResponse(), 400, false);
+    }
+
+    public function testJsonRefreshFeedAction()
+    {
+        $fixtures = array('ArthurHoaro\FeedsApiBundle\Tests\Fixtures\Entity\LoadArticleData');
+        $this->customSetUp($fixtures);
+        $feeds = LoadArticleData::$feeds;
+        $feedId = $feeds[1]->getId();
+
+        $this->setUp();
+        $this->client->request(
+            'PATCH',
+            '/api/v1/feeds/'. $feedId .'/refresh',
+            array('ACCEPT' => 'application/json'));
+
+        var_dump($feeds);
     }
 
 
