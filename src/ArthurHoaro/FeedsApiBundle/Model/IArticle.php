@@ -7,6 +7,20 @@ use Doctrine\ORM\Mapping as ORM;
 interface IArticle extends IEntity
 {
     /**
+     * Get public id
+     *
+     * @return int
+     */
+    public function getPublicId();
+
+    /**
+     * Set public id
+     *
+     * @param int $publicId
+     */
+    public function setPublicId($publicId);
+
+    /**
      * Set title
      *
      * @param string $title
@@ -125,4 +139,14 @@ interface IArticle extends IEntity
      * @return string
      */
     public function getLink();
+
+    /**
+     * @return mixed
+     */
+    public function getFeed();
+
+    /**
+     * @param mixed $feed
+     */
+    public function setFeed($feed);
 }

@@ -31,8 +31,9 @@ class FeedType extends AbstractType {
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-                'data_class' => 'ArthurHoaro\FeedsApiBundle\Entity\Feed',
-            ));
+            'data_class' => 'ArthurHoaro\FeedsApiBundle\Entity\Feed',
+            'csrf_protection'   => false,
+        ));
     }
 
     /**

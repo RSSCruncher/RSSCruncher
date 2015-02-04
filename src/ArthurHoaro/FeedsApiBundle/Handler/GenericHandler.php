@@ -90,13 +90,12 @@ class GenericHandler implements GenericHandlerInterface {
     /**
      * Processes the form.
      *
-     * @param IEntity       $entity
-     * @param array         $parameters
-     * @param String        $method
+     * @param IEntity $entity
+     * @param array $parameters
+     * @param String $method
+     * @param bool $formType
      *
      * @return IEntity
-     *
-     * @throws \ArthurHoaro\FeedsApiBundle\Exception\InvalidFormException
      */
     protected function processForm(IEntity $entity, array $parameters, $method = "PUT", $formType = false)
     {

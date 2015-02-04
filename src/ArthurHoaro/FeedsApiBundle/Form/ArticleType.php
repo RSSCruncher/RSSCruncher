@@ -39,8 +39,9 @@ class ArticleType extends AbstractType {
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-                'data_class' => 'ArthurHoaro\FeedsApiBundle\Entity\Article',
-            ));
+            'data_class' => 'ArthurHoaro\FeedsApiBundle\Entity\Article',
+            'csrf_protection'   => false,
+        ));
     }
 
     /**

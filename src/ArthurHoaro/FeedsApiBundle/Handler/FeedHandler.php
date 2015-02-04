@@ -6,8 +6,9 @@ use ArthurHoaro\FeedsApiBundle\Form\ArticleType;
 use ArthurHoaro\FeedsApiBundle\Helper\ArticleConverter;
 use ArthurHoaro\FeedsApiBundle\Model\IFeed;
 use ArthurHoaro\FeedsApiBundle\Entity\Article;
-use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\Form\FormFactoryInterface;
+use Debril\RssAtomBundle\Protocol\FeedReader;
+use Debril\RssAtomBundle\Protocol\FeedIn;
+
 
 /**
  * Class FeedHandler
@@ -29,8 +30,10 @@ class FeedHandler extends GenericHandler {
      * Refresh items of a list of feeds
      *
      * @param array $id
+     * @param FeedReader $reader
+     * @return array $items - list of refreshed feeds
      */
-    public function refreshFeeds(array $id, $reader) {
+    public function refreshFeeds(array $id, FeedReader $reader) {
         if( !empty($id) )
             $feeds = $this->select($id);
         else
@@ -47,17 +50,18 @@ class FeedHandler extends GenericHandler {
      * Refresh items of a feed
      *
      * @param IFeed $feed
+     * @param FeedReader $reader
+     * @return array $outItems -
      */
-    private function refresh(IFeed $feed, $reader) {
+    private function refresh(IFeed $feed, FeedReader $reader) {
         $readFeed = $reader->getFeedContent($feed->getFeedurl());
         $newItems = $readFeed->getItems();
-        var_dump($newItems);die;
+
         $outItems = array();
         foreach($newItems as $value) {
-            $item = ArticleConverter::convert($value);
+            $item = ArticleConverter::convertFromRemote($value);
             $item->setFeed($feed);
-
-            $outItems[] = $this->processForm($item, array(), 'PUT', get_class(new ArticleType()));
+            $outItems[] = $item;
         }
 
         return $outItems;

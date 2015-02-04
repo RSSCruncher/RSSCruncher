@@ -119,8 +119,6 @@ class ArticleControllerTest extends WebTestCase {
             'PATCH',
             '/api/v1/feeds/'. $feedId .'/refresh',
             array('ACCEPT' => 'application/json'));
-
-        var_dump($feeds);
     }
 
 

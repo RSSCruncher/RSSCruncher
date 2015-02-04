@@ -23,6 +23,13 @@ class Article implements IArticle
     private $id;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="publicId", type="integer", nullable=true, unique=true)
+     */
+    private $publicId;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
@@ -94,6 +101,27 @@ class Article implements IArticle
     {
         return $this->id;
     }
+
+    /**
+     * Get public id
+     *
+     * @return int
+     */
+    public function getPublicId()
+    {
+        return $this->publicId;
+    }
+
+    /**
+     * Set public id
+     *
+     * @param int $publicId
+     */
+    public function setPublicId($publicId)
+    {
+        $this->publicId = $publicId;
+    }
+
 
     /**
      * Set title
