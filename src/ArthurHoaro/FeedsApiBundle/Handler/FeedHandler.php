@@ -2,6 +2,8 @@
 
 namespace ArthurHoaro\FeedsApiBundle\Handler;
 
+use ArthurHoaro\FeedsApiBundle\Exception\FeedNotFoundException;
+use ArthurHoaro\FeedsApiBundle\Exception\FeedNotParsedException;
 use ArthurHoaro\FeedsApiBundle\Form\ArticleType;
 use ArthurHoaro\FeedsApiBundle\Helper\ArticleConverter;
 use ArthurHoaro\FeedsApiBundle\Model\IFeed;
@@ -19,31 +21,29 @@ class FeedHandler extends GenericHandler {
     /**
      * Select a list of Feeds by their IDs
      *
-     * @param array $id
+     * @param int $id
      * @return array IFeed
      */
-    public function select(array $id) {
+    public function select($id) {
         return $this->repository->findBy(array('id' => $id));
     }
 
     /**
-     * Refresh items of a list of feeds
+     * Refresh items of a feed
      *
-     * @param array $id
+     * @param int $id
      * @param FeedReader $reader
      * @return array $items - list of refreshed feeds
+     * @throws FeedNotFoundException
      */
-    public function refreshFeeds(array $id, FeedReader $reader) {
-        if( !empty($id) )
-            $feeds = $this->select($id);
-        else
-            $feeds = $this->all();
+    public function refreshFeed($id, FeedReader $reader) {
+        if(empty($id)) throw new FeedNotFoundException();
 
-        $items = array();
-        foreach($feeds as $key => $value) {
-            $items[] = $this->refresh($value, $reader);
+        $feed = $this->select($id);
+        if (count($feed) > 0 )  {
+            return $this->refresh(array_shift($feed), $reader);
         }
-        return $items;
+        throw new FeedNotFoundException($id);
     }
 
     /**
@@ -51,10 +51,21 @@ class FeedHandler extends GenericHandler {
      *
      * @param IFeed $feed
      * @param FeedReader $reader
-     * @return array $outItems -
+     * @return array $outItems
+     *
+     * @throws \Exception
      */
     private function refresh(IFeed $feed, FeedReader $reader) {
-        $readFeed = $reader->getFeedContent($feed->getFeedurl());
+        $feedUrl = $feed->getFeedurl();
+        try {
+            $readFeed = $reader->getFeedContent($feedUrl);
+        } catch(\Exception $e) {
+            // An ugly trick to handle SimpleXML bad error handling... maybe to be removed
+            if( strpos($e->getMessage(), 'parse') !== false ) {
+                throw new FeedNotParsedException($feedUrl, $e);
+            }
+            else throw $e;
+        }
         $newItems = $readFeed->getItems();
 
         $outItems = array();

@@ -6,10 +6,12 @@
 
 namespace ArthurHoaro\FeedsApiBundle\Tests\Controller;
 
-use ArthurHoaro\FeedsApiBundle\Tests\Fixtures\Entity\LoadArticleData;
-use Liip\FunctionalTestBundle\Test\WebTestCase as WebTestCase;
+use ArthurHoaro\FeedsApiBundle\Tests\Fixtures\Entity\LoadBasicFeedsArticlesData;
+use ArthurHoaro\FeedsApiBundle\Tests\Fixtures\Entity\LoadArticleFeedArray;
 
-class ArticleControllerTest extends WebTestCase {
+class ArticleControllerTest extends ControllerTest {
+
+    protected $client;
 
     public function setUp()
     {
@@ -29,30 +31,59 @@ class ArticleControllerTest extends WebTestCase {
 
     public function testJsonGetArticleAction()
     {
-        $fixtures = array('ArthurHoaro\FeedsApiBundle\Tests\Fixtures\Entity\LoadArticleData');
+        $fixtures = array('ArthurHoaro\FeedsApiBundle\Tests\Fixtures\Entity\LoadBasicFeedsArticlesData');
         $this->customSetUp($fixtures);
-        $articles = LoadArticleData::$articles;
+        $articles = LoadBasicFeedsArticlesData::$articles;
         $article = array_pop($articles);
 
         $route =  $this->getUrl('api_1_get_article', array('id' => $article->getId(), '_format' => 'json'));
-
         $this->client->request('GET', $route, array('ACCEPT' => 'application/json'));
+
         $response = $this->client->getResponse();
-        $this->assertJsonResponse($response, 200);
+        $this->assertJsonResponse($response, 200, false);
+
         $content = $response->getContent();
+        $decodedArticle = json_decode($content, true);
+        $this->assertTrue(($decodedArticle != null && $decodedArticle != false), 'JSON invalid format');
+        $this->assertTrue(!empty($decodedArticle['id']) && $decodedArticle['id'] == $article->getId());
+    }
 
+    public function testJsonGetArticlesAction()
+    {
+        $fixtures = array('ArthurHoaro\FeedsApiBundle\Tests\Fixtures\Entity\LoadBasicFeedsArticlesData');
+        $this->customSetUp($fixtures);
+        $articles = LoadBasicFeedsArticlesData::$articles;
+
+        $offset = 1; $limit = 2;
+        $route =  $this->getUrl('api_1_get_articles', array('offset' => $offset, 'limit' => $limit));
+        $this->client->request('GET', $route, array('ACCEPT' => 'application/json'));
+
+        $response = $this->client->getResponse();
+        $this->assertJsonResponse($response, 200, false);
+
+        $content = $response->getContent();
         $decoded = json_decode($content, true);
-        $this->assertTrue(!empty($decoded['id']));
+        $this->assertTrue(($decoded != null && $decoded != false), 'JSON invalid format');
+        $this->assertTrue(count($decoded) == $limit, 'Number of results is invalid');
+        $this->assertTrue(!empty($decoded[0]['id']) && $decoded[0]['id'] == $articles[count($articles) - 1 - $offset]->getId());
 
+    }
+
+    public function testJsonGetNotFoundArticleAction()
+    {
+        $route =  $this->getUrl('api_1_get_article', array('id' => -1, '_format' => 'json'));
+        $this->client->request('GET', $route, array('ACCEPT' => 'application/json'));
+
+        $this->assertJsonResponse($this->client->getResponse(), 404);
     }
 
 
     public function testJsonPostArticleAction()
     {
-        $fixtures = array('ArthurHoaro\FeedsApiBundle\Tests\Fixtures\Entity\LoadArticleData');
+        $fixtures = array('ArthurHoaro\FeedsApiBundle\Tests\Fixtures\Entity\LoadBasicFeedsArticlesData');
         $this->customSetUp($fixtures);
-        $feeds = LoadArticleData::$feeds;
-        $feedId = $feeds[0]->getId();
+        $feeds = LoadBasicFeedsArticlesData::$feeds;
+        $feedId = $feeds[LoadArticleFeedArray::DUMMY]->getId();
 
         $this->setUp();
         $this->client->request(
@@ -89,7 +120,7 @@ class ArticleControllerTest extends WebTestCase {
             }'
         );
 
-        $this->assertJsonResponse($this->client->getResponse(), 500, false);
+        $this->assertJsonResponse($this->client->getResponse(), 500, true);
     }
 
     public function testJsonPostArticleActionShouldReturn400WithBadParameters()
@@ -104,40 +135,78 @@ class ArticleControllerTest extends WebTestCase {
             '{"siteurl":"siteurl2","articlename":"articlename2","articleurl":"articleurl2"}'
         );
 
-        $this->assertJsonResponse($this->client->getResponse(), 400, false);
+        $this->assertJsonResponse($this->client->getResponse(), 400, true);
     }
 
-    public function testJsonRefreshFeedAction()
+    public function testJsonPutNewAndUpdateArticleAction()
     {
-        $fixtures = array('ArthurHoaro\FeedsApiBundle\Tests\Fixtures\Entity\LoadArticleData');
+        $fixtures = array('ArthurHoaro\FeedsApiBundle\Tests\Fixtures\Entity\LoadBasicFeedsArticlesData');
         $this->customSetUp($fixtures);
-        $feeds = LoadArticleData::$feeds;
-        $feedId = $feeds[1]->getId();
+        $feeds = LoadBasicFeedsArticlesData::$feeds;
+        $feedId = $feeds[LoadArticleFeedArray::DUMMY]->getId();
+
+        $route =  $this->getUrl('api_1_put_article', array('id' => 666, '_format' => 'json'));
 
         $this->setUp();
         $this->client->request(
-            'PATCH',
-            '/api/v1/feeds/'. $feedId .'/refresh',
-            array('ACCEPT' => 'application/json'));
+            'PUT',
+            $route,
+            array(),
+            array(),
+            array('CONTENT_TYPE' => 'application/json'),
+            '{"title":"titre42","link":"http://blogofthedeath.com/article42","feed": '. $feedId .',
+                "content": "hello world",
+                "publicationdate": {
+                    "date": { "year": 2014, "month": 11, "day": 5 },
+                    "time": { "hour": 23, "minute": 11 }
+                }
+            }'
+        );
+
+        $response = $this->client->getResponse();
+        $this->assertJsonResponse($response, 201, false);
+
+        $location = explode('/', $response->headers->get('location'));
+        $newId = end($location);
+        $route =  $this->getUrl('api_1_put_article', array('id' => $newId, '_format' => 'json'));
+
+        $this->setUp();
+        $this->client->request(
+            'PUT',
+            $route,
+            array(),
+            array(),
+            array('CONTENT_TYPE' => 'application/json'),
+            '{"title":"titre42","link":"http://blogofthedeath.com/article42","feed": '. $feedId .',
+                "content": "the world has been updated",
+                "publicationdate": {
+                    "date": { "year": 2014, "month": 11, "day": 5 },
+                    "time": { "hour": 23, "minute": 11 }
+                }
+            }'
+        );
+
+        $this->assertJsonResponse($this->client->getResponse(), 204, false, false);
     }
 
-
-    protected function assertJsonResponse($response, $statusCode = 200, $checkValidJson =  true, $contentType = 'application/json')
+    public function testJsonPatchArticleAction()
     {
-        $this->assertEquals(
-            $statusCode, $response->getStatusCode(),
-            $response->getContent()
-        );
-        $this->assertTrue(
-            $response->headers->contains('Content-Type', $contentType),
-            $response->headers
+        $fixtures = array('ArthurHoaro\FeedsApiBundle\Tests\Fixtures\Entity\LoadBasicFeedsArticlesData');
+        $this->customSetUp($fixtures);
+        $articles = LoadBasicFeedsArticlesData::$articles;
+        $article = array_pop($articles);
+
+        $route =  $this->getUrl('api_1_patch_article', array('id' => $article->getId(), '_format' => 'json'));
+
+        $this->client->request(
+            'PATCH',
+            $route,
+            array(),
+            array(),
+            array('CONTENT_TYPE' => 'application/json'),
+            '{"content": "a whole new unicorn"}'
         );
 
-        if ($checkValidJson) {
-            $decode = json_decode($response->getContent());
-            $this->assertTrue(($decode != null && $decode != false),
-                'is response valid json: [' . $response->getContent() . ']'
-            );
-        }
+        $this->assertJsonResponse($this->client->getResponse(), 204, false, false);
     }
 } 

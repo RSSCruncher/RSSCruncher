@@ -252,7 +252,7 @@ class FeedController extends FOSRestController {
     /**
      * Refresh Articles of a single Feed
      *
-    @ApiDoc(
+     * @ApiDoc(
      *   resource = true,
      *   description = "Refresh a feed to find its new Articles, return all new or updated Articles",
      *   output = "ArthurHoaro\FeedsApiBundle\Entity\Article",
@@ -268,28 +268,18 @@ class FeedController extends FOSRestController {
      *
      * @return array
      *
-     * @throws NotFoundHttpException when feed not exist
      */
     public function refreshFeedAction($id) {
-        return $this->refreshFeedsAction(array($id));
-    }
-
-    /**
-     *
-     */
-    public function refreshFeedsAction($ids) {
-        $items = $this->container->get('arthur_hoaro_feeds_api.feed.handler')->refreshFeeds(
-            $ids,
+        $items = $this->container->get('arthur_hoaro_feeds_api.feed.handler')->refreshFeed(
+            $id,
             $this->container->get('debril.reader')
         );
 
         $validator = $this->get('validator');
 
-        foreach($items as $feedArticles) {
-            foreach($feedArticles as $item) {
-                if( count($validator->validate($item)) == 0 ) {
-                    $articles[] = $this->container->get('arthur_hoaro_feeds_api.article.handler')->save($item);
-                }
+        foreach($items as $item) {
+            if( count($validator->validate($item)) == 0 ) {
+                $articles[] = $this->container->get('arthur_hoaro_feeds_api.article.handler')->save($item);
             }
         }
 
