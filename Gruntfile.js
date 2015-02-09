@@ -2,10 +2,12 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-symlink');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-less');
+    //grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
 
     grunt.file.mkdir('app/Resources/public/images/');
 
@@ -22,11 +24,32 @@ module.exports = function(grunt) {
                 files: filesLess
             }
         },
-        symlink: {
+        /*symlink: {
             app: {
                 relativeSrc: '../../app/Resources/public/',
                 dest: 'web/bundles/app',
                 options: {type: 'dir'}
+            },
+             // Gestion de FontAwesome
+             font_awesome: {
+             dest: 'app/Resources/public/fonts/awesome',
+             relativeSrc: '../../../../web/vendor/font-awesome/font/',
+             options: {type: 'dir'}
+             }
+        },
+        */
+        copy: {
+            app: {
+                expand: true,
+                cwd: 'app/Resources/public/',
+                src: ['**'],
+                dest: 'web/bundles/app'
+            },
+            font_awesome: {
+                expand: true,
+                cwd: 'web/vendor/font-awesome/fonts/',
+                src: ['**'],
+                dest: 'web/bundles/app/fonts/awesome'
             }
         },
         concat: {
@@ -51,8 +74,19 @@ module.exports = function(grunt) {
         uglify: {
             dist: {
                 files: {
-                    'web/built/app/js/wozbe.min.js': ['web/built/app/js/hoaro.js']
+                    'web/built/app/js/hoaro.min.js': ['web/built/app/js/hoaro.js']
                 }
+            }
+        },
+        cssmin: {
+            target: {
+                files: [{
+                    expand: true,
+                    cwd: 'web/built/arthurhoarorsscruncheruser/css',
+                    src: ['*.css', '!*.min.css'],
+                    dest: 'web/built/app/css',
+                    ext: '.min.css'
+                }]
             }
         },
         jshint: {
@@ -89,7 +123,7 @@ module.exports = function(grunt) {
 
     // Default task(s).
     grunt.registerTask('default', ['css', 'javascript']);
-    grunt.registerTask('css', ['less:discovering', 'less']);
+    grunt.registerTask('css', ['copy:font_awesome', 'less:discovering', 'less', 'cssmin']);
     grunt.registerTask('javascript', ['jshint', 'concat', 'uglify']);
     grunt.registerTask('assets:install', ['symlink']);
     grunt.registerTask('deploy', ['assets:install', 'default']);

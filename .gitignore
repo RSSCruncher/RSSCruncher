@@ -48,7 +48,7 @@ dist/
 
 # Grunt usually preprocesses files such as coffeescript, compass... inside the .tmp directory
 .tmp/
-
+/web/built
 
 ### Bower ###
 bower_components
