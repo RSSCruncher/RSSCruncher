@@ -1,0 +1,3 @@
+arthur_hoaro_rss_cruncher_user_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: ArthurHoaroRssCruncherUserBundle:Default:index }
