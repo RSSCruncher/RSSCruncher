@@ -123,7 +123,7 @@ module.exports = function(grunt) {
 
     // Default task(s).
     grunt.registerTask('default', ['css', 'javascript']);
-    grunt.registerTask('css', ['copy:font_awesome', 'less:discovering', 'less', 'cssmin']);
+    grunt.registerTask('css', ['copy', 'less:discovering', 'less', 'cssmin']);
     grunt.registerTask('javascript', ['jshint', 'concat', 'uglify']);
     grunt.registerTask('assets:install', ['symlink']);
     grunt.registerTask('deploy', ['assets:install', 'default']);
