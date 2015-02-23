@@ -24,8 +24,17 @@ class FeedHandler extends GenericHandler {
      * @param int $id
      * @return array IFeed
      */
-    public function select($id) {
-        return $this->repository->findBy(array('id' => $id));
+    public function select($id, $params = array()) {
+        return $this->repository->findBy(array_merge(array('id' => $id), $params));
+    }
+
+    /**
+     * @param $id
+     * @param array $params
+     * @return array
+     */
+    public function selectEnabled($id, $params = array()) {
+        return $this->select($id, array_merge($params, array('enabled' => true)));
     }
 
     /**

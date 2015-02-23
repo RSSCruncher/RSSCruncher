@@ -241,4 +241,32 @@ class FeedControllerTest extends ControllerTest {
             get_class(new FeedNotParsedException())
         );
     }
+
+    public function testJsonDisableThenTryToAccessAndRefreshFeed() {
+        $fixtures = array('ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity\LoadBasicFeedsArticlesData');
+        $this->customSetUp($fixtures);
+
+        $feeds = LoadBasicFeedsArticlesData::$feeds;
+        $feedId = $feeds[LoadArticleFeedArray::VALID]->getId();
+
+        $route = $this->getUrl('api_1_patch_feed', array('id' => $feedId, '_format' => 'json'));
+        $this->client->request(
+            'PATCH',
+            $route,
+            $route,
+            array(),
+            array(),
+            array('CONTENT_TYPE' => 'application/json'),
+            '{"enabled": false}'
+        );
+        $this->assertJsonResponse($this->client->getResponse(), 204, false, false);
+
+        $route =  $this->getUrl('api_1_get_feed', array('id' => $feedId, '_format' => 'json'));
+        $this->client->request('GET', $route, array('ACCEPT' => 'application/json'));
+        $this->assertJsonResponse($this->client->getResponse(), 200);
+
+        $route = $this->getUrl('api_1_refresh_feed', array('id' => $feedId, '_format' => 'json'));
+        $this->client->request('PATCH', $route, array('ACCEPT' => 'application/json'));
+        $this->assertJsonResponse($this->client->getResponse(), 200);
+    }
 } 
