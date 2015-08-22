@@ -108,3 +108,5 @@ fos_oauth_server:
     access_token_class:  ArthurHoaro\RssCruncherApiBundle\Entity\AccessToken
     refresh_token_class: ArthurHoaro\RssCruncherApiBundle\Entity\RefreshToken
     auth_code_class:     ArthurHoaro\RssCruncherApiBundle\Entity\AuthCode
+    service:
+        user_provider: fos_user.user_manager
