@@ -1,45 +1,53 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
 <div class="row">
-    <form action="{{ path('fos_user_registration_register') }}" {{ form_enctype(form) }} method="POST" class="fos_user_registration_register col-md-offset-3 col-md-6 col-xs-12">
+  {{
+    form_start(
+      form,{'method': 'post', 'action': path('fos_user_registration_register'), 'attr':
+      {'class': 'fos_user_registration_register col-md-offset-3 col-md-6 col-xs-12'}}
+    )
+  }}
 
-        {% set pwdError = 0 %}
+    {% set pwdError = 0 %}
+    {% for passwordField in form.plainPassword %}
+      {% if form_errors(passwordField) %}
+        {% set pwdError = 1 %}
+      {% endif %}
+    {% endfor %}
+
+    {% if form_errors(form) or form_errors(form.username) or form_errors(form.email) or pwdError == 1 %}
+      <div class="alert alert-danger" role="alert">
+        {{ form_errors(form) }}
+        {{ form_errors(form.username) }}
+        {{ form_errors(form.email) }}
         {% for passwordField in form.plainPassword %}
-            {% if form_errors(passwordField) %}
-                {% set pwdError = 1 %}
-            {% endif %}
+          {{ form_errors(passwordField) }}
         {% endfor %}
+      </div>
+    {% endif %}
 
-        {% if form_errors(form) or form_errors(form.username) or form_errors(form.email) or pwdError == 1 %}
-            <div class="alert alert-danger" role="alert">
-                {{ form_errors(form) }}
-                {{ form_errors(form.username) }}
-                {{ form_errors(form.email) }}
-                {% for passwordField in form.plainPassword %}
-                    {{ form_errors(passwordField) }}
-                {% endfor %}
-            </div>
-        {% endif %}
+    <div class="form-group {% if form_errors(form.username) %}has-error{% endif %}">
+      {{ form_label(form.username, null, { 'label_attr': {'class': 'control-label'} }) }}
+      {{ form_widget(form.username, { 'attr': {'class': 'form-control'} }) }}
+    </div>
 
-        <div class="form-group {% if form_errors(form.username) %}has-error{% endif %}">
-            {{ form_label(form.username, null, { 'label_attr': {'class': 'control-label'} }) }}
-            {{ form_widget(form.username, { 'attr': {'class': 'form-control'} }) }}
-        </div>
+    <div class="form-group {% if form_errors(form.email) %}has-error{% endif %}">
+      {{ form_label(form.email, null, { 'label_attr': {'class': 'control-label'} }) }}
+      {{ form_widget(form.email, { 'attr': {'class': 'form-control'} }) }}
+    </div>
 
-        <div class="form-group {% if form_errors(form.email) %}has-error{% endif %}">
-            {{ form_label(form.email, null, { 'label_attr': {'class': 'control-label'} }) }}
-            {{ form_widget(form.email, { 'attr': {'class': 'form-control'} }) }}
-        </div>
+    {% for passwordField in form.plainPassword %}
+      <div class="form-group {% if form_errors(passwordField) %}has-error{% endif %}">
+        {{ form_label(passwordField, null, { 'label_attr': {'class': 'control-label'} }) }}
+        {{ form_widget(passwordField, { 'attr': {'class': 'form-control'} }) }}
+      </div>
+    {% endfor %}
 
-        {% for passwordField in form.plainPassword %}
-            <div class="form-group {% if form_errors(passwordField) %}has-error{% endif %}">
-                {{ form_label(passwordField, null, { 'label_attr': {'class': 'control-label'} }) }}
-                {{ form_widget(passwordField, { 'attr': {'class': 'form-control'} }) }}
-            </div>
-        {% endfor %}
+    <div>
+      <input type="submit" value="{{ 'registration.submit'|trans({}, 'FOSUserBundle') }}"
+             class="btn btn-lg btn-success"/>
+    </div>
 
-        <div>
-            <input type="submit" value="{{ 'registration.submit'|trans({}, 'FOSUserBundle') }}" class="btn btn-lg btn-success" />
-        </div>
-
-        {{ form_end(form) }}
-    </form>
+    {{ form_end(form) }}
+  </form>
 </div>

@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new FOS\OAuthServerBundle\FOSOAuthServerBundle(),
             new ArthurHoaro\RssCruncherApiBundle\ArthurHoaroRssCruncherApiBundle(),
             new ArthurHoaro\RssCruncherUserBundle\ArthurHoaroRssCruncherUserBundle(),
+            new ArthurHoaro\RssCruncherClientBundle\ArthurHoaroRssCruncherClientBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
@@ -31,7 +32,7 @@ class AppKernel extends Kernel
             $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
             $bundles[] = new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle();
         }
-
+        
         return $bundles;
     }
 

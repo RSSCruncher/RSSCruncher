@@ -24,7 +24,7 @@ class AuthCode extends BaseAuthCode
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Client")
+     * @ORM\ManyToOne(targetEntity="ArthurHoaro\RssCruncherClientBundle\Entity\Client")
      * @ORM\JoinColumn(nullable=false)
      */
     protected $client;

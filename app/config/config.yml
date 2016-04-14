@@ -104,7 +104,7 @@ fos_user:
 
 fos_oauth_server:
     db_driver: orm       # Driver availables: orm, mongodb, or propel
-    client_class:        ArthurHoaro\RssCruncherApiBundle\Entity\Client
+    client_class:        ArthurHoaro\RssCruncherClientBundle\Entity\Client
     access_token_class:  ArthurHoaro\RssCruncherApiBundle\Entity\AccessToken
     refresh_token_class: ArthurHoaro\RssCruncherApiBundle\Entity\RefreshToken
     auth_code_class:     ArthurHoaro\RssCruncherApiBundle\Entity\AuthCode

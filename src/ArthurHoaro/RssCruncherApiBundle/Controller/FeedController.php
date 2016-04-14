@@ -12,6 +12,7 @@ use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class FeedController extends FOSRestController {
@@ -86,7 +87,7 @@ class FeedController extends FOSRestController {
      *
      * @Annotations\View(
      *  template = "AcmeBlogBundle:Feed:newFeed.html.twig",
-     *  statusCode = Codes::HTTP_BAD_REQUEST,
+     *  statusCode = Response::HTTP_BAD_REQUEST,
      *  templateVar = "form"
      * )
      *
@@ -107,7 +108,7 @@ class FeedController extends FOSRestController {
                 '_format' => $request->get('_format')
             );
 
-            return $this->routeRedirectView('api_1_get_feed', $routeOptions, Codes::HTTP_CREATED);
+            return $this->routeRedirectView('api_1_get_feed', $routeOptions, Response::HTTP_CREATED);
         } catch (InvalidFormException $exception) {
 
             return $exception->getForm();
@@ -143,12 +144,12 @@ class FeedController extends FOSRestController {
     {
         try {
             if (!($feed = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->get($id))) {
-                $statusCode = Codes::HTTP_CREATED;
+                $statusCode = Response::HTTP_CREATED;
                 $feed = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->post(
                     $request->request->all()
                 );
             } else {
-                $statusCode = Codes::HTTP_NO_CONTENT;
+                $statusCode = Response::HTTP_NO_CONTENT;
                 $feed = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->put(
                     $feed,
                     $request->request->all()
@@ -205,7 +206,7 @@ class FeedController extends FOSRestController {
                 '_format' => $request->get('_format')
             );
 
-            return $this->routeRedirectView('api_1_get_feed', $routeOptions, Codes::HTTP_NO_CONTENT);
+            return $this->routeRedirectView('api_1_get_feed', $routeOptions, Response::HTTP_NO_CONTENT);
 
         } catch (InvalidFormException $exception) {
 

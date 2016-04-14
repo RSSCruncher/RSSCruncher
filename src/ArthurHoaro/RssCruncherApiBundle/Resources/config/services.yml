@@ -2,17 +2,17 @@ parameters:
   arthur_hoaro_rss_cruncher_api.handler.package: ArthurHoaro\RssCruncherApiBundle\Handler\
   arthur_hoaro_rss_cruncher_api.entity.package: ArthurHoaro\RssCruncherApiBundle\Entity\
   arthur_hoaro_rss_cruncher_api.type.package: ArthurHoaro\RssCruncherApiBundle\Form\
-  arthur_hoaro_rss_cruncher_api.feed.handler.class: %arthur_hoaro_rss_cruncher_api.handler.package%FeedHandler
-  arthur_hoaro_rss_cruncher_api.feed.class: %arthur_hoaro_rss_cruncher_api.entity.package%Feed
-  arthur_hoaro_rss_cruncher_api.feed.type.class: %arthur_hoaro_rss_cruncher_api.type.package%FeedType
-  arthur_hoaro_rss_cruncher_api.article.handler.class: %arthur_hoaro_rss_cruncher_api.handler.package%ArticleHandler
-  arthur_hoaro_rss_cruncher_api.article.class: %arthur_hoaro_rss_cruncher_api.entity.package%Article
-  arthur_hoaro_rss_cruncher_api.article.type.class: %arthur_hoaro_rss_cruncher_api.type.package%ArticleType
+  arthur_hoaro_rss_cruncher_api.feed.handler.class: '%arthur_hoaro_rss_cruncher_api.handler.package%FeedHandler'
+  arthur_hoaro_rss_cruncher_api.feed.class: '%arthur_hoaro_rss_cruncher_api.entity.package%Feed'
+  arthur_hoaro_rss_cruncher_api.feed.type.class: '%arthur_hoaro_rss_cruncher_api.type.package%FeedType'
+  arthur_hoaro_rss_cruncher_api.article.handler.class: '%arthur_hoaro_rss_cruncher_api.handler.package%ArticleHandler'
+  arthur_hoaro_rss_cruncher_api.article.class: '%arthur_hoaro_rss_cruncher_api.entity.package%Article'
+  arthur_hoaro_rss_cruncher_api.article.type.class: '%arthur_hoaro_rss_cruncher_api.type.package%ArticleType'
 services:
   arthur_hoaro_rss_cruncher_api.feed.handler:
-    class: %arthur_hoaro_rss_cruncher_api.feed.handler.class%
-    arguments: [@doctrine.orm.entity_manager, %arthur_hoaro_rss_cruncher_api.feed.class%, @form.factory, %arthur_hoaro_rss_cruncher_api.feed.type.class%]
+    class: '%arthur_hoaro_rss_cruncher_api.feed.handler.class%'
+    arguments: ['@doctrine.orm.entity_manager', '%arthur_hoaro_rss_cruncher_api.feed.class%', '@form.factory', '%arthur_hoaro_rss_cruncher_api.feed.type.class%']
   arthur_hoaro_rss_cruncher_api.article.handler:
-    class: %arthur_hoaro_rss_cruncher_api.article.handler.class%
-    arguments: [@doctrine.orm.entity_manager, %arthur_hoaro_rss_cruncher_api.article.class%, @form.factory, %arthur_hoaro_rss_cruncher_api.article.type.class%]
+    class: '%arthur_hoaro_rss_cruncher_api.article.handler.class%'
+    arguments: ['@doctrine.orm.entity_manager', '%arthur_hoaro_rss_cruncher_api.article.class%', '@form.factory', '%arthur_hoaro_rss_cruncher_api.article.type.class%']
 

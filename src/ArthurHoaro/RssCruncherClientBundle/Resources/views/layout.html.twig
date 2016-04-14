@@ -1,0 +1,37 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}RSSCruncher - Membership{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('built/app/css/user.css') }}" type="text/css" />
+{% endblock %}
+{% block body %}
+<div class="row">
+    <div class="col-md-offset-10 col-md-2 col-xs-12">
+    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+        {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
+        <a href="{{ path('fos_user_security_logout') }}">
+            {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+        </a>
+    {% else %}
+        <a href="{{ path('fos_user_security_login') }}" class="btn btn-primary">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+    {% endif %}
+    </div>
+</div>
+
+{% for type, messages in app.session.flashBag.all %}
+    {% for message in messages %}
+        <div class="{{ type }}">
+            {{ message|trans({}, 'FOSUserBundle') }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<div>
+    {% block fos_user_content %}
+    {% endblock fos_user_content %}
+</div>
+{% endblock body %}
+
+{% block javascripts %}
+    <script src="{{ asset('built/app/js/user.js') }}"></script>
+{% endblock %}

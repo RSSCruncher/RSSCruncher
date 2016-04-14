@@ -1,0 +1,22 @@
+arthur_hoaro_rss_cruncher_client_index:
+  path:     /
+  defaults:
+    _controller: ArthurHoaroRssCruncherClientBundle:Client:index
+arthur_hoaro_rss_cruncher_client_new:
+  path:     /new
+  defaults: { _controller: ArthurHoaroRssCruncherClientBundle:Client:new }
+arthur_hoaro_rss_cruncher_client_create:
+  path:     /create
+  defaults: { _controller: ArthurHoaroRssCruncherClientBundle:Client:create }
+arthur_hoaro_rss_cruncher_client_show:
+  path:     /show/{id}
+  defaults: { _controller: ArthurHoaroRssCruncherClientBundle:Client:show }
+arthur_hoaro_rss_cruncher_client_edit:
+  path:     /edit/{id}
+  defaults: { _controller: ArthurHoaroRssCruncherClientBundle:Client:edit }
+arthur_hoaro_rss_cruncher_client_update:
+  path:     /update/{id}
+  defaults: { _controller: ArthurHoaroRssCruncherClientBundle:Client:update }
+arthur_hoaro_rss_cruncher_client_delete:
+  path:     /delete/{id}
+  defaults: { _controller: ArthurHoaroRssCruncherClientBundle:Client:delete }

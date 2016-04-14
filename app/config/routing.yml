@@ -1,3 +1,7 @@
+arthur_hoaro_rss_cruncher_client:
+    resource: "@ArthurHoaroRssCruncherClientBundle/Resources/config/routing.yml"
+    prefix:   /client
+
 arthur_hoaro_rss_cruncher_user:
     resource: "@ArthurHoaroRssCruncherUserBundle/Resources/config/routing.yml"
     prefix:   /

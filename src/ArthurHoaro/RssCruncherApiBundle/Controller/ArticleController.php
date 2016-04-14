@@ -12,6 +12,7 @@ use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ArticleController extends FOSRestController {
@@ -103,7 +104,7 @@ class ArticleController extends FOSRestController {
      *
      * @Annotations\View(
      *  template = "AcmeBlogBundle:Article:newArticle.html.twig",
-     *  statusCode = Codes::HTTP_BAD_REQUEST,
+     *  statusCode = Response::HTTP_BAD_REQUEST,
      *  templateVar = "form"
      * )
      *
@@ -124,7 +125,7 @@ class ArticleController extends FOSRestController {
                 '_format' => $request->get('_format')
             );
 
-            return $this->routeRedirectView('api_1_get_article', $routeOptions, Codes::HTTP_CREATED);
+            return $this->routeRedirectView('api_1_get_article', $routeOptions, Response::HTTP_CREATED);
         } catch (InvalidFormException $exception) {
 
             return $exception->getForm();
@@ -160,12 +161,12 @@ class ArticleController extends FOSRestController {
     {
         try {
             if (!($article = $this->container->get('arthur_hoaro_rss_cruncher_api.article.handler')->get($id))) {
-                $statusCode = Codes::HTTP_CREATED;
+                $statusCode = Response::HTTP_CREATED;
                 $article = $this->container->get('arthur_hoaro_rss_cruncher_api.article.handler')->post(
                     $request->request->all()
                 );
             } else {
-                $statusCode = Codes::HTTP_NO_CONTENT;
+                $statusCode = Response::HTTP_NO_CONTENT;
                 $article = $this->container->get('arthur_hoaro_rss_cruncher_api.article.handler')->put(
                     $article,
                     $request->request->all()
@@ -222,7 +223,7 @@ class ArticleController extends FOSRestController {
                 '_format' => $request->get('_format')
             );
 
-            return $this->routeRedirectView('api_1_get_article', $routeOptions, Codes::HTTP_NO_CONTENT);
+            return $this->routeRedirectView('api_1_get_article', $routeOptions, Response::HTTP_NO_CONTENT);
 
         } catch (InvalidFormException $exception) {
 
