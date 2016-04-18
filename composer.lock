@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8ea7584a8e191cd135a4b599737973d1",
-    "content-hash": "eabbbee70b533238db3cf693ada23e22",
+    "hash": "a31d0c27b1875260b74e0bcd7de78f3d",
+    "content-hash": "724dca35f0c01c53e0b32aa1e2c6bb36",
     "packages": [
         {
             "name": "debril/rss-atom-bundle",
@@ -902,16 +902,16 @@
         },
         {
             "name": "friendsofsymfony/oauth2-php",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/oauth2-php.git",
-                "reference": "4ae0a2aa85566146ef6f0f7169854c49e0c9243a"
+                "reference": "fa2aecb1fca2a03fd5f9aca19fe9adb9dfff928c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/oauth2-php/zipball/4ae0a2aa85566146ef6f0f7169854c49e0c9243a",
-                "reference": "4ae0a2aa85566146ef6f0f7169854c49e0c9243a",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/oauth2-php/zipball/fa2aecb1fca2a03fd5f9aca19fe9adb9dfff928c",
+                "reference": "fa2aecb1fca2a03fd5f9aca19fe9adb9dfff928c",
                 "shasum": ""
             },
             "require": {
@@ -924,7 +924,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "1.2.x-dev"
                 }
             },
             "autoload": {
@@ -952,7 +952,7 @@
                 "oauth",
                 "oauth2"
             ],
-            "time": "2015-12-21 11:32:17"
+            "time": "2016-03-31 14:24:17"
         },
         {
             "name": "friendsofsymfony/rest-bundle",
@@ -3051,12 +3051,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/liip/LiipFunctionalTestBundle.git",
-                "reference": "23a229daa3a4880a6fd659a24d64639427ed1e7d"
+                "reference": "7401da84b3da42cbde1fab51f26503ae9d6b8f02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/liip/LiipFunctionalTestBundle/zipball/23a229daa3a4880a6fd659a24d64639427ed1e7d",
-                "reference": "23a229daa3a4880a6fd659a24d64639427ed1e7d",
+                "url": "https://api.github.com/repos/liip/LiipFunctionalTestBundle/zipball/7401da84b3da42cbde1fab51f26503ae9d6b8f02",
+                "reference": "7401da84b3da42cbde1fab51f26503ae9d6b8f02",
                 "shasum": ""
             },
             "require": {
@@ -3118,7 +3118,7 @@
             "keywords": [
                 "Symfony2"
             ],
-            "time": "2016-04-09 16:28:17"
+            "time": "2016-04-15 09:58:44"
         },
         {
             "name": "myclabs/deep-copy",
@@ -4221,7 +4221,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.6"
+        "php": ">=5.5"
     },
     "platform-dev": []
 }

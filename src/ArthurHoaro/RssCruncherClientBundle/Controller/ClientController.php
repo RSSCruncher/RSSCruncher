@@ -46,7 +46,7 @@ class ClientController extends Controller
 
         if ($form->isValid()) {
             $clientManager = $this->get('fos_oauth_server.client_manager.default');
-            $entity->setAllowedGrantTypes(['token', 'authorization_code', 'refresh_token']);
+            $entity->setAllowedGrantTypes(['token', 'authorization_code', 'refresh_token', 'kaka']);
             $clientManager->updateClient($entity);
             return $this->redirect(
                 $this->generateUrl(

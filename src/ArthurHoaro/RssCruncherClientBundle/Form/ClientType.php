@@ -8,7 +8,9 @@ namespace ArthurHoaro\RssCruncherClientBundle\Form;
 
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,6 +26,16 @@ class ClientType extends AbstractType
         $builder
             ->add('name')
             ->add('redirectUri', TextType::class)
+            ->add('allowedGrantTypes', ChoiceType::class, [
+                    'choices' => [
+                        'My application manages its user authentication'
+                        => 'client_credentials',
+                        'Users use their RSSCruncher account'
+                        => 'authorization_code',
+                    ],
+                    'expanded' => true,
+                    'multiple' => false,
+                ])
             //->add('redirectUri', UrlType::class)
         ;
     }

@@ -14,6 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Client extends BaseClient
 {
+    public static $GRANT_TYPE_CODE = 'code';
+    public static $GRANT_TYPE_CLIENT = 'client';
     /**
      * @var integer
      *
@@ -87,5 +89,28 @@ class Client extends BaseClient
         $uris = parent::getRedirectUris();
         return (count($uris)) ? $uris[0] : '';
     }
+
+    /**
+     * @param string $grantType grant type.
+     */
+    public function setAllowedGrantType($grantType)
+    {
+        parent::setAllowedGrantTypes(['token', 'refresh_token'] + [$grantType]);
+    }
+
+    /**
+     * @return array
+     *
+     * @Assert\EqualTo(
+     *     [value => 'client_credentials', 'authorization_code']
+     * )
+     */
+    public function getAllowedGrantType()
+    {
+        $types = array_diff(['token', 'refresh_token'], parent::getAllowedGrantTypes());
+        return (count($types)) ? $types[0] : '';
+    }
+
+
 }
 
