@@ -1,50 +1,24 @@
-<div class="row">
-  {{ form_start(
-      form,{'method': 'post', 'action': path('arthur_hoaro_rss_cruncher_client_create'), 'attr':
-      {'class': 'fos_user_registration_register col-md-offset-3 col-md-6 col-xs-12'}}
-    )
-  }}
-  <div class="form-group {% if form_errors(form.name) %}has-error{% endif %}">
-    {{ form_label(form.name, null, { 'label_attr': {'class': 'control-label'} }) }}
-    {{ form_widget(form.name, { 'attr': {'class': 'form-control'} }) }}
-  </div>
+{% extends "ArthurHoaroRssCruncherClientBundle::layout.html.twig" %}
 
-  <ul id="email-fields-list"
-      data-prototype="{{ form_widget(form.redirectUris.vars.prototype)|e }}">
-  {% for urlField in form.redirectUris %}
-    <div class="form-group {% if form_errors(urlField) %}has-error{% endif %}">
-      {{ form_label(urlField, null, { 'label_attr': {'class': 'control-label'} }) }}
-      {{ form_widget(urlField, { 'attr': {'class': 'form-control'} }) }}
+{% block body %}
+
+  <div class="row">
+    {{ form_start(
+        form,{'method': 'post', 'action': path('arthur_hoaro_rss_cruncher_client_create'), 'attr':
+        {'class': 'fos_user_registration_register col-md-offset-3 col-md-6 col-xs-12'}}
+      )
+    }}
+    <div class="form-group {% if form_errors(form.name) %}has-error{% endif %}">
+      {{ form_label(form.name, null, { 'label_attr': {'class': 'control-label'} }) }}
+      {{ form_widget(form.name, { 'attr': {'class': 'form-control'} }) }}
     </div>
-  {% endfor %}
-  </ul>
 
-  <a href="#" id="add-another-email">Add another email</a>
 
-  {{ form_end(form) }}
-</div>
+    <div class="form-group {% if form_errors(form.redirectUri) %}has-error{% endif %}">
+      {{ form_label(form.redirectUri, null, { 'label_attr': {'class': 'control-label'} }) }}
+      {{ form_widget(form.redirectUri, { 'attr': {'class': 'form-control'} }) }}
+    </div>
 
-<script type="text/javascript">
-  // keep track of how many email fields have been rendered
-  var emailCount = '{{ form.redirectUris|length }}';
-
-  document.addEventListener('DOMContentLoaded', function(){
-    document.getElementById('add-another-email').addEventListener('click', function(e) {
-      e.preventDefault();
-
-      var emailList = document.getElementById('#email-fields-list');
-
-      // grab the prototype template
-      var newWidget = emailList.attr('data-prototype');
-      // replace the "__name__" used in the id and name of the prototype
-      // with a number that's unique to your emails
-      // end name attribute looks like name="contact[emails][2]"
-      newWidget = newWidget.replace(/__name__/g, emailCount);
-      emailCount++;
-
-      // create a new list element and add it to the list
-      var newLi = jQuery('<li></li>').html(newWidget);
-      newLi.appendTo(emailList);
-    });
-  }, false);
-</script>
+    {{ form_end(form) }}
+  </div>
+{% endblock %}

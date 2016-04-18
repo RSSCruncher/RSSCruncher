@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<routes xmlns="http://symfony.com/schema/routing"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route id="arthur_hoaro_rss_cruncher_user_oauth_login_check" path="/login" methods="GET POST">
+        <default key="_controller">ArthurHoaroRssCruncherUserBundle:OAuthSecurity:login</default>
+    </route>
+    <route id="arthur_hoaro_rss_cruncher_user_oauth_login" path="/oauth/v2/auth/login" methods="GET POST">
+        <default key="_controller">ArthurHoaroRssCruncherUserBundle:OAuthSecurity:login</default>
+    </route>
+    <route id="arthur_hoaro_rss_cruncher_user_oauth_login_check" path="/oauth/v2/auth/login_check" methods="GET POST">
+        <default key="_controller">FOSUserBundle:Security:check</default>
+    </route>
+</routes>

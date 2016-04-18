@@ -6,7 +6,7 @@
 {% endif %}
 
 <div class="row">
-    <form action="{{ path("fos_user_security_check") }}" method="post" class="col-md-offset-3 col-md-6 col-xs-12">
+    <form action="{{ path(path_check_login) }}" method="post" class="col-md-offset-3 col-md-6 col-xs-12">
         <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
 
         <div class="form-group">

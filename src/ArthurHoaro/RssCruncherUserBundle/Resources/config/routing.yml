@@ -1,3 +1,11 @@
-arthur_hoaro_rss_cruncher_user_homepage:
-    path:     /hello/{name}
-    defaults: { _controller: ArthurHoaroRssCruncherUserBundle:Default:index }
+arthur_hoaro_rss_cruncher_user_oauth_login:
+  path:     /oauth/v2/auth/login
+  defaults:
+    _controller: ArthurHoaroRssCruncherUserBundle:OAuthSecurity:login
+fos_user_security_login:
+  path:     /login
+  defaults:
+    _controller: ArthurHoaroRssCruncherUserBundle:OAuthSecurity:login
+arthur_hoaro_rss_cruncher_user_oauth_login_check:
+        path:     /oauth/v2/auth/login_check
+        defaults: { _controller: FOSUserBundle:Security:check }

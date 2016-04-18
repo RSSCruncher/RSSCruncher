@@ -1,0 +1,75 @@
+{#
+Available:
+  - errors
+  - error
+  - warnings
+  - warning
+  - infos
+  - info
+  - successes
+  - success
+#}
+
+{% if errors is defined and errors is not empty %}
+  <div class="alert alert-danger" role="alert">
+      <ul>
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+  </div>
+{% endif %}
+
+{% if error is defined and error is not empty %}
+  <div class="alert alert-danger" role="alert">
+    {{ error }}
+  </div>
+{% endif %}
+
+{% if warnings is defined and warnings is not empty %}
+  <div class="alert alert-warning" role="alert">
+    <ul>
+      {% for warning in warnings %}
+        <li>{{ warning }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+{% if warning is defined and warning is not empty %}
+  <div class="alert alert-info" role="alert">
+    {{ warning }}
+  </div>
+{% endif %}
+
+{% if infos is defined and infos is not empty %}
+  <div class="alert alert-info" role="alert">
+    <ul>
+      {% for info in infos %}
+        <li>{{ info }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+{% if info is defined and info is not empty %}
+  <div class="alert alert-info" role="alert">
+    {{ info }}
+  </div>
+{% endif %}
+
+{% if successes is defined and successes is not empty %}
+  <div class="alert alert-success" role="alert">
+    <ul>
+      {% for success in successes %}
+        <li>{{ success }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+{% if success is defined and success is not empty %}
+  <div class="alert alert-success" role="alert">
+    {{ success }}
+  </div>
+{% endif %}

@@ -1,4 +1,9 @@
 services:
+  arthur_hoaro_rss_cruncker_fos_security:
+    class: FOS\UserBundle\Controller\SecurityController
+    calls:
+      - [setContainer, ["@service_container"]]
+#    arguments: [%request%]
 #    arthur_hoaro_rss_cruncher_user.example:
 #        class: ArthurHoaro\RssCruncherUserBundle\Example
 #        arguments: [@service_id, "plain_value", %parameter%]

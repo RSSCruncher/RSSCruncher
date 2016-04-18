@@ -1,0 +1,3 @@
+arthur_hoaro_rss_cruncher_website_homepage:
+    path:     /
+    defaults: { _controller: ArthurHoaroRssCruncherWebsiteBundle:Default:index }

@@ -1,43 +1,57 @@
-{% extends '::base.html.twig' %}
+{% extends '@ArthurHoaroRssCruncherClient/layout.html.twig' %}
 
 {% block body -%}
-    <h1>Client list</h1>
+  <h1>Client list</h1>
 
-    <table class="records_list">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nome</th>
-                <th>Redirect</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for entity in entities %}
-            <tr>
-                <td><a href="{{ path('arthur_hoaro_rss_cruncher_client_index', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.name }}</td>
-                <td>{{ entity.redirectUris[0] }}</td>
-                <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('arthur_hoaro_rss_cruncher_client_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('arthur_hoaro_rss_cruncher_client_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Redirect</th>
+        <th>Client Id</th>
+        <th>Secret</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entity in entities %}
+        <tr>
+          <td><a href="{{ path('arthur_hoaro_rss_cruncher_client_index', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+          <td>{{ entity.name }}</td>
+          <td>{{ entity.redirectUri }}</td>
+          <td>{{ entity.id }}_{{ entity.randomId }}</td>
+          <td>{{ entity.secret }}</td>
+          <td>
+            <ul>
+              <li>
+                <a href="{{ path('arthur_hoaro_rss_cruncher_client_show', { 'id': entity.id }) }}">show</a>
+              </li>
+              <li>
+                <a href="{{ path('arthur_hoaro_rss_cruncher_client_edit', { 'id': entity.id }) }}">edit</a>
+              </li>
+            </ul>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Redirect</th>
+        <th>Client Id</th>
+        <th>Secret</th>
+        <th>Actions</th>
+      </tr>
+    </tfoot>
+  </table>
 
-        <ul>
-        <li>
-            <a href="{{ path('arthur_hoaro_rss_cruncher_client_new') }}">
-                Create a new entry
-            </a>
-        </li>
-    </ul>
-    {% endblock %}
+  <ul>
+    <li>
+      <a href="{{ path('arthur_hoaro_rss_cruncher_client_new') }}">
+        Create a new entry
+      </a>
+    </li>
+  </ul>
+{% endblock %}

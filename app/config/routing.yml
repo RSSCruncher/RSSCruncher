@@ -1,11 +1,3 @@
-arthur_hoaro_rss_cruncher_client:
-    resource: "@ArthurHoaroRssCruncherClientBundle/Resources/config/routing.yml"
-    prefix:   /client
-
-arthur_hoaro_rss_cruncher_user:
-    resource: "@ArthurHoaroRssCruncherUserBundle/Resources/config/routing.yml"
-    prefix:   /
-
 #REST
 rest :
   type : rest
@@ -36,3 +28,16 @@ fos_oauth_server_token:
 
 fos_oauth_server_authorize:
   resource: "@FOSOAuthServerBundle/Resources/config/routing/authorize.xml"
+
+# RSSCruncher
+arthur_hoaro_rss_cruncher_client:
+  resource: "@ArthurHoaroRssCruncherClientBundle/Resources/config/routing.yml"
+  prefix:   /client
+
+arthur_hoaro_rss_cruncher_user:
+  resource: "@ArthurHoaroRssCruncherUserBundle/Resources/config/routing.yml"
+  prefix:   /
+
+arthur_hoaro_rss_cruncher_website:
+  resource: "@ArthurHoaroRssCruncherWebsiteBundle/Resources/config/routing.yml"
+  prefix:   /

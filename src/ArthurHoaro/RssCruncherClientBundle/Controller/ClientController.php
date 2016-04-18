@@ -9,13 +9,10 @@ namespace ArthurHoaro\RssCruncherClientBundle\Controller;
 
 use ArthurHoaro\RssCruncherClientBundle\Entity\Client;
 use ArthurHoaro\RssCruncherClientBundle\Form\ClientType;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\BrowserKit\Response;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class ClientController extends Controller
 {
@@ -34,6 +31,13 @@ class ClientController extends Controller
         );
     }
 
+    /**
+     * Creates a new Client.
+     *
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
     public function createAction(Request $request)
     {
         $entity = new Client();
@@ -42,7 +46,7 @@ class ClientController extends Controller
 
         if ($form->isValid()) {
             $clientManager = $this->get('fos_oauth_server.client_manager.default');
-            $entity->setAllowedGrantTypes('client_credentials');
+            $entity->setAllowedGrantTypes(['token', 'authorization_code', 'refresh_token']);
             $clientManager->updateClient($entity);
             return $this->redirect(
                 $this->generateUrl(
@@ -51,6 +55,17 @@ class ClientController extends Controller
                 )
             );
         }
+
+        $validator = $this->get('validator');
+        $errors = $validator->validate($form);
+
+        return $this->render('@ArthurHoaroRssCruncherClient/Client/new.html.twig',
+            [
+                'entity' => $entity,
+                'form'   => $form->createView(),
+                'errors' => $form->getErrors(true, false),
+            ]
+        );
     }
 
     /**
@@ -150,7 +165,7 @@ class ClientController extends Controller
     {
         $form = $this->createForm(ClientType::class, $entity, array(
             'action' => $this->generateUrl('arthur_hoaro_rss_cruncher_client_update', array('id' => $entity->getId())),
-            'method' => 'PUT',
+            'method' => 'POST',
         ));
 
         $form->add('submit', SubmitType::class, array('label' => 'Update'));
@@ -159,7 +174,12 @@ class ClientController extends Controller
     }
 
     /**
-     * Edits an existing Testent entity.
+     * Edits an existing Client entity.
+     *
+     * @param Request $request
+     * @param int     $id      client ID.
+     *
+     * @return Response
      */
     public function updateAction(Request $request, $id)
     {
@@ -177,14 +197,20 @@ class ClientController extends Controller
 
         if ($editForm->isValid()) {
             $em->flush();
-
-            return $this->redirect($this->generateUrl('arthur_hoaro_rss_cruncher_client_edit', array('id' => $id)));
+            $message = ['success' => 'Client updated!'];
+        } else {
+            $message = ['errors' => $editForm->getErrors(true, false)];
         }
 
-        return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+        return $this->render('@ArthurHoaroRssCruncherClient/Client/edit.html.twig',
+            array_merge(
+                $message,
+                [
+                    'entity'      => $entity,
+                    'edit_form'   => $editForm->createView(),
+                    'delete_form' => $deleteForm->createView(),
+                ]
+            )
         );
     }
 

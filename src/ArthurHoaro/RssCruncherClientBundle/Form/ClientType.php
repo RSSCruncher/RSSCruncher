@@ -23,14 +23,8 @@ class ClientType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('redirectUris', CollectionType::class,
-                [
-                    'entry_type' => UrlType::class,
-                    'allow_add' => true,
-                    'allow_delete' => true,
-                    'by_reference' => false
-                ]
-            )
+            ->add('redirectUri', TextType::class)
+            //->add('redirectUri', UrlType::class)
         ;
     }
 

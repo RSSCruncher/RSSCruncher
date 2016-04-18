@@ -24,6 +24,7 @@ class AppKernel extends Kernel
             new ArthurHoaro\RssCruncherApiBundle\ArthurHoaroRssCruncherApiBundle(),
             new ArthurHoaro\RssCruncherUserBundle\ArthurHoaroRssCruncherUserBundle(),
             new ArthurHoaro\RssCruncherClientBundle\ArthurHoaroRssCruncherClientBundle(),
+            new ArthurHoaro\RssCruncherWebsiteBundle\ArthurHoaroRssCruncherWebsiteBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

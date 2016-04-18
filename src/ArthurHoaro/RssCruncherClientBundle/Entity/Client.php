@@ -4,6 +4,7 @@ namespace ArthurHoaro\RssCruncherClientBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use FOS\OAuthServerBundle\Entity\Client as BaseClient;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Client
@@ -62,6 +63,29 @@ class Client extends BaseClient
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set first element of $redirectUris
+     *
+     * @param string $redirectUri
+     */
+    public function setRedirectUri($redirectUri)
+    {
+        parent::setRedirectUris([$redirectUri]);
+    }
+
+    /**
+     * Set first element of $redirectUris
+     *
+     * @return string first redirectUri
+     *
+     * @Assert\Url()
+     */
+    public function getRedirectUri()
+    {
+        $uris = parent::getRedirectUris();
+        return (count($uris)) ? $uris[0] : '';
     }
 }
 
