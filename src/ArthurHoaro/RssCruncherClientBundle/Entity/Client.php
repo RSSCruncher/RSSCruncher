@@ -14,8 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Client extends BaseClient
 {
-    public static $GRANT_TYPE_CODE = 'code';
-    public static $GRANT_TYPE_CLIENT = 'client';
+    public static $DEFAULT_GRANT_TYPES = ['token', 'refresh_token'];
+
     /**
      * @var integer
      *
@@ -95,22 +95,18 @@ class Client extends BaseClient
      */
     public function setAllowedGrantType($grantType)
     {
-        parent::setAllowedGrantTypes(['token', 'refresh_token'] + [$grantType]);
+        parent::setAllowedGrantTypes(array_merge(self::$DEFAULT_GRANT_TYPES, [$grantType]));
     }
 
     /**
-     * @return array
+     * @return string
      *
-     * @Assert\EqualTo(
-     *     [value => 'client_credentials', 'authorization_code']
-     * )
+     * @Assert\Choice(choices = {"client_credentials", "authorization_code"}, message = "Choose a valid grant type.")
      */
     public function getAllowedGrantType()
     {
-        $types = array_diff(['token', 'refresh_token'], parent::getAllowedGrantTypes());
+        $types = array_values(array_diff(parent::getAllowedGrantTypes(), self::$DEFAULT_GRANT_TYPES));
         return (count($types)) ? $types[0] : '';
     }
-
-
 }
 

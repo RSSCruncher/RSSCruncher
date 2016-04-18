@@ -1,0 +1,15 @@
+{# http://stackoverflow.com/questions/12507957/symfony2-choice-form-split-in-twig #}
+{% block choice_widget_expanded %}
+  {% spaceless %}
+    {# <div {{ block('widget_container_attributes') }}> #}
+      {% for child in form %}
+        <div class="{{ (multiple ? 'checkbox' : 'radio') }}">
+          <label class="{{ (multiple ? 'checkbox' : 'radio') ~ (widget_type is defined and widget_type ? ' ' ~ widget_type : '') ~ (inline is defined and inline ? ' inline' : '') }}">
+            {{ form_widget(child, {'attr': {'class': attr.widget_class|default('')}}) }}
+            {{ child.vars.label|trans({}, translation_domain) }}
+          </label>
+        </div>
+      {% endfor %}
+    {# </div> #}
+  {% endspaceless %}
+{% endblock choice_widget_expanded %}

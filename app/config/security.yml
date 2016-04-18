@@ -48,6 +48,7 @@ security:
   access_control:
     # API
     - { path: ^/api, roles: [ IS_AUTHENTICATED_FULLY ] }
+    - { path: ^/client, roles: [ IS_AUTHENTICATED_FULLY ] }
     # UserBundle
     - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }

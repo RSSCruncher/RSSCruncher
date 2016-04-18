@@ -26,16 +26,16 @@ class ClientType extends AbstractType
         $builder
             ->add('name')
             ->add('redirectUri', TextType::class)
-            ->add('allowedGrantTypes', ChoiceType::class, [
-                    'choices' => [
-                        'My application manages its user authentication'
-                        => 'client_credentials',
-                        'Users use their RSSCruncher account'
-                        => 'authorization_code',
-                    ],
-                    'expanded' => true,
-                    'multiple' => false,
-                ])
+            ->add('allowedGrantType', ChoiceType::class, [
+                'choices' => [
+                    'My application manages its user authentication'
+                    => 'client_credentials',
+                    'Users use their RSSCruncher account'
+                    => 'authorization_code',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+            ])
             //->add('redirectUri', UrlType::class)
         ;
     }

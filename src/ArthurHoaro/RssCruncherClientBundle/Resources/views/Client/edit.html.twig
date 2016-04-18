@@ -1,4 +1,5 @@
 {% extends '@ArthurHoaroRssCruncherClient/layout.html.twig' %}
+{% form_theme edit_form '@ArthurHoaroRssCruncherClient/fields.html.twig' %}
 
 {% block body %}
 
@@ -21,6 +22,10 @@
       {{ form_widget(edit_form.redirectUri, { 'attr': {'class': 'form-control'} }) }}
     </div>
 
+    <div class="form-group {% if form_errors(edit_form.allowedGrantType) %}has-error{% endif %}">
+      {{ form_label(edit_form.allowedGrantType, null, { 'label_attr': {'class': 'control-label'} }) }}
+      {{ form_widget(edit_form.allowedGrantType) }}
+    </div>
     {{ form_end(edit_form) }}
   </div>
 
