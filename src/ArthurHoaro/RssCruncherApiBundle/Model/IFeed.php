@@ -6,6 +6,8 @@
 
 namespace ArthurHoaro\RssCruncherApiBundle\Model;
 
+use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
+
 interface IFeed extends IEntity {
 
     /**
@@ -67,4 +69,14 @@ interface IFeed extends IEntity {
      * @return string
      */
     public function getFeedurl();
+
+    /**
+     * @return IArticle[]
+     */
+    public function getArticles();
+
+    /**
+     * @param IArticle[] $articles
+     */
+    public function setArticles($articles);
 } 

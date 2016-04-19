@@ -46,38 +46,6 @@ class ArticleController extends FOSRestController {
 
         return $this->container->get('arthur_hoaro_rss_cruncher_api.article.handler')->all($limit, $offset);
     }
-
-    /**
-     * List all articles for a given feed.
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   statusCodes = {
-     *     200 = "Returned when successful"
-     *   }
-     * )
-     *
-     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing feeds.")
-     * @Annotations\QueryParam(name="limit", requirements="\d+", default="20", description="How many feeds to return.")
-     *
-     * @Annotations\View(
-     *  templateVar="articles"
-     * )
-     *
-     * @param integer               $feedId       the feed ID
-     * @param Request               $request      the request object
-     * @param ParamFetcherInterface $paramFetcher param fetcher service
-     *
-     * @return array
-     */
-    public function getFeedArticlesAction($feedId, Request $request, ParamFetcherInterface $paramFetcher)
-    {
-        $offset = $paramFetcher->get('offset');
-        $offset = null == $offset ? 0 : $offset;
-        $limit = $paramFetcher->get('limit');
-
-        return $this->container->get('arthur_hoaro_rss_cruncher_api.article.handler')->all($limit, $offset);
-    }
     
     /**
      * Get single Article,

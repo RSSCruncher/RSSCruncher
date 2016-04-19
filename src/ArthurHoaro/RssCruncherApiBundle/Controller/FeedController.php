@@ -4,6 +4,9 @@ namespace ArthurHoaro\RssCruncherApiBundle\Controller;
 
 use ArthurHoaro\RssCruncherApiBundle\Exception\InvalidFormException;
 use ArthurHoaro\RssCruncherApiBundle\Form\FeedType;
+use ArthurHoaro\RssCruncherApiBundle\Model\IFeed;
+use ArthurHoaro\RssCruncherClientBundle\Entity\Client;
+use ArthurHoaro\RssCruncherClientBundle\Helper\ClientHelper;
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Request\ParamFetcherInterface;
@@ -44,7 +47,13 @@ class FeedController extends FOSRestController {
         $offset = null == $offset ? 0 : $offset;
         $limit = $paramFetcher->get('limit');
 
-        return $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->all($limit, $offset);
+        $feedHandler = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler');
+        switch (ClientHelper::getCurrentClient($this->container)->getAllowedGrantType()) {
+            case ClientHelper::$GRANT_TYPE_CLIENT:
+                return $feedHandler->findClientFeeds($limit, $offset);
+            case ClientHelper::$GRANT_TYPE_USER:
+                return $feedHandler->findUserFeeds($limit, $offset);
+        }
     }
     
     /**
@@ -71,6 +80,32 @@ class FeedController extends FOSRestController {
 	public function getFeedAction($id) {
 		return $this->getOr404($id);
 	}
+
+    /**
+     * Get a feed's articles
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Gets a IEntity for a given id",
+     *   output = "ArthurHoaro\RssCruncherApiBundle\Entity\Article",
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     404 = "Returned when the feed is not found"
+     *   }
+     * )
+     *
+     * @Annotations\View(templateVar="feed")
+     *
+     * @param int     $id      the feed id
+     *
+     * @return array
+     *
+     * @throws NotFoundHttpException when feed not exist
+     */
+    public function getFeedArticlesAction($id) {
+        $feed = $this->getOr404($id);
+        return $feed->getArticles();
+    }
 
     /**
      * Create a Feed from the submitted data.
@@ -238,7 +273,7 @@ class FeedController extends FOSRestController {
      *
      * @param mixed $id
      *
-     * @return \ArthurHoaro\RssCruncherApiBundle\Model\IEntity
+     * @return IFeed
      *
      * @throws NotFoundHttpException
      */

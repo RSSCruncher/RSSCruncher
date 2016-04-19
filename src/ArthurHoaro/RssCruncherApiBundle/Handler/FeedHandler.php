@@ -37,6 +37,10 @@ class FeedHandler extends GenericHandler {
         return $this->select($id, array_merge($params, array('enabled' => true)));
     }
 
+    public function findUserFeeds($userId, $limit, $offset) {
+        // TODO
+    }
+
     /**
      * Refresh items of a feed
      *

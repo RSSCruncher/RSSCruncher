@@ -3,13 +3,18 @@
 namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 
 use ArthurHoaro\RssCruncherApiBundle\Model\IArticle;
+use ArthurHoaro\RssCruncherApiBundle\Model\IFeed;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * Article
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="ArthurHoaro\RssCruncherApiBundle\Entity\ArticleRepository")
+ *
+ * @ExclusionPolicy("none")
  */
 class Article implements IArticle
 {
@@ -88,9 +93,15 @@ class Article implements IArticle
     /**
      * @ORM\ManyToOne(targetEntity="Feed", inversedBy="articles")
      * @ORM\JoinColumn(name="feed_id", referencedColumnName="id", nullable=false)
+     *
+     * @Exclude
      */
     protected $feed;
 
+    /**
+     * @ORM\Column(name="feed_id", type="integer")
+     */
+    protected $feedId;
 
     /**
      * Get id
@@ -122,12 +133,11 @@ class Article implements IArticle
         $this->publicId = $publicId;
     }
 
-
     /**
      * Set title
      *
      * @param string $title
-     * @return Article
+     * @return IArticle
      */
     public function setTitle($title)
     {
@@ -150,7 +160,7 @@ class Article implements IArticle
      * Set publicationDate
      *
      * @param \DateTime $publicationDate
-     * @return Article
+     * @return IArticle
      */
     public function setPublicationDate($publicationDate)
     {
@@ -173,7 +183,7 @@ class Article implements IArticle
      * Set modificationDate
      *
      * @param \DateTime $modificationDate
-     * @return Article
+     * @return IArticle
      */
     public function setModificationDate($modificationDate)
     {
@@ -196,7 +206,7 @@ class Article implements IArticle
      * Set summary
      *
      * @param string $summary
-     * @return Article
+     * @return IArticle
      */
     public function setSummary($summary)
     {
@@ -219,7 +229,7 @@ class Article implements IArticle
      * Set content
      *
      * @param string $content
-     * @return Article
+     * @return IArticle
      */
     public function setContent($content)
     {
@@ -242,7 +252,7 @@ class Article implements IArticle
      * Set authorName
      *
      * @param string $authorName
-     * @return Article
+     * @return IArticle
      */
     public function setAuthorName($authorName)
     {
@@ -288,7 +298,7 @@ class Article implements IArticle
      * Set link
      *
      * @param string $link
-     * @return Article
+     * @return IArticle
      */
     public function setLink($link)
     {
@@ -308,7 +318,7 @@ class Article implements IArticle
     }
 
     /**
-     * @return mixed
+     * @return IFeed
      */
     public function getFeed()
     {
@@ -316,10 +326,18 @@ class Article implements IArticle
     }
 
     /**
-     * @param mixed $feed
+     * @param IFeed $feed
      */
     public function setFeed($feed)
     {
         $this->feed = $feed;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getFeedId()
+    {
+        return $this->feedId;
     }
 }

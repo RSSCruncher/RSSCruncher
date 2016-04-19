@@ -2,14 +2,20 @@
 
 namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 
+use ArthurHoaro\RssCruncherApiBundle\Model\IArticle;
 use ArthurHoaro\RssCruncherApiBundle\Model\IFeed;
+use ArthurHoaro\RssCruncherClientBundle\Entity\Client;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
- * IFeed
+ * Feed
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="ArthurHoaro\RssCruncherApiBundle\Entity\FeedRepository")
+ *
+ * @ExclusionPolicy("none")
  */
 class Feed implements IFeed
 {
@@ -59,9 +65,20 @@ class Feed implements IFeed
 
 
     /**
-    * @ORM\OneToMany(targetEntity="Article", mappedBy="feed")
-    */
+     * @ORM\OneToMany(targetEntity="Article", mappedBy="feed", fetch="EXTRA_LAZY")
+     *
+     * @Exclude
+     */
     protected $articles;
+
+    /**
+     * @var Client[]
+     *
+     * @ORM\ManyToMany(targetEntity="ArthurHoaro\RssCruncherClientBundle\Entity\Client", inversedBy="feeds", fetch="EXTRA_LAZY")
+     *
+     * @Exclude
+     */
+    protected $clients;
 
     /**
      * Get id
@@ -182,7 +199,7 @@ class Feed implements IFeed
     }
 
     /**
-     * @return mixed
+     * @return IArticle[]
      */
     public function getArticles()
     {
@@ -190,10 +207,26 @@ class Feed implements IFeed
     }
 
     /**
-     * @param mixed $articles
+     * @param IArticle[] $articles
      */
     public function setArticles($articles)
     {
         $this->articles = $articles;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClients()
+    {
+        return $this->clients;
+    }
+
+    /**
+     * @param mixed $clients
+     */
+    public function setClients($clients)
+    {
+        $this->clients = $clients;
     }
 }

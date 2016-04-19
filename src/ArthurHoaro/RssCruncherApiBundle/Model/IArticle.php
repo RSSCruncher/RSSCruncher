@@ -24,7 +24,7 @@ interface IArticle extends IEntity
      * Set title
      *
      * @param string $title
-     * @return Article
+     * @return IArticles
      */
     public function setTitle($title);
 
@@ -39,7 +39,7 @@ interface IArticle extends IEntity
      * Set publicationDate
      *
      * @param \DateTime $publicationDate
-     * @return Article
+     * @return IArticle
      */
     public function setPublicationDate($publicationDate);
 
@@ -54,7 +54,7 @@ interface IArticle extends IEntity
      * Set modificationDate
      *
      * @param \DateTime $modificationDate
-     * @return Article
+     * @return IArticle
      */
     public function setModificationDate($modificationDate);
 
@@ -69,7 +69,7 @@ interface IArticle extends IEntity
      * Set summary
      *
      * @param string $summary
-     * @return Article
+     * @return IArticle
      */
     public function setSummary($summary);
 
@@ -84,7 +84,7 @@ interface IArticle extends IEntity
      * Set content
      *
      * @param string $content
-     * @return Article
+     * @return IArticle
      */
     public function setContent($content);
 
@@ -99,7 +99,7 @@ interface IArticle extends IEntity
      * Set authorName
      *
      * @param string $authorName
-     * @return Article
+     * @return IArticle
      */
     public function setAuthorName($authorName);
 
@@ -114,7 +114,7 @@ interface IArticle extends IEntity
      * Set authorEmail
      *
      * @param string $authorEmail
-     * @return Article
+     * @return IArticle
      */
     public function setAuthorEmail($authorEmail);
 
@@ -129,7 +129,7 @@ interface IArticle extends IEntity
      * Set link
      *
      * @param string $link
-     * @return Article
+     * @return IArticle
      */
     public function setLink($link);
 
@@ -149,4 +149,9 @@ interface IArticle extends IEntity
      * @param mixed $feed
      */
     public function setFeed($feed);
+
+    /**
+     * @return integer
+     */
+    public function getFeedId();
 }
