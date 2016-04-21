@@ -2,6 +2,7 @@
 
 namespace ArthurHoaro\RssCruncherApiBundle\Handler;
 
+use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser;
 use ArthurHoaro\RssCruncherApiBundle\Exception\FeedNotFoundException;
 use ArthurHoaro\RssCruncherApiBundle\Exception\FeedNotParsedException;
 use ArthurHoaro\RssCruncherApiBundle\Form\ArticleType;
@@ -10,6 +11,7 @@ use ArthurHoaro\RssCruncherApiBundle\Model\IFeed;
 use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
 use Debril\RssAtomBundle\Protocol\FeedReader;
 use Debril\RssAtomBundle\Protocol\FeedIn;
+use Liip\FunctionalTestBundle\Tests\App\Entity\User;
 
 
 /**
@@ -37,8 +39,16 @@ class FeedHandler extends GenericHandler {
         return $this->select($id, array_merge($params, array('enabled' => true)));
     }
 
-    public function findUserFeeds($userId, $limit, $offset) {
-        // TODO
+    /**
+     * @param ProxyUser $user
+     * @param int       $limit
+     * @param int       $offset
+     *
+     * @return array
+     */
+    public function allUser($user, $limit = 5, $offset = 0)
+    {
+        return $this->repository->findBy(['ProxyUser' => $user], null, $limit, $offset);
     }
 
     /**

@@ -8,6 +8,7 @@ use ArthurHoaro\RssCruncherClientBundle\Entity\Client;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Exclude;
+use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser;
 
 /**
  * Feed
@@ -72,13 +73,13 @@ class Feed implements IFeed
     protected $articles;
 
     /**
-     * @var Client[]
+     * @var ProxyUser[]
      *
-     * @ORM\ManyToMany(targetEntity="ArthurHoaro\RssCruncherClientBundle\Entity\Client", inversedBy="feeds", fetch="EXTRA_LAZY")
+     * @ORM\ManyToMany(targetEntity="ProxyUser", inversedBy="feeds", fetch="EXTRA_LAZY")
      *
      * @Exclude
      */
-    protected $clients;
+    protected $proxyUsers;
 
     /**
      * Get id

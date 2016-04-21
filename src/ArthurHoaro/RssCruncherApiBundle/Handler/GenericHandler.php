@@ -7,12 +7,44 @@ use ArthurHoaro\RssCruncherApiBundle\Form\EntityType;
 use ArthurHoaro\RssCruncherApiBundle\Model\IEntity;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\FormFactoryInterface;
+use Doctrine\Common\Persistence\ObjectRepository;
 
 class GenericHandler implements GenericHandlerInterface {
 
+    /**
+     * @var ObjectManager
+     */
+    protected $om;
+
+    /**
+     * @var IEntity
+     */
+    protected $entityClass;
+
+    /**
+     * @var ObjectRepository
+     */
+    protected $repository;
+
+    /**
+     * @var FormFactoryInterface
+     */
     protected $formFactory;
 
-    public function __construct(ObjectManager $om, $entityClass, FormFactoryInterface $formFactory, $formTypeClass)
+    /**
+     * @var string
+     */
+    protected $formTypeclass;
+
+    /**
+     * GenericHandler constructor.
+     *
+     * @param ObjectManager        $om
+     * @param IEntity              $entityClass
+     * @param FormFactoryInterface $formFactory
+     * @param string               $formTypeClass
+     */
+    public function __construct($om, $entityClass, $formFactory, $formTypeClass)
     {
         $this->om = $om;
         $this->entityClass = $entityClass;

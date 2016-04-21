@@ -34,12 +34,7 @@ class Client extends BaseClient
      */
     protected $name;
 
-    /**
-     * @var Feed[]
-     *
-     * @ORM\ManyToMany(targetEntity="ArthurHoaro\RssCruncherApiBundle\Entity\Feed", mappedBy="clients", fetch="EXTRA_LAZY")
-     */
-    protected $feeds;
+    
     /**
      * Get id
      *
@@ -114,22 +109,6 @@ class Client extends BaseClient
     {
         $types = array_values(array_diff(parent::getAllowedGrantTypes(), self::$DEFAULT_GRANT_TYPES));
         return (count($types)) ? $types[0] : '';
-    }
-
-    /**
-     * @return \ArthurHoaro\RssCruncherApiBundle\Model\IFeed[]
-     */
-    public function getFeeds()
-    {
-        return $this->feeds;
-    }
-
-    /**
-     * @param \ArthurHoaro\RssCruncherApiBundle\Model\IFeed[] $feeds
-     */
-    public function setFeeds($feeds)
-    {
-        $this->feeds = $feeds;
     }
 }
 

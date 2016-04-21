@@ -4,6 +4,7 @@ namespace ArthurHoaro\RssCruncherApiBundle\Controller;
 
 use ArthurHoaro\RssCruncherApiBundle\Exception\InvalidFormException;
 use ArthurHoaro\RssCruncherApiBundle\Form\FeedType;
+use ArthurHoaro\RssCruncherApiBundle\Handler\FeedHandler;
 use ArthurHoaro\RssCruncherApiBundle\Model\IFeed;
 use ArthurHoaro\RssCruncherClientBundle\Entity\Client;
 use ArthurHoaro\RssCruncherClientBundle\Helper\ClientHelper;
@@ -18,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class FeedController extends FOSRestController {
+class FeedController extends ApiController {
     /**
      * List all feeds.
      *
@@ -47,13 +48,9 @@ class FeedController extends FOSRestController {
         $offset = null == $offset ? 0 : $offset;
         $limit = $paramFetcher->get('limit');
 
+        /** @var FeedHandler $feedHandler */
         $feedHandler = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler');
-        switch (ClientHelper::getCurrentClient($this->container)->getAllowedGrantType()) {
-            case ClientHelper::$GRANT_TYPE_CLIENT:
-                return $feedHandler->findClientFeeds($limit, $offset);
-            case ClientHelper::$GRANT_TYPE_USER:
-                return $feedHandler->findUserFeeds($limit, $offset);
-        }
+        $feedHandler->allUser($this->getProxyUser(), $limit, $offset);
     }
     
     /**
