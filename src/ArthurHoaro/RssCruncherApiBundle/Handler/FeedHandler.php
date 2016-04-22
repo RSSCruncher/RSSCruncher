@@ -48,7 +48,8 @@ class FeedHandler extends GenericHandler {
      */
     public function allUser($user, $limit = 5, $offset = 0)
     {
-        return $this->repository->findBy(['ProxyUser' => $user], null, $limit, $offset);
+        //return $this->repository->findBy(['proxyUsers' => $user], null, $limit, $offset);
+        return $this->repository->findByUser($user);
     }
 
     /**

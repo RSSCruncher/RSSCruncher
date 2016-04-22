@@ -12,5 +12,19 @@ use Doctrine\ORM\EntityRepository;
  */
 class FeedRepository extends EntityRepository
 {
-
+    /**
+     * @param ProxyUser $proxyUser
+     *
+     * @return Article[]
+     */
+    public function findByUser($proxyUser)
+    {
+        $dql  = 'SELECT f FROM ArthurHoaroRssCruncherApiBundle:Feed f ';
+        $dql .= 'JOIN f.proxyUsers pu ';
+        $dql .= 'WHERE pu.client = :client AND pu.user = :user';
+        $query = $this->_em->createQuery($dql);
+        $query->setParameter('client', $proxyUser->getClient());
+        $query->setParameter('user', $proxyUser->getUser());
+        return $query->getResult();
+    }
 }

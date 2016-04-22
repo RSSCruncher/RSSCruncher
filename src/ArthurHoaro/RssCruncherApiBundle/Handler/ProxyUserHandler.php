@@ -26,7 +26,7 @@ class ProxyUserHandler extends GenericHandler
     public function getByToken($accessToken)
     {
         //return $this->repository->findByToken($accessToken);
-        return $this->repository->findBy(['client' => $accessToken->getClient(), 'user' => $accessToken->getUser()]);
+        return $this->repository->findOneBy(['client' => $accessToken->getClient(), 'user' => $accessToken->getUser()]);
     }
 
     /**

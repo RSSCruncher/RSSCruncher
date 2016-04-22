@@ -132,7 +132,7 @@ class GenericHandler implements GenericHandlerInterface {
     protected function processForm(IEntity $entity, array $parameters, $method = "PUT", $formType = false)
     {
         $formType = ($formType === false) ? $this->formTypeclass : $formType;
-        $form = $this->formFactory->create(new $formType(), $entity, array('method' => $method));
+        $form = $this->formFactory->create($formType, $entity, array('method' => $method));
         $form->submit($parameters, 'PATCH' !== $method);
         if ($form->isValid()) {
 

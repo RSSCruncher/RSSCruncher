@@ -50,7 +50,7 @@ class FeedController extends ApiController {
 
         /** @var FeedHandler $feedHandler */
         $feedHandler = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler');
-        $feedHandler->allUser($this->getProxyUser(), $limit, $offset);
+        return $feedHandler->allUser($this->getProxyUser(), $limit, $offset);
     }
     
     /**

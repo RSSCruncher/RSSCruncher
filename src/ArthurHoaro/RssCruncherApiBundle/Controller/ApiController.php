@@ -56,6 +56,10 @@ abstract class ApiController extends FOSRestController
             return $proxyUser;
         }
 
-        return $handler->createUser($token->getClient(), $token->getUser());
+        $proxyUser = $handler->createUser($token->getClient(), $token->getUser());
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($proxyUser);
+        $em->flush();
+        return $proxyUser;
     }
 }
