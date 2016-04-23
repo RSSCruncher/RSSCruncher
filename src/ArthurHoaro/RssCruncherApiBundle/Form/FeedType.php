@@ -7,6 +7,8 @@
 namespace ArthurHoaro\RssCruncherApiBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,7 +21,7 @@ class FeedType extends AbstractType {
     {
         $builder
             ->add('sitename')
-            ->add('siteurl')
+            ->add('siteurl', UrlType::class, ['default_protocol' => 'http'])
             ->add('feedname')
             ->add('feedurl')
         ;
@@ -28,7 +30,7 @@ class FeedType extends AbstractType {
     /**
      * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => 'ArthurHoaro\RssCruncherApiBundle\Entity\Feed',

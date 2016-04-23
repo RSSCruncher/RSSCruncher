@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Exclude;
 use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Feed
@@ -39,7 +40,9 @@ class Feed implements IFeed
     /**
      * @var string
      *
-     * @ORM\Column(name="siteurl", type="string", length=255)
+     * @ORM\Column(name="siteurl", type="string", length=2000)
+     *
+     * @Assert\Url()
      */
     private $siteurl;
 
@@ -53,7 +56,9 @@ class Feed implements IFeed
     /**
      * @var string
      *
-     * @ORM\Column(name="feedurl", type="string", length=255)
+     * @ORM\Column(name="feedurl", type="string", length=2000)
+     *
+     * @Assert\Url()
      */
     private $feedurl;
 
@@ -71,15 +76,6 @@ class Feed implements IFeed
      * @Exclude
      */
     protected $articles;
-
-    /**
-     * @var ProxyUser[]
-     *
-     * @ORM\ManyToMany(targetEntity="ProxyUser", inversedBy="feeds", fetch="EXTRA_LAZY")
-     *
-     * @Exclude
-     */
-    protected $proxyUsers;
 
     /**
      * Get id
@@ -216,18 +212,18 @@ class Feed implements IFeed
     }
 
     /**
-     * @return mixed
+     * @return ProxyUser[]
      */
-    public function getClients()
+    public function getProxyUsers()
     {
-        return $this->clients;
+        return $this->proxyUsers;
     }
 
     /**
-     * @param mixed $clients
+     * @param ProxyUser[] $proxyUsers
      */
-    public function setClients($clients)
+    public function setProxyUsers($proxyUsers)
     {
-        $this->clients = $clients;
+        $this->proxyUsers = $proxyUsers;
     }
 }

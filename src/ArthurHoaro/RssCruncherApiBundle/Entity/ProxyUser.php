@@ -6,18 +6,21 @@
 
 namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 
+use ArthurHoaro\RssCruncherApiBundle\Model\IEntity;
 use Doctrine\ORM\Mapping as ORM;
 use ArthurHoaro\RssCruncherApiBundle\Entity\User;
 use ArthurHoaro\RssCruncherClientBundle\Entity\Client;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * A 'user' using the API can be either a client, or a real user through a client (different grant type).
  * This is an abstraction to this notion, to have a single User class.
- * 
+ * UniqueEntity({"client_id", "user_id"})
+ *
  * @ORM\Entity
  * @ORM\Table(name="proxy_user", indexes={@ORM\Index(name="client_user", columns={"client_id", "user_id"})})
  */
-class ProxyUser
+class ProxyUser implements IEntity
 {
     public static $TYPE_CLIENT = 'CLIENT';
     public static $TYPE_USER   = 'USER';
@@ -32,7 +35,7 @@ class ProxyUser
     /**
      * @var Client
      *
-     * @ORM\OneToOne(targetEntity="ArthurHoaro\RssCruncherClientBundle\Entity\Client")
+     * @ORM\ManyToOne(targetEntity="ArthurHoaro\RssCruncherClientBundle\Entity\Client", inversedBy="proxyUsers")
      * @ORM\JoinColumn(name="client_id", referencedColumnName="id")
      */
     protected $client;
@@ -40,7 +43,7 @@ class ProxyUser
     /**
      * @var User
      *
-     * @ORM\OneToOne(targetEntity="ArthurHoaro\RssCruncherApiBundle\Entity\User")
+     * @ORM\ManyToOne(targetEntity="ArthurHoaro\RssCruncherApiBundle\Entity\User", inversedBy="proxyUsers")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     protected $user;

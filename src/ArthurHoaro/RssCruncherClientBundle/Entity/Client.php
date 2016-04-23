@@ -2,6 +2,7 @@
 
 namespace ArthurHoaro\RssCruncherClientBundle\Entity;
 
+use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser;
 use ArthurHoaro\RssCruncherApiBundle\Model\IFeed;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\OAuthServerBundle\Entity\Client as BaseClient;
@@ -34,7 +35,13 @@ class Client extends BaseClient
      */
     protected $name;
 
-    
+    /**
+     * @var ProxyUser[]
+     *
+     * @ORM\OneToMany(targetEntity="ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser", mappedBy="client")
+     */
+    protected $proxyUsers;
+
     /**
      * Get id
      *
@@ -109,6 +116,22 @@ class Client extends BaseClient
     {
         $types = array_values(array_diff(parent::getAllowedGrantTypes(), self::$DEFAULT_GRANT_TYPES));
         return (count($types)) ? $types[0] : '';
+    }
+
+    /**
+     * @return \ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser[]
+     */
+    public function getProxyUsers()
+    {
+        return $this->proxyUsers;
+    }
+
+    /**
+     * @param \ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser[] $proxyUsers
+     */
+    public function setProxyUsers($proxyUsers)
+    {
+        $this->proxyUsers = $proxyUsers;
     }
 }
 

@@ -117,12 +117,6 @@ class FeedController extends ApiController {
      *   }
      * )
      *
-     * @Annotations\View(
-     *  template = "AcmeBlogBundle:Feed:newFeed.html.twig",
-     *  statusCode = Response::HTTP_BAD_REQUEST,
-     *  templateVar = "form"
-     * )
-     *
      * @param Request $request the request object
      *
      * @return FormTypeInterface|View
@@ -135,12 +129,18 @@ class FeedController extends ApiController {
                 $request->request->all()
             );
 
-            $routeOptions = array(
-                'id' => $newFeed->getId(),
-                '_format' => $request->get('_format')
+            $response = new Response();
+            $response->setStatusCode(Response::HTTP_CREATED);
+
+            // set the `Location` header when creating new resources
+            $response->headers->set('Location',
+                $this->generateUrl(
+                    'api_1_get_feed', array('id' => $newFeed->getId()),
+                    true // absolute
+                )
             );
 
-            return $this->routeRedirectView('api_1_get_feed', $routeOptions, Response::HTTP_CREATED);
+            return $response;
         } catch (InvalidFormException $exception) {
 
             return $exception->getForm();

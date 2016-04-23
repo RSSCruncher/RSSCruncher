@@ -84,11 +84,10 @@ fos_rest:
             xml: true
             json : true
         templating_formats:
-            html: true
+            html: false
         force_redirects:
-            html: true
+            html: false
         failed_validation: HTTP_BAD_REQUEST
-        default_engine: twig
     routing_loader:
         default_format: json
     disable_csrf_role: ROLE_API
