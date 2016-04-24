@@ -2,18 +2,23 @@
 
 namespace ArthurHoaro\RssCruncherApiBundle\Controller;
 
+use ArthurHoaro\RssCruncherApiBundle\ApiEntity\FeedDTO;
+use ArthurHoaro\RssCruncherApiBundle\Entity\Feed;
+use ArthurHoaro\RssCruncherApiBundle\Entity\FeedRepository;
+use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeed;
+use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeedRepository;
 use ArthurHoaro\RssCruncherApiBundle\Exception\InvalidFormException;
 use ArthurHoaro\RssCruncherApiBundle\Form\FeedType;
+use ArthurHoaro\RssCruncherApiBundle\Form\UserFeedType;
 use ArthurHoaro\RssCruncherApiBundle\Handler\FeedHandler;
-use ArthurHoaro\RssCruncherApiBundle\Model\IFeed;
 use ArthurHoaro\RssCruncherClientBundle\Entity\Client;
 use ArthurHoaro\RssCruncherClientBundle\Helper\ClientHelper;
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Request\ParamFetcherInterface;
-use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,9 +53,16 @@ class FeedController extends ApiController {
         $offset = null == $offset ? 0 : $offset;
         $limit = $paramFetcher->get('limit');
 
-        /** @var FeedHandler $feedHandler */
-        $feedHandler = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler');
-        return $feedHandler->allUser($this->getProxyUser(), $limit, $offset);
+        $em = $this->getDoctrine()->getManager();
+        /** @var UserFeedRepository $feedRepository */
+        $userFeedRepository = $em->getRepository(UserFeed::class);
+        $userFeeds = $userFeedRepository->findByProxyUser($this->getProxyUser());
+        $apiFeeds = [];
+        foreach ($userFeeds as $feed) {
+            $apiFeeds[] = (new FeedDTO())->setEntity($feed);
+        }
+
+        return $apiFeeds;
     }
     
     /**
@@ -124,10 +136,31 @@ class FeedController extends ApiController {
     public function postFeedAction(Request $request)
     {
         try {
-            // Hey Feed handler create a new Feed.
-            $newFeed = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->post(
-                $request->request->all()
-            );
+            $parameters = $request->request->all();
+
+            // Validate input.
+            $form = $this->get('form.factory')->create(UserFeedType::class, new UserFeed(), ['method' => 'POST']);
+            $form->submit($parameters);
+            if (!$form->isValid()) {
+                throw new InvalidFormException('Invalid submitted data', $form);
+
+            }
+            /** @var UserFeed $entity */
+            $entity = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            /** @var FeedRepository $feedRepository */
+            $feedRepository = $em->getRepository(Feed::class);
+            // Retrieve or create the existing Feed matching our feedurl.
+            $feed = $feedRepository->findByUrlOrCreate($parameters['feedurl']);
+
+            // Attach stuff
+            $entity->setFeed($feed);
+            $entity->setProxyUser($this->getProxyUser());
+
+            // Save
+            $em->persist($entity);
+            $em->flush();
 
             $response = new Response();
             $response->setStatusCode(Response::HTTP_CREATED);
@@ -135,7 +168,7 @@ class FeedController extends ApiController {
             // set the `Location` header when creating new resources
             $response->headers->set('Location',
                 $this->generateUrl(
-                    'api_1_get_feed', array('id' => $newFeed->getId()),
+                    'api_1_get_feed', array('id' => $entity->getId()),
                     true // absolute
                 )
             );
@@ -270,7 +303,7 @@ class FeedController extends ApiController {
      *
      * @param mixed $id
      *
-     * @return IFeed
+     * @return Feed
      *
      * @throws NotFoundHttpException
      */

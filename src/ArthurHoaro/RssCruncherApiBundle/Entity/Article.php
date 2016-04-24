@@ -2,8 +2,7 @@
 
 namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 
-use ArthurHoaro\RssCruncherApiBundle\Model\IArticle;
-use ArthurHoaro\RssCruncherApiBundle\Model\IFeed;
+use ArthurHoaro\RssCruncherApiBundle\Model\IEntity;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Exclude;
@@ -16,7 +15,7 @@ use JMS\Serializer\Annotation\Exclude;
  *
  * @ExclusionPolicy("none")
  */
-class Article implements IArticle
+class Article implements IEntity
 {
     /**
      * @var integer
@@ -137,7 +136,7 @@ class Article implements IArticle
      * Set title
      *
      * @param string $title
-     * @return IArticle
+     * @return Article
      */
     public function setTitle($title)
     {
@@ -160,7 +159,7 @@ class Article implements IArticle
      * Set publicationDate
      *
      * @param \DateTime $publicationDate
-     * @return IArticle
+     * @return Article
      */
     public function setPublicationDate($publicationDate)
     {
@@ -183,7 +182,7 @@ class Article implements IArticle
      * Set modificationDate
      *
      * @param \DateTime $modificationDate
-     * @return IArticle
+     * @return Article
      */
     public function setModificationDate($modificationDate)
     {
@@ -206,7 +205,7 @@ class Article implements IArticle
      * Set summary
      *
      * @param string $summary
-     * @return IArticle
+     * @return Article
      */
     public function setSummary($summary)
     {
@@ -229,7 +228,7 @@ class Article implements IArticle
      * Set content
      *
      * @param string $content
-     * @return IArticle
+     * @return Article
      */
     public function setContent($content)
     {
@@ -252,7 +251,7 @@ class Article implements IArticle
      * Set authorName
      *
      * @param string $authorName
-     * @return IArticle
+     * @return Article
      */
     public function setAuthorName($authorName)
     {
@@ -298,7 +297,7 @@ class Article implements IArticle
      * Set link
      *
      * @param string $link
-     * @return IArticle
+     * @return Article
      */
     public function setLink($link)
     {
@@ -318,7 +317,7 @@ class Article implements IArticle
     }
 
     /**
-     * @return IFeed
+     * @return Feed
      */
     public function getFeed()
     {
@@ -326,7 +325,7 @@ class Article implements IArticle
     }
 
     /**
-     * @param IFeed $feed
+     * @param Feed $feed
      */
     public function setFeed($feed)
     {

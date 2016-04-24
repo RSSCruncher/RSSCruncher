@@ -8,7 +8,6 @@ namespace ArthurHoaro\RssCruncherApiBundle\Helper;
 
 
 use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
-use ArthurHoaro\RssCruncherApiBundle\Model\IArticle;
 use Debril\RssAtomBundle\Protocol\ItemOut;
 
 /**
@@ -37,12 +36,12 @@ class ArticleConverter {
     /**
      * Update Article from its newer version
      *
-     * @param IArticle $previous
-     * @param IArticle $updated
+     * @param Article $previous
+     * @param Article $updated
      * @param bool $clearEmpty (default: false) - set to true to erase old data if newer is blank
-     * @return IArticle - previous updated
+     * @return Article - previous updated
      */
-    public static function convertFromPrevious(IArticle $previous, IArticle $updated, $clearEmpty = false) {
+    public static function convertFromPrevious(Article $previous, Article $updated, $clearEmpty = false) {
         if( !empty($updated->getTitle()) || $clearEmpty )
             $previous->setTitle($updated->getTitle());
         if( !empty($updated->getLink()) || $clearEmpty )

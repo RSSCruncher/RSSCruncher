@@ -51,7 +51,7 @@ class ProxyUser implements IEntity
     /**
      * @var Feed[]
      *
-     * @ORM\ManyToMany(targetEntity="ArthurHoaro\RssCruncherApiBundle\Entity\Feed", mappedBy="clients", fetch="EXTRA_LAZY")
+     * @ORM\OneToMany(targetEntity="UserFeed", mappedBy="userProxy", fetch="EXTRA_LAZY")
      */
     protected $feeds;
 

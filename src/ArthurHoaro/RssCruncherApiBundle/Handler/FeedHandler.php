@@ -2,12 +2,12 @@
 
 namespace ArthurHoaro\RssCruncherApiBundle\Handler;
 
+use ArthurHoaro\RssCruncherApiBundle\Entity\Feed;
 use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser;
 use ArthurHoaro\RssCruncherApiBundle\Exception\FeedNotFoundException;
 use ArthurHoaro\RssCruncherApiBundle\Exception\FeedNotParsedException;
 use ArthurHoaro\RssCruncherApiBundle\Form\ArticleType;
 use ArthurHoaro\RssCruncherApiBundle\Helper\ArticleConverter;
-use ArthurHoaro\RssCruncherApiBundle\Model\IFeed;
 use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
 use Debril\RssAtomBundle\Protocol\FeedReader;
 use Debril\RssAtomBundle\Protocol\FeedIn;
@@ -24,10 +24,10 @@ class FeedHandler extends GenericHandler {
      * Select a list of Feeds by their IDs
      *
      * @param int $id
-     * @return array IFeed
+     * @return array Feed
      */
-    public function select($id, $params = array()) {
-        return $this->repository->findBy(array_merge(array('id' => $id), $params));
+    public function selectWithDisabled($id, $params = array()) {
+        return $this->repository->findBy(array_merge(['enabled' => false], $params));
     }
 
     /**
@@ -35,8 +35,14 @@ class FeedHandler extends GenericHandler {
      * @param array $params
      * @return array
      */
-    public function selectEnabled($id, $params = array()) {
-        return $this->select($id, array_merge($params, array('enabled' => true)));
+    public function select($id, $params = array()) {
+        return $this->repository->findBy(array_merge(
+            [
+                'id' => $id,
+                'enabled' => true,
+            ],
+            $params
+        ));
     }
 
     /**
@@ -46,9 +52,8 @@ class FeedHandler extends GenericHandler {
      *
      * @return array
      */
-    public function allUser($user, $limit = 5, $offset = 0)
+    public function all($user, $limit = 5, $offset = 0)
     {
-        //return $this->repository->findBy(['proxyUsers' => $user], null, $limit, $offset);
         return $this->repository->findByUser($user);
     }
 
@@ -73,13 +78,13 @@ class FeedHandler extends GenericHandler {
     /**
      * Refresh items of a feed
      *
-     * @param IFeed $feed
+     * @param Feed $feed
      * @param FeedReader $reader
      * @return array $outItems
      *
      * @throws \Exception
      */
-    private function refresh(IFeed $feed, FeedReader $reader) {
+    private function refresh(Feed $feed, FeedReader $reader) {
         $feedUrl = $feed->getFeedurl();
         try {
             $readFeed = $reader->getFeedContent($feedUrl);

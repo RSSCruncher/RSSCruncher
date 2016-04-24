@@ -87,10 +87,12 @@ class GenericHandler implements GenericHandlerInterface {
      */
     public function post(array $parameters)
     {
-        $entity = $this->create(); // factory method create an empty Entity
-
         // Process form does all the magic, validate and hydrate the Entity Object.
-        return $this->processForm($entity, $parameters, 'POST');
+        $entity = $this->processForm($this->create(), $parameters, 'POST');
+        $this->om->persist($entity);
+        $this->om->flush();
+
+        return $entity;
     }
 
     /**
@@ -135,12 +137,7 @@ class GenericHandler implements GenericHandlerInterface {
         $form = $this->formFactory->create($formType, $entity, array('method' => $method));
         $form->submit($parameters, 'PATCH' !== $method);
         if ($form->isValid()) {
-
-            $entity = $form->getData();
-            $this->om->persist($entity);
-            $this->om->flush($entity);
-
-            return $entity;
+            return $entity = $form->getData();
         }
 
         throw new InvalidFormException('Invalid submitted data', $form);

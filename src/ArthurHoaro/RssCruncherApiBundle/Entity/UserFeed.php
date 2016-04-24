@@ -8,8 +8,18 @@ namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 
 
 use ArthurHoaro\RssCruncherApiBundle\Model\IEntity;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Exclude;
 
-class FeedUser implements IEntity
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="user_feed")
+ *
+ * @ExclusionPolicy("none")
+ */
+class UserFeed implements IEntity
 {
     /**
      * @var integer
@@ -18,14 +28,14 @@ class FeedUser implements IEntity
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      *
      * @ORM\Column(name="sitename", type="string", length=255)
      */
-    private $sitename;
+    protected $sitename;
 
     /**
      * @var string
@@ -34,30 +44,40 @@ class FeedUser implements IEntity
      *
      * @Assert\Url()
      */
-    private $siteurl;
+    protected $siteurl;
 
     /**
      * @var string
      *
      * @ORM\Column(name="feedname", type="string", length=255)
      */
-    private $feedname;
+    protected $feedname;
 
     /**
      * @var boolean
      *
      * @ORM\Column(name="enabled", type="boolean")
      */
-    private $enabled = true;
+    protected $enabled = true;
 
     /**
-     * @var ProxyUser[]
+     * @var Feed
      *
-     * @ORM\ManyToMany(targetEntity="ProxyUser", inversedBy="feeds", fetch="EXTRA_LAZY")
+     * @ORM\ManyToOne(targetEntity="Feed", inversedBy="userFeeds", fetch="EXTRA_LAZY")
+     * @ORM\JoinColumn(name="feed_id", referencedColumnName="id")
      *
      * @Exclude
      */
-    protected $proxyUsers;
+    protected $feed;
+
+    /**
+     * @var ProxyUser
+     *
+     * @ORM\ManyToOne(targetEntity="ProxyUser", inversedBy="feeds", fetch="EXTRA_LAZY")
+     *
+     * @Exclude
+     */
+    protected $proxyUser;
 
     /**
      * Get id
@@ -134,18 +154,38 @@ class FeedUser implements IEntity
     }
 
     /**
-     * @return ProxyUser[]
+     * @return ProxyUser
      */
-    public function getProxyUsers()
+    public function getProxyUser()
     {
-        return $this->proxyUsers;
+        return $this->proxyUser;
     }
 
     /**
-     * @param ProxyUser[] $proxyUsers
+     * @param ProxyUser $proxyUser
      */
-    public function setProxyUsers($proxyUsers)
+    public function setProxyUser($proxyUser)
     {
-        $this->proxyUsers = $proxyUsers;
+        $this->proxyUser = $proxyUser;
+    }
+
+    /**
+     * @return Feed
+     */
+    public function getFeed()
+    {
+        return $this->feed;
+    }
+
+    /**
+     * @param Feed $feed
+     */
+    public function setFeed($feed)
+    {
+        $this->feed = $feed;
+    }
+
+    public function getFeedurl() {
+        return $this->feed->getFeedurl();
     }
 }

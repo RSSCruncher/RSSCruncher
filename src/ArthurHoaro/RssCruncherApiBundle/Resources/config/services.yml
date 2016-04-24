@@ -12,6 +12,9 @@ parameters:
   arthur_hoaro_rss_cruncher_api.proxy_user.class: '%arthur_hoaro_rss_cruncher_api.entity.package%ProxyUser'
   arthur_hoaro_rss_cruncher_api.access_token.handler.class: '%arthur_hoaro_rss_cruncher_api.handler.package%AccessTokenHandler'
   arthur_hoaro_rss_cruncher_api.access_token.class: '%arthur_hoaro_rss_cruncher_api.entity.package%AccessToken'
+  arthur_hoaro_rss_cruncher_api.user_feed.handler.class: '%arthur_hoaro_rss_cruncher_api.handler.package%UserFeedHandler'
+  arthur_hoaro_rss_cruncher_api.user_feed.class: '%arthur_hoaro_rss_cruncher_api.entity.package%UserFeed'
+  arthur_hoaro_rss_cruncher_api.user_feed.type.class: '%arthur_hoaro_rss_cruncher_api.type.package%UserFeedType'
 services:
   arthur_hoaro_rss_cruncher_api.feed.handler:
     class: '%arthur_hoaro_rss_cruncher_api.feed.handler.class%'
@@ -25,4 +28,11 @@ services:
   arthur_hoaro_rss_cruncher_api.access_token.handler:
     class: '%arthur_hoaro_rss_cruncher_api.access_token.handler.class%'
     arguments: ['@doctrine.orm.entity_manager', '%arthur_hoaro_rss_cruncher_api.access_token.class%', '', '']
+  arthur_hoaro_rss_cruncher_api.user_feed.handler:
+    class: '%arthur_hoaro_rss_cruncher_api.user_feed.handler.class%'
+    arguments:
+      - '@doctrine.orm.entity_manager'
+      - '%arthur_hoaro_rss_cruncher_api.user_feed.class%'
+      - '@form.factory'
+      - '%arthur_hoaro_rss_cruncher_api.user_feed.type.class%'
 

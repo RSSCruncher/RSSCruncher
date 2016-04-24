@@ -2,8 +2,7 @@
 
 namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 
-use ArthurHoaro\RssCruncherApiBundle\Model\IArticle;
-use ArthurHoaro\RssCruncherApiBundle\Model\IFeed;
+use ArthurHoaro\RssCruncherApiBundle\Model\IEntity;
 use ArthurHoaro\RssCruncherClientBundle\Entity\Client;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\ExclusionPolicy;
@@ -19,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ExclusionPolicy("none")
  */
-class Feed implements IFeed
+class Feed implements IEntity
 {
     /**
      * @var integer
@@ -33,29 +32,6 @@ class Feed implements IFeed
     /**
      * @var string
      *
-     * @ORM\Column(name="sitename", type="string", length=255)
-     */
-    private $sitename;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="siteurl", type="string", length=2000)
-     *
-     * @Assert\Url()
-     */
-    private $siteurl;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="feedname", type="string", length=255)
-     */
-    private $feedname;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="feedurl", type="string", length=2000)
      *
      * @Assert\Url()
@@ -65,10 +41,9 @@ class Feed implements IFeed
     /**
      * @var boolean
      *
-     * @ORM\Column(name="enabled", type="boolean")
+     * @ORM\Column(name="https", type="boolean")
      */
-    private $enabled = true;
-
+    private $https;
 
     /**
      * @ORM\OneToMany(targetEntity="Article", mappedBy="feed", fetch="EXTRA_LAZY")
@@ -76,6 +51,20 @@ class Feed implements IFeed
      * @Exclude
      */
     protected $articles;
+
+    /**
+     * @ORM\OneToMany(targetEntity="UserFeed", mappedBy="feed", fetch="EXTRA_LAZY")
+     *
+     * @Exclude
+     */
+    protected $userFeeds;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="enabled", type="boolean")
+     */
+    private $enabled = true;
 
     /**
      * Get id
@@ -88,79 +77,10 @@ class Feed implements IFeed
     }
 
     /**
-     * Set sitename
-     *
-     * @param string $sitename
-     * @return IFeed
-     */
-    public function setSitename($sitename)
-    {
-        $this->sitename = $sitename;
-
-        return $this;
-    }
-
-    /**
-     * Get sitename
-     *
-     * @return string 
-     */
-    public function getSitename()
-    {
-        return $this->sitename;
-    }
-
-    /**
-     * Set siteurl
-     *
-     * @param string $siteurl
-     * @return IFeed
-     */
-    public function setSiteurl($siteurl)
-    {
-        $this->siteurl = $siteurl;
-
-        return $this;
-    }
-
-    /**
-     * Get siteurl
-     *
-     * @return string 
-     */
-    public function getSiteurl()
-    {
-        return $this->siteurl;
-    }
-
-    /**
-     * Set feedname
-     *
-     * @param string $feedname
-     * @return IFeed
-     */
-    public function setFeedname($feedname)
-    {
-        $this->feedname = $feedname;
-
-        return $this;
-    }
-
-    /**
-     * Get feedname
-     *
-     * @return string 
-     */
-    public function getFeedname()
-    {
-        return $this->feedname;
-    }
-
-    /**
      * Set feedurl
      *
      * @param string $feedurl
-     * @return IFeed
+     * @return Feed
      */
     public function setFeedurl($feedurl)
     {
@@ -196,7 +116,7 @@ class Feed implements IFeed
     }
 
     /**
-     * @return IArticle[]
+     * @return Article[]
      */
     public function getArticles()
     {
@@ -204,7 +124,7 @@ class Feed implements IFeed
     }
 
     /**
-     * @param IArticle[] $articles
+     * @param Article[] $articles
      */
     public function setArticles($articles)
     {
@@ -212,18 +132,34 @@ class Feed implements IFeed
     }
 
     /**
-     * @return ProxyUser[]
+     * @return mixed
      */
-    public function getProxyUsers()
+    public function getUserFeeds()
     {
-        return $this->proxyUsers;
+        return $this->userFeeds;
     }
 
     /**
-     * @param ProxyUser[] $proxyUsers
+     * @param mixed $userFeeds
      */
-    public function setProxyUsers($proxyUsers)
+    public function setUserFeeds($userFeeds)
     {
-        $this->proxyUsers = $proxyUsers;
+        $this->userFeeds = $userFeeds;
+    }
+
+    /**
+     * @return string
+     */
+    public function isHttps()
+    {
+        return $this->https;
+    }
+
+    /**
+     * @param string $https
+     */
+    public function setHttps($https)
+    {
+        $this->https = $https;
     }
 }

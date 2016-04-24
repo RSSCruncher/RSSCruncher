@@ -20,9 +20,6 @@ class FeedType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('sitename')
-            ->add('siteurl', UrlType::class, ['default_protocol' => 'http'])
-            ->add('feedname')
             ->add('feedurl')
         ;
     }

@@ -3,7 +3,6 @@
 namespace ArthurHoaro\RssCruncherApiBundle\Handler;
 
 use ArthurHoaro\RssCruncherApiBundle\Helper\ArticleConverter;
-use ArthurHoaro\RssCruncherApiBundle\Model\IArticle;
 use ArthurHoaro\RssCruncherApiBundle\Entity\ArticleRepository;
 
 /**
@@ -15,10 +14,10 @@ class ArticleHandler extends GenericHandler {
     /**
      * Insert or Update an Article
      *
-     * @param IArticle $article
-     * @return IArticle
+     * @param Article $article
+     * @return Article
      */
-    public function save(IArticle $article) {
+    public function save(Article $article) {
 
         $existing = $this->repository->findExistingArticle($article);
         if( $existing === null ) {

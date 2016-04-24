@@ -2,7 +2,6 @@
 
 namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 
-use ArthurHoaro\RssCruncherApiBundle\Model\IArticle;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -14,15 +13,15 @@ use Doctrine\ORM\EntityRepository;
 class ArticleRepository extends EntityRepository
 {
     /**
-     * Find if this IArticle already exists for a Feed:
+     * Find if this Article already exists for a Feed:
      *  - a Feed must be defined
      *  - first attempt on publicId
      *  - second attempt on link
      *
-     * @param IArticle $article
-     * @return IArticle article found | null if not found
+     * @param Article $article
+     * @return Article article found | null if not found
      */
-    public function findExistingArticle(IArticle $article) {
+    public function findExistingArticle(Article $article) {
         if( empty($article->getFeed()) || (empty($article->getPublicId()) && empty($article->getLink())) ) return null;
 
         $dql = 'SELECT a FROM ArthurHoaro\RssCruncherApiBundle\Entity\Article a WHERE a.feed = :feed AND ';
@@ -39,7 +38,7 @@ class ArticleRepository extends EntityRepository
         $query->setParameter('feed', $article->getFeed());
         $results = $query->getResult();
 
-        if( !empty($results) && count($results) == 1 && is_a($results[0], 'ArthurHoaro\RssCruncherApiBundle\Model\IArticle') ) {
+        if( !empty($results) && count($results) == 1 && is_a($results[0], 'ArthurHoaro\RssCruncherApiBundle\Model\Article') ) {
             return $results[0];
         }
         return null;

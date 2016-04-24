@@ -2,6 +2,9 @@
 
 namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 
+use ArthurHoaro\RssCruncherApiBundle\Helper\FeedHelper;
+use ArthurHoaro\RssCruncherApiBundle\Helper\StringUtil;
+use ArthurHoaro\RssCruncherApiBundle\Helper\UrlCleaner;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -12,19 +15,32 @@ use Doctrine\ORM\EntityRepository;
  */
 class FeedRepository extends EntityRepository
 {
-    /**
-     * @param ProxyUser $proxyUser
-     *
-     * @return Article[]
-     */
-    public function findByUser($proxyUser)
+    public function findByUrl($url) {
+        return $this->findOneBy([
+            'feedurl' => $url,
+            'enabled' => true,
+        ]);
+    }
+
+    public function findByUrlOrCreate($url) {
+        $urlObj = new UrlCleaner($url);
+        $cleanUrl = $urlObj->cleanup(false);
+        $feed = $this->findByUrl($cleanUrl);
+        if (!empty($feed)) {
+            return $feed;
+        }
+
+        return $this->createFeed($url, $urlObj->isHttps());
+    }
+
+    private function createFeed($cleanUrl, $isHttps)
     {
-        $dql  = 'SELECT f FROM ArthurHoaroRssCruncherApiBundle:Feed f ';
-        $dql .= 'JOIN f.proxyUsers pu ';
-        $dql .= 'WHERE pu.client = :client AND pu.user = :user';
-        $query = $this->_em->createQuery($dql);
-        $query->setParameter('client', $proxyUser->getClient());
-        $query->setParameter('user', $proxyUser->getUser());
-        return $query->getResult();
+        $entity = new Feed();
+        $entity->setFeedurl($cleanUrl);
+        $entity->setHttps($isHttps);
+        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->flush();
+
+        return $entity;
     }
 }
