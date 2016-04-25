@@ -64,7 +64,27 @@ class Feed implements IEntity
      *
      * @ORM\Column(name="enabled", type="boolean")
      */
-    private $enabled = true;
+    protected $enabled;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_creation", type="datetime")
+     */
+    protected $dateCreation;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_modification", type="datetime")
+     */
+    protected $dateModification;
+
+    function __construct()
+    {
+        $this->enabled = true;
+        $this->dateCreation = new \DateTime('now');
+    }
 
     /**
      * Get id
@@ -161,5 +181,21 @@ class Feed implements IEntity
     public function setHttps($https)
     {
         $this->https = $https;
+    }
+
+    /**
+     * @param \DateTime $dateCreation
+     */
+    public function setDateCreation($dateCreation)
+    {
+        $this->dateCreation = $dateCreation;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateCreation()
+    {
+        return $this->dateCreation;
     }
 }

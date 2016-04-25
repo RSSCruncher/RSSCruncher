@@ -18,6 +18,7 @@ use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -136,31 +137,14 @@ class FeedController extends ApiController {
     public function postFeedAction(Request $request)
     {
         try {
-            $parameters = $request->request->all();
-
-            // Validate input.
-            $form = $this->get('form.factory')->create(UserFeedType::class, new UserFeed(), ['method' => 'POST']);
-            $form->submit($parameters);
-            if (!$form->isValid()) {
-                throw new InvalidFormException('Invalid submitted data', $form);
-
-            }
+            $handler = $this->get('arthur_hoaro_rss_cruncher_api.user_feed.handler');
             /** @var UserFeed $entity */
-            $entity = $form->getData();
-
-            $em = $this->getDoctrine()->getManager();
-            /** @var FeedRepository $feedRepository */
-            $feedRepository = $em->getRepository(Feed::class);
-            // Retrieve or create the existing Feed matching our feedurl.
-            $feed = $feedRepository->findByUrlOrCreate($parameters['feedurl']);
-
-            // Attach stuff
-            $entity->setFeed($feed);
+            $entity = $handler->post($request->request->all());
             $entity->setProxyUser($this->getProxyUser());
 
             // Save
-            $em->persist($entity);
-            $em->flush();
+            $this->getDoctrine()->getManager()->persist($entity);
+            $this->getDoctrine()->getManager()->flush();
 
             $response = new Response();
             $response->setStatusCode(Response::HTTP_CREATED);
@@ -208,28 +192,47 @@ class FeedController extends ApiController {
     public function putFeedAction(Request $request, $id)
     {
         try {
+            $parameters = $request->request->all();
+
             if (!($feed = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->get($id))) {
                 $statusCode = Response::HTTP_CREATED;
-                $feed = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->post(
-                    $request->request->all()
-                );
             } else {
                 $statusCode = Response::HTTP_NO_CONTENT;
-                $feed = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->put(
-                    $feed,
-                    $request->request->all()
-                );
             }
 
-            $routeOptions = array(
-                'id' => $feed->getId(),
-                '_format' => $request->get('_format')
+            // Validate input.
+            /** @var FormInterface $form */
+            $form = $this->get('form.factory')->create(
+                UserFeedType::class,
+                new UserFeed(),
+                ['method' => 'PUT']
             );
+            $form->submit($parameters);
+            if (!$form->isValid()) {
+                throw new InvalidFormException('Invalid submitted data', $form);
+            }
+            /** @var UserFeed $entity */
+            $entity = $form->getData();
 
-            return $this->routeRedirectView('api_1_get_feed', $routeOptions, $statusCode);
+            $em = $this->getDoctrine()->getManager();
+            /** @var FeedRepository $feedRepository */
+            $feedRepository = $em->getRepository(Feed::class);
+            // Retrieve or create the existing Feed matching our feedurl.
+            $feed = $feedRepository->findByUrlOrCreate($parameters['feedurl']);
 
+            // Attach stuff
+            $entity->setFeed($feed);
+            $entity->setProxyUser($this->getProxyUser());
+
+            // Save
+            $em->persist($entity);
+            $em->flush();
+
+            $response = new Response();
+            $response->setStatusCode($statusCode);
+
+            return $response;
         } catch (InvalidFormException $exception) {
-
             return $exception->getForm();
         }
     }

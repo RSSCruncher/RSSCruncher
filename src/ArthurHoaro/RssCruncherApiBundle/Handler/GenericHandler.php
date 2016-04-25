@@ -6,6 +6,7 @@ use ArthurHoaro\RssCruncherApiBundle\Exception\InvalidFormException;
 use ArthurHoaro\RssCruncherApiBundle\Form\EntityType;
 use ArthurHoaro\RssCruncherApiBundle\Model\IEntity;
 use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Doctrine\Common\Persistence\ObjectRepository;
 
@@ -124,12 +125,14 @@ class GenericHandler implements GenericHandlerInterface {
     /**
      * Processes the form.
      *
-     * @param IEntity $entity
-     * @param array $parameters
-     * @param String $method
-     * @param bool $formType
+     * @param IEntity  $entity
+     * @param array    $parameters
+     * @param string   $method
+     * @param FormType $formType
      *
      * @return IEntity
+     *
+     * @throws InvalidFormException
      */
     protected function processForm(IEntity $entity, array $parameters, $method = "PUT", $formType = false)
     {
@@ -137,7 +140,7 @@ class GenericHandler implements GenericHandlerInterface {
         $form = $this->formFactory->create($formType, $entity, array('method' => $method));
         $form->submit($parameters, 'PATCH' !== $method);
         if ($form->isValid()) {
-            return $entity = $form->getData();
+            return $form->getData();
         }
 
         throw new InvalidFormException('Invalid submitted data', $form);

@@ -80,6 +80,25 @@ class UserFeed implements IEntity
     protected $proxyUser;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_creation", type="datetime")
+     */
+    protected $dateCreation;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_modification", type="datetime")
+     */
+    protected $dateModification;
+
+    function __construct()
+    {
+        $this->dateCreation = new \DateTime('now');
+    }
+
+    /**
      * Get id
      *
      * @return integer
@@ -185,7 +204,37 @@ class UserFeed implements IEntity
         $this->feed = $feed;
     }
 
-    public function getFeedurl() {
-        return $this->feed->getFeedurl();
+    /**
+     * @param mixed $dateCreation
+     */
+    public function setDateCreation($dateCreation)
+    {
+        $this->dateCreation = $dateCreation;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getDateCreation()
+    {
+        return $this->dateCreation;
+    }
+
+    /**
+     * @param mixed $dateModification
+     */
+    public function setDateModification($dateModification)
+    {
+        $this->dateModification = $dateModification;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDateModification()
+    {
+        return $this->dateModification;
+    }
+
+
 }

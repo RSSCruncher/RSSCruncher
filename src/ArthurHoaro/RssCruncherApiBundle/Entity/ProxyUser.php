@@ -56,6 +56,25 @@ class ProxyUser implements IEntity
     protected $feeds;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_creation", type="datetime")
+     */
+    protected $dateCreation;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_modification", type="datetime")
+     */
+    protected $dateModification;
+
+    function __construct()
+    {
+        $this->dateCreation = new \DateTime('now');
+    }
+
+    /**
      * Get id
      *
      * @return integer
@@ -119,5 +138,37 @@ class ProxyUser implements IEntity
     public function addFeed($feed)
     {
         $this->feeds[] = $feed;
+    }
+
+    /**
+     * @param \DateTime $dateCreation
+     */
+    public function setDateCreation($dateCreation)
+    {
+        $this->dateCreation = $dateCreation;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateCreation()
+    {
+        return $this->dateCreation;
+    }
+
+    /**
+     * @param \DateTime $dateModification
+     */
+    public function setDateModification($dateModification)
+    {
+        $this->dateModification = $dateModification;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateModification()
+    {
+        return $this->dateModification;
     }
 }
