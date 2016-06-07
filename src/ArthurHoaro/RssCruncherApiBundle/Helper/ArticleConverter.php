@@ -8,7 +8,7 @@ namespace ArthurHoaro\RssCruncherApiBundle\Helper;
 
 
 use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
-use Debril\RssAtomBundle\Protocol\ItemOut;
+use Debril\RssAtomBundle\Protocol\Parser\Item;
 
 /**
  * Class ArticleConverter
@@ -18,10 +18,10 @@ class ArticleConverter {
     /**
      * Convert an ItemOut to an Article
      *
-     * @param ItemOut $originalArticle
+     * @param Item $originalArticle
      * @return Article
      */
-    public static function convertFromRemote(ItemOut $originalArticle) {
+    public static function convertFromRemote(Item $originalArticle) {
         $convertedArticle = new Article();
         $convertedArticle->setTitle( (string) $originalArticle->getTitle() );
         $convertedArticle->setLink( (string) $originalArticle->getLink() );

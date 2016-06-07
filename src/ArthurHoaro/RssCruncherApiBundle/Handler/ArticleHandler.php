@@ -2,6 +2,7 @@
 
 namespace ArthurHoaro\RssCruncherApiBundle\Handler;
 
+use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
 use ArthurHoaro\RssCruncherApiBundle\Helper\ArticleConverter;
 use ArthurHoaro\RssCruncherApiBundle\Entity\ArticleRepository;
 

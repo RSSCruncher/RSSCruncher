@@ -18,6 +18,7 @@ use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use SimplePMS\Message;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\FormTypeInterface;
@@ -134,7 +135,7 @@ class FeedController extends ApiController {
      *
      * @return FormTypeInterface|View
      */
-    public function postFeedAction(Request $request)
+    public function postFeedsAction(Request $request)
     {
         try {
             $handler = $this->get('arthur_hoaro_rss_cruncher_api.user_feed.handler');
@@ -149,13 +150,8 @@ class FeedController extends ApiController {
             $response = new Response();
             $response->setStatusCode(Response::HTTP_CREATED);
 
-            // set the `Location` header when creating new resources
-            $response->headers->set('Location',
-                $this->generateUrl(
-                    'api_1_get_feed', array('id' => $entity->getId()),
-                    true // absolute
-                )
-            );
+            $pms = $this->container->get('arthur_hoaro_rss_cruncher_api.queue_manager')->getManager();
+            $pms->send($entity, 'update');
 
             return $response;
         } catch (InvalidFormException $exception) {
@@ -338,7 +334,7 @@ class FeedController extends ApiController {
      * @return array
      *
      */
-    public function refreshFeedAction($id) {
+    public function getFeedRefreshAction($id) {
         $items = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->refreshFeed(
             $id,
             $this->container->get('debril.reader')

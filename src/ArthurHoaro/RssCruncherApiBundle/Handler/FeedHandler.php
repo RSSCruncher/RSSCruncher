@@ -56,17 +56,17 @@ class FeedHandler extends GenericHandler {
         ));
     }
 
-    /**
-     * @param ProxyUser $user
-     * @param int       $limit
-     * @param int       $offset
-     *
-     * @return array
-     */
-    public function all($user, $limit = 5, $offset = 0)
-    {
-        return $this->repository->findByUser($user);
-    }
+//    /**
+//     * @param ProxyUser $user
+//     * @param int       $limit
+//     * @param int       $offset
+//     *
+//     * @return array
+//     */
+//    public function all($user, $limit = 5, $offset = 0)
+//    {
+//        return $this->repository->findByUser($user);
+//    }
 
     /**
      * Refresh items of a feed
@@ -101,7 +101,7 @@ class FeedHandler extends GenericHandler {
             $readFeed = $reader->getFeedContent($feedUrl);
         } catch(\Exception $e) {
             // An ugly trick to handle SimpleXML bad error handling... maybe to be removed
-            if( strpos($e->getMessage(), 'parse') !== false ) {
+            if(strpos($e->getMessage(), 'parse') !== false) {
                 throw new FeedNotParsedException($feedUrl, $e);
             }
             else throw $e;

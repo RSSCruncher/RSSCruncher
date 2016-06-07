@@ -65,7 +65,7 @@ class ProxyUser implements IEntity
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date_modification", type="datetime")
+     * @ORM\Column(name="date_modification", type="datetime", nullable=true)
      */
     protected $dateModification;
 

@@ -15,6 +15,7 @@ parameters:
   arthur_hoaro_rss_cruncher_api.user_feed.handler.class: '%arthur_hoaro_rss_cruncher_api.handler.package%UserFeedHandler'
   arthur_hoaro_rss_cruncher_api.user_feed.class: '%arthur_hoaro_rss_cruncher_api.entity.package%UserFeed'
   arthur_hoaro_rss_cruncher_api.user_feed.type.class: '%arthur_hoaro_rss_cruncher_api.type.package%UserFeedType'
+  database_dsn: 'pgsql:'
 services:
   arthur_hoaro_rss_cruncher_api.feed.handler:
     class: '%arthur_hoaro_rss_cruncher_api.feed.handler.class%'
@@ -35,4 +36,12 @@ services:
       - '%arthur_hoaro_rss_cruncher_api.user_feed.class%'
       - '@form.factory'
       - '%arthur_hoaro_rss_cruncher_api.user_feed.type.class%'
-
+  arthur_hoaro_rss_cruncher_api.queue_manager:
+    class: ArthurHoaro\RssCruncherApiBundle\Service\MessagingService
+    arguments:
+      - '%database_dsn%'
+      - '%database_host%'
+      - '%database_port%'
+      - '%database_name%'
+      - '%database_user%'
+      - '%database_password%'

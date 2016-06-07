@@ -35,7 +35,9 @@
     "friendsofsymfony/oauth-server-bundle": "~1.5",
     "jms/serializer-bundle": "~1.1",
     "nelmio/api-doc-bundle": "~2",
-    "debril/rss-atom-bundle": "~2"
+    "debril/rss-atom-bundle": "~2",
+    "fordnox/php-queue-manager": "dev-master",
+    "arthurhoaro/simple-php-messaging-service": "dev-master"
   },
   "require-dev": {
     "doctrine/doctrine-fixtures-bundle": "dev-master",

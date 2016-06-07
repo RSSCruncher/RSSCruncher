@@ -1,3 +1,8 @@
+#arthur_hoaro_rss_cruncher_worker:
+#    resource: "@ArthurHoaroRssCruncherWorkerBundle/Controller/"
+#    type:     annotation
+#    prefix:   /
+
 #REST
 rest :
   type : rest
