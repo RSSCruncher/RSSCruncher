@@ -5,6 +5,10 @@ namespace ArthurHoaro\RssCruncherClientBundle\Helper;
 use ArthurHoaro\RssCruncherClientBundle\Entity\Client;
 use Symfony\Component\DependencyInjection\Container;
 
+/**
+ * Class ClientHelper
+ * @package ArthurHoaro\RssCruncherClientBundle\Helper
+ */
 class ClientHelper
 {
     public static $GRANT_TYPE_CLIENT = 'client_credentials';

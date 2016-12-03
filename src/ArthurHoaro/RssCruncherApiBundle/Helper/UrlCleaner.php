@@ -1,13 +1,15 @@
 <?php
-/**
- * UrlCleaner.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Helper;
 
 
-
+/**
+ * Class UrlCleaner
+ *
+ * Imported from Shaarli - license ZLIB.
+ *
+ * @package ArthurHoaro\RssCruncherApiBundle\Helper
+ */
 class UrlCleaner
 {
     private static $annoyingQueryParams = array(

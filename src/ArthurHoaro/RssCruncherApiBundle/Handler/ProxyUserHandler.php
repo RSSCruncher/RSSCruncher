@@ -1,8 +1,4 @@
 <?php
-/**
- * ProxyUserHandler.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Handler;
 

@@ -1,8 +1,4 @@
 <?php
-/**
- * OAuthSecurityController.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherUserBundle\Controller;
 
@@ -11,8 +7,19 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RequestContext;
 
+/**
+ * Class OAuthSecurityController
+ * @package ArthurHoaro\RssCruncherUserBundle\Controller
+ */
 class OAuthSecurityController extends SecurityController
 {
+    /**
+     * Different login for OAuth (client auth) or classic login.
+     *
+     * @param array $data
+     * 
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     protected function renderLogin(array $data)
     {
         /** @var RequestContext $request */

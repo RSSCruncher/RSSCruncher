@@ -1,8 +1,4 @@
 <?php
-/**
- * ClientForm.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherClientBundle\Form;
 

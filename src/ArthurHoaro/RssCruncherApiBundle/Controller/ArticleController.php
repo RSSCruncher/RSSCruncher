@@ -15,6 +15,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * Class ArticleController
+ *
+ * API calls for Articles.
+ *
+ * @package ArthurHoaro\RssCruncherApiBundle\Controller
+ */
 class ArticleController extends FOSRestController {
     /**
      * List all articles.
@@ -127,7 +134,6 @@ class ArticleController extends FOSRestController {
 
             return $this->routeRedirectView('api_1_get_article', $routeOptions, Response::HTTP_CREATED);
         } catch (InvalidFormException $exception) {
-
             return $exception->getForm();
         }
     }
@@ -181,7 +187,6 @@ class ArticleController extends FOSRestController {
             return $this->routeRedirectView('api_1_get_article', $routeOptions, $statusCode);
 
         } catch (InvalidFormException $exception) {
-
             return $exception->getForm();
         }
     }
@@ -226,7 +231,6 @@ class ArticleController extends FOSRestController {
             return $this->routeRedirectView('api_1_get_article', $routeOptions, Response::HTTP_NO_CONTENT);
 
         } catch (InvalidFormException $exception) {
-
             return $exception->getForm();
         }
     }
@@ -249,4 +253,4 @@ class ArticleController extends FOSRestController {
     {
         return $this->createForm(new ArticleType());
     }
-} 
+}

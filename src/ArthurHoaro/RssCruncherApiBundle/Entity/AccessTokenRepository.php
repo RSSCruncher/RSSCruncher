@@ -1,8 +1,4 @@
 <?php
-/**
- * AccessTokenRepository.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 

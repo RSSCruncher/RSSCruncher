@@ -1,18 +1,24 @@
 <?php
-/**
- * AccessTokenRepository.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Handler;
 
 
 use ArthurHoaro\RssCruncherApiBundle\Entity\AccessToken;
 
+/**
+ * Class AccessTokenHandler
+ *
+ * Handler for AccessToken
+ *
+ * @package ArthurHoaro\RssCruncherApiBundle\Handler
+ */
 class AccessTokenHandler extends GenericHandler
 {
     /**
-     * @param string $accessToken
+     * Retrieve an AccessToken object using a token as a string.
+     *
+     * @param string $accessToken token
+     *
      * @return AccessToken
      */
     public function getByToken($accessToken)

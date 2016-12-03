@@ -1,8 +1,4 @@
 <?php
-/**
- * ApiController.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Controller;
 
@@ -12,6 +8,14 @@ use ArthurHoaro\RssCruncherApiBundle\Handler\AccessTokenHandler;
 use ArthurHoaro\RssCruncherApiBundle\Handler\ProxyUserHandler;
 use FOS\RestBundle\Controller\FOSRestController;
 
+/**
+ * Class ApiController
+ *
+ * Main abstract class for all API controllers.
+ * Used for common helper functions, such as retrieving a UserProxy.
+ *
+ * @package ArthurHoaro\RssCruncherApiBundle\Controller
+ */
 abstract class ApiController extends FOSRestController
 {
     /**
@@ -25,19 +29,22 @@ abstract class ApiController extends FOSRestController
     protected $token;
 
     /**
-     * @return string
+     * Get the current security token.
+     *
+     * @return string current token.
      */
     protected function getToken()
     {
-        $tokenManager = $this->container->get('fos_oauth_server.access_token_manager.default');
-        $token        = $this->container->get('security.token_storage')->getToken();
+        $token = $this->container->get('security.token_storage')->getToken();
         return $token->getToken();
     }
 
     /**
-     * @return ProxyUser
+     * Retrieve the current ProxyUser (user+client) using the current access token.
      *
-     * @throws \Exception
+     * @return ProxyUser used to make this API call.
+     *
+     * @throws \Exception Invalid AccessToken.
      */
     protected function getProxyUser()
     {
@@ -52,7 +59,7 @@ abstract class ApiController extends FOSRestController
         }
 
         $proxyUser = $handler->getByToken($token);
-        if (!empty($proxyUser)) {
+        if (! empty($proxyUser)) {
             return $proxyUser;
         }
 

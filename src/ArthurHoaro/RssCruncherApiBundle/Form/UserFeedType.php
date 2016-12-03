@@ -1,8 +1,4 @@
 <?php
-/**
- * FeedType.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Form;
 
@@ -20,6 +16,13 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Url;
 
+/**
+ * Class UserFeedType
+ *
+ * Type of a user feed (used to validate a UserFeed).
+ *
+ * @package ArthurHoaro\RssCruncherApiBundle\Form
+ */
 class UserFeedType extends AbstractType {
     /**
      * @param FormBuilderInterface $builder
@@ -66,4 +69,4 @@ class UserFeedType extends AbstractType {
     {
         return '';
     }
-} 
+}

@@ -25,26 +25,13 @@ use Symfony\Component\Form\FormInterface;
  */
 class FeedHandler extends GenericHandler {
 
-
-
-    protected function createFeed($parameters) {
-
-    }
-
     /**
-     * Select a list of Feeds by their IDs
+     * Retrieve an enabled Feed by its ID as an array.
      *
-     * @param int $id
-     * @return array Feed
-     */
-    public function selectWithDisabled($id, $params = array()) {
-        return $this->repository->findBy(array_merge(['enabled' => false], $params));
-    }
-
-    /**
-     * @param $id
-     * @param array $params
-     * @return array
+     * @param int   $id     Feed ID.
+     * @param array $params Additional parameters.
+     *
+     * @return array List containing the Feed found or null.
      */
     public function select($id, $params = array()) {
         return $this->repository->findBy(array_merge(
@@ -70,48 +57,24 @@ class FeedHandler extends GenericHandler {
         return null;
     }
 
-//    /**
-//     * @param ProxyUser $user
-//     * @param int       $limit
-//     * @param int       $offset
-//     *
-//     * @return array
-//     */
-//    public function all($user, $limit = 5, $offset = 0)
-//    {
-//        return $this->repository->findByUser($user);
-//    }
-
     /**
      * Refresh items of a feed
      *
-     * @param Feed   $feed
-     * @param FeedIo $reader
+     * @param Feed   $feed   to refresh.
+     * @param FeedIo $reader Service used to fetch feeds.
      *
-     * @return array $items - list of refreshed feeds
+     * @return Article[] $items List of new Articles.
      *
-     * @throws FeedNotFoundException
+     * @throws FeedNotFoundException The given Feed doesn't exist in the database.
+     * @throws \Exception            DB error.
      */
     public function refreshFeed(Feed $feed, FeedIo $reader) {
-        return $this->refresh($feed, $reader);
-    }
-
-    /**
-     * Refresh items of a feed
-     *
-     * @param Feed $feed
-     * @param FeedIo $reader
-     * @return array $outItems
-     *
-     * @throws \Exception
-     */
-    private function refresh(Feed $feed, FeedIo $reader) {
         $feedUrl = $feed->getFeedurl();
         try {
             $readFeed = $reader->read($feedUrl);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             // An ugly trick to handle SimpleXML bad error handling... maybe to be removed
-            if(strpos($e->getMessage(), 'parse') !== false) {
+            if (strpos($e->getMessage(), 'parse') !== false) {
                 throw new FeedNotParsedException($feedUrl, $e);
             }
             else throw $e;
@@ -119,7 +82,7 @@ class FeedHandler extends GenericHandler {
         $newItems = $readFeed->getFeed();
 
         $outItems = array();
-        foreach($newItems as $value) {
+        foreach ($newItems as $value) {
             $item = ArticleConverter::convertFromRemote($value);
             if (true || $item->getModificationDate() > $feed->getDateFetch()) {
                 $item->setFeed($feed);
@@ -133,7 +96,7 @@ class FeedHandler extends GenericHandler {
     /**
      * Update the last fetch date.
      *
-     * @param Feed $feed
+     * @param Feed $feed to update.
      */
     public function updateDateFetch(Feed $feed)
     {

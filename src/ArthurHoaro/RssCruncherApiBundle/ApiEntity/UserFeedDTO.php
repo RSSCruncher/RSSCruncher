@@ -4,36 +4,37 @@ namespace ArthurHoaro\RssCruncherApiBundle\ApiEntity;
 
 use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeed;
 
-
+/**
+ * Class UserFeedDTO
+ *
+ * UserFeed serialized for REST API.
+ *
+ * @package ArthurHoaro\RssCruncherApiBundle\ApiEntity
+ */
 class UserFeedDTO implements IApiEntity
 {
     /**
-     * @var integer
+     * @var int Internal ID
      */
     protected $id;
 
     /**
-     * @var string
+     * @var string Custom site name set by the user.
      */
     protected $sitename;
 
     /**
-     * @var string
+     * @var string Custom site URL set by the user.
      */
     protected $siteurl;
 
     /**
-     * @var string
+     * @var string Custom feed name set by the user.
      */
     protected $feedname;
 
     /**
-     * @var boolean
-     */
-    protected $enabled = true;
-
-    /**
-     * @var string
+     * @var string Unique feed URL (from the feed table).
      */
     protected $feedurl;
 
@@ -47,7 +48,6 @@ class UserFeedDTO implements IApiEntity
         $this->setSitename($userFeed->getSitename());
         $this->setSiteurl($userFeed->getSiteurl());
         $this->setFeedname($userFeed->getFeedname());
-        $this->setEnabled($userFeed->isEnabled());
         $scheme = $userFeed->getFeed()->isHttps() ? 'https' : 'http';
         $this->setFeedurl($scheme . '://' . $userFeed->getFeed()->getFeedurl());
 
@@ -116,22 +116,6 @@ class UserFeedDTO implements IApiEntity
     public function setFeedname($feedname)
     {
         $this->feedname = $feedname;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isEnabled()
-    {
-        return $this->enabled;
-    }
-
-    /**
-     * @param boolean $enabled
-     */
-    public function setEnabled($enabled)
-    {
-        $this->enabled = $enabled;
     }
 
     /**

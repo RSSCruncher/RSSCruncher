@@ -1,8 +1,4 @@
 <?php
-/**
- * FeedCreatorCommand.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Command;
 
@@ -21,6 +17,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class MainCommand extends ContainerAwareCommand
 {
+    /**
+     * Command info.
+     *
+     * Called by `rsscruncher:run`.
+     */
     protected function configure()
     {
         $this
@@ -29,6 +30,14 @@ class MainCommand extends ContainerAwareCommand
         ;
     }
 
+    /**
+     * Execute the command. Infinite loop, reading the update SPMS queue. It will:
+     *   - refresh feeds after their creation
+     *
+     * FIXME! Log events
+     *
+     * @inheritdoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $logger = $this->getContainer()->get('logger');
@@ -49,19 +58,26 @@ class MainCommand extends ContainerAwareCommand
         }
     }
 
+    /**
+     * Use feed handler to actually refresh a feed, and update its fetch date.
+     *
+     * @param Feed $feed Feed object extracted from SPMS message.
+     */
     protected function refreshFeed(Feed $feed)
     {
-        $items = $this->getContainer()->get('arthur_hoaro_rss_cruncher_api.feed.handler')->refreshFeed(
-            $feed->getId(),
+        $feedHandler = $this->getContainer()->get('arthur_hoaro_rss_cruncher_api.feed.handler');
+        $items = $feedHandler->refreshFeed(
+            $feed,
             $this->getContainer()->get('feedio')
         );
 
         $validator = $this->getContainer()->get('validator');
 
-        foreach($items as $item) {
-            if( count($validator->validate($item)) == 0 ) {
-                $articles[] = $this->getContainer()->get('arthur_hoaro_rss_cruncher_api.article.handler')->save($item);
+        foreach ($items as $item) {
+            if (count($validator->validate($item)) == 0 ) {
+                $this->getContainer()->get('arthur_hoaro_rss_cruncher_api.article.handler')->save($item);
             }
         }
+        $feedHandler->updateDateFetch($feed);
     }
 }

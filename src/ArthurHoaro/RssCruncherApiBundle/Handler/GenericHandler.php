@@ -10,6 +10,10 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Doctrine\Common\Persistence\ObjectRepository;
 
+/**
+ * Class GenericHandler
+ * @package ArthurHoaro\RssCruncherApiBundle\Handler
+ */
 class GenericHandler implements GenericHandlerInterface {
 
     /**
@@ -125,10 +129,10 @@ class GenericHandler implements GenericHandlerInterface {
     /**
      * Processes the form.
      *
-     * @param IEntity  $entity
-     * @param array    $parameters
-     * @param string   $method
-     * @param FormType $formType
+     * @param IEntity       $entity
+     * @param array         $parameters
+     * @param string        $method
+     * @param FormType|bool $formType
      *
      * @return IEntity
      *

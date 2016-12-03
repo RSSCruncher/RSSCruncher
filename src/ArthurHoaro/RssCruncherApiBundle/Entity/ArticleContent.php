@@ -10,6 +10,10 @@ use JMS\Serializer\Annotation\Exclude;
 /**
  * ArticleContent
  *
+ * This table represents the history of an item content (description).
+ * The latest description of an article will be its content,
+ * but this allows the history to be saved, and eventually retrieved.
+ *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="ArthurHoaro\RssCruncherApiBundle\Entity\ArticleRepository")
  *

@@ -1,8 +1,4 @@
 <?php
-/**
- * ArticleControllerTest.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Tests\Controller;
 

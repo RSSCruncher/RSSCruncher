@@ -1,19 +1,27 @@
 <?php
-/**
- * UserFeedRepository.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 
 
 use Doctrine\ORM\EntityRepository;
 
+/**
+ * Class UserFeedRepository
+ *
+ * Custom queries regarding UserFeed.
+ *
+ * @package ArthurHoaro\RssCruncherApiBundle\Entity
+ */
 class UserFeedRepository extends EntityRepository
 {
     /**
-     * @param ProxyUser $proxyUser
-     * @param array     $options
+     * Retrieve a list of UserFeeds associated to a ProxyUser.
+     *
+     * FIXME! limit and offset are ignored.
+     *
+     * @param ProxyUser $proxyUser to look for.
+     * @param int       $limit     Max elements to retrieve.
+     * @param int       $offset    Retrieve elements from item $offset.
      *
      * @return UserFeed[]
      */

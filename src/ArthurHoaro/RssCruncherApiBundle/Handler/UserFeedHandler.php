@@ -33,4 +33,4 @@ class UserFeedHandler extends GenericHandler {
         $entity->setFeed($feed);
         return $entity;
     }
-} 
+}

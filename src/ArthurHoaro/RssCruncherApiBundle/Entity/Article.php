@@ -9,6 +9,8 @@ use JMS\Serializer\Annotation\Exclude;
 
 /**
  * Article
+ * 
+ * A feed entry.
  *
  * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="feed_public_id", columns={"feed_id", "public_id"})})
  * @ORM\Entity(repositoryClass="ArthurHoaro\RssCruncherApiBundle\Entity\ArticleRepository")

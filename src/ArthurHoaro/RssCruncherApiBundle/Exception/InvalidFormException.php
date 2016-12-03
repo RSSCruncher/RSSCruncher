@@ -1,6 +1,11 @@
 <?php
 namespace ArthurHoaro\RssCruncherApiBundle\Exception;
 
+/**
+ * Class InvalidFormException
+ *
+ * @package ArthurHoaro\RssCruncherApiBundle\Exception
+ */
 class InvalidFormException extends \RuntimeException
 {
     protected $form;

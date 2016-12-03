@@ -15,12 +15,14 @@ class ArticleHandler extends GenericHandler {
     /**
      * Insert or Update an Article
      *
+     * Note: this will also insert an entry in ArticleContent if the content has to be created or updated.
+     *
      * @param Article $article
      * @return Article
      */
     public function save(Article $article) {
         $existing = $this->repository->findExistingArticle($article);
-        if( $existing === null ) {
+        if ($existing === null) {
             $this->om->persist($article);
             $this->om->flush();
         }
@@ -35,4 +37,4 @@ class ArticleHandler extends GenericHandler {
 
         return $article;
     }
-} 
+}

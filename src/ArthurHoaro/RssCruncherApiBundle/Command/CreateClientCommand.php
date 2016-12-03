@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: arthur
- * Date: 23/02/15
- * Time: 15:53
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Command;
 
@@ -15,7 +9,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
+/**
+ * Class CreateClientCommand
+ * @package ArthurHoaro\RssCruncherApiBundle\Command
+ *
+ * @deprecated Use webapp
+ */
 class CreateClientCommand extends ContainerAwareCommand {
 
     protected function configure()

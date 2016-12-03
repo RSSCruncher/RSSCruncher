@@ -1,19 +1,22 @@
 <?php
-/**
- * FeedType.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Class ArticleType
+ *
+ * Type of an article (used to validate an Article).
+ *
+ * @package ArthurHoaro\RssCruncherApiBundle\Form
+ */
 class ArticleType extends AbstractType {
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -34,9 +37,9 @@ class ArticleType extends AbstractType {
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => 'ArthurHoaro\RssCruncherApiBundle\Entity\Article',
@@ -51,4 +54,4 @@ class ArticleType extends AbstractType {
     {
         return '';
     }
-} 
+}

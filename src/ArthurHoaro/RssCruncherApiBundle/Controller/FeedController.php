@@ -30,9 +30,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * Class FeedController
+ *
+ * Controller for API call related to Feeds (and mostly UserFeeds).
+ *
+ * @package ArthurHoaro\RssCruncherApiBundle\Controller
+ */
 class FeedController extends ApiController {
     /**
-     * List all feeds.
+     * List all feeds (UserFeeds) attached to a ProxyUser.
+     *
+     * FIXME! offset+limit
      *
      * @ApiDoc(
      *   resource = true,
@@ -51,7 +60,7 @@ class FeedController extends ApiController {
      * @param Request               $request      the request object
      * @param ParamFetcherInterface $paramFetcher param fetcher service
      *
-     * @return array
+     * @return UserFeedDTO[] List of UserFeeds entities formatted for the API (UserFeedDTO).
      */
     public function getFeedsAction(Request $request, ParamFetcherInterface $paramFetcher)
     {
@@ -72,7 +81,7 @@ class FeedController extends ApiController {
     }
     
     /**
-     * Get single Feed,
+     * Get single UserFeed.
      *
      * @ApiDoc(
      *   resource = true,
@@ -97,7 +106,7 @@ class FeedController extends ApiController {
 	}
 
     /**
-     * Get a feed's articles
+     * Get articles attached to a feed.
      *
      * @ApiDoc(
      *   resource = true,
@@ -159,7 +168,6 @@ class FeedController extends ApiController {
 
             return $response;
         } catch (InvalidFormException $exception) {
-
             return $exception->getForm();
         }
     }
@@ -193,8 +201,8 @@ class FeedController extends ApiController {
     {
         try {
             $parameters = $request->request->all();
-
-            if (!($feed = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->get($id))) {
+            $feed = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->get($id);
+            if (! $feed) {
                 $statusCode = Response::HTTP_CREATED;
             } else {
                 $statusCode = Response::HTTP_NO_CONTENT;
@@ -208,7 +216,7 @@ class FeedController extends ApiController {
                 ['method' => 'PUT']
             );
             $form->submit($parameters);
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 throw new InvalidFormException('Invalid submitted data', $form);
             }
             /** @var UserFeed $entity */
@@ -275,9 +283,7 @@ class FeedController extends ApiController {
             );
 
             return $this->routeRedirectView('api_1_get_feed', $routeOptions, Response::HTTP_NO_CONTENT);
-
         } catch (InvalidFormException $exception) {
-
             return $exception->getForm();
         }
     }
@@ -312,7 +318,8 @@ class FeedController extends ApiController {
      */
     protected function getOr404($id)
     {
-        if (!($feed = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->get($id))) {
+        $feed = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->get($id);
+        if (! $feed) {
             throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.',$id));
         }
         return $feed;
@@ -354,6 +361,7 @@ class FeedController extends ApiController {
 
         $validator = $this->get('validator');
 
+        $articles = [];
         foreach ($items as $item) {
             if (count($validator->validate($item)) == 0) {
                 $articles[] = $this->container->get('arthur_hoaro_rss_cruncher_api.article.handler')->save($item);

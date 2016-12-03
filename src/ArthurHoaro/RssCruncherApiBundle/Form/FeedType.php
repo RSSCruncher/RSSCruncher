@@ -1,8 +1,4 @@
 <?php
-/**
- * FeedType.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Form;
 
@@ -12,6 +8,13 @@ use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Class FeedType
+ *
+ * Type of a feed (used to validate a Feed).
+ *
+ * @package ArthurHoaro\RssCruncherApiBundle\Form
+ */
 class FeedType extends AbstractType {
     /**
      * @param FormBuilderInterface $builder
@@ -42,4 +45,4 @@ class FeedType extends AbstractType {
     {
         return '';
     }
-} 
+}

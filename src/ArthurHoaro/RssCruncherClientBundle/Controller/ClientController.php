@@ -1,8 +1,4 @@
 <?php
-/**
- * ClassController.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherClientBundle\Controller;
 
@@ -11,9 +7,14 @@ use ArthurHoaro\RssCruncherClientBundle\Entity\Client;
 use ArthurHoaro\RssCruncherClientBundle\Form\ClientType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class ClientController
+ * @package ArthurHoaro\RssCruncherClientBundle\Controller
+ */
 class ClientController extends Controller
 {
     /**
@@ -56,7 +57,7 @@ class ClientController extends Controller
         }
 
         $validator = $this->get('validator');
-        $errors = $validator->validate($form);
+        $validator->validate($form);
 
         return $this->render('@ArthurHoaroRssCruncherClient/Client/new.html.twig',
             [
@@ -76,18 +77,20 @@ class ClientController extends Controller
      */
     private function createCreateForm(Client $entity)
     {
-        $form = $this->createForm(ClientType::class, $entity, array(
+        $form = $this->createForm(ClientType::class, $entity, [
             'action' => $this->generateUrl('arthur_hoaro_rss_cruncher_client_create'),
             'method' => 'POST',
-        ));
+        ]);
 
-        $form->add('submit', SubmitType::class, array('label' => 'Create'));
+        $form->add('submit', SubmitType::class, ['label' => 'Create']);
 
         return $form;
     }
 
     /**
      * Displays a form to create a new Client entity.
+     *
+     * @return Response Rendered page.
      */
     public function newAction()
     {
@@ -104,7 +107,11 @@ class ClientController extends Controller
     }
 
     /**
-     * Finds and displays a Testent entity.
+     * Finds and displays a Client entity.
+     *
+     * @param int $id Client ID.
+     *
+     * @return Response Rendered page.
      */
     public function showAction($id)
     {
@@ -128,7 +135,11 @@ class ClientController extends Controller
     }
 
     /**
-     * Displays a form to edit an existing Testent entity.
+     * Displays a form to edit an existing Client entity.
+     *
+     * @param int $id Client ID to edit.
+     *
+     * @return Response Rendered page.
      */
     public function editAction($id)
     {
@@ -136,7 +147,7 @@ class ClientController extends Controller
 
         $entity = $em->getRepository('ArthurHoaroRssCruncherClientBundle:Client')->find($id);
 
-        if (!$entity) {
+        if (! $entity) {
             throw $this->createNotFoundException('Unable to find Client entity.');
         }
 
@@ -154,7 +165,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Creates a form to edit a Testent entity.
+     * Creates a form to edit a Client entity.
      *
      * @param Client $entity The entity
      *
@@ -162,12 +173,12 @@ class ClientController extends Controller
      */
     private function createEditForm(Client $entity)
     {
-        $form = $this->createForm(ClientType::class, $entity, array(
-            'action' => $this->generateUrl('arthur_hoaro_rss_cruncher_client_update', array('id' => $entity->getId())),
+        $form = $this->createForm(ClientType::class, $entity, [
+            'action' => $this->generateUrl('arthur_hoaro_rss_cruncher_client_update', ['id' => $entity->getId()]),
             'method' => 'POST',
-        ));
+        ]);
 
-        $form->add('submit', SubmitType::class, array('label' => 'Update'));
+        $form->add('submit', SubmitType::class, ['label' => 'Update']);
 
         return $form;
     }
@@ -178,7 +189,7 @@ class ClientController extends Controller
      * @param Request $request
      * @param int     $id      client ID.
      *
-     * @return Response
+     * @return Response Rendered page.
      */
     public function updateAction(Request $request, $id)
     {
@@ -214,7 +225,12 @@ class ClientController extends Controller
     }
 
     /**
-     * Deletes a Testent entity.
+     * Deletes a Client entity.
+     *
+     * @param Request $request
+     * @param int     $id      client ID.
+     *
+     * @return RedirectResponse
      */
     public function deleteAction(Request $request, $id)
     {
@@ -246,9 +262,9 @@ class ClientController extends Controller
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('arthur_hoaro_rss_cruncher_client_delete', array('id' => $id)))
+            ->setAction($this->generateUrl('arthur_hoaro_rss_cruncher_client_delete', ['id' => $id]))
             ->setMethod('DELETE')
-            ->add('submit', SubmitType::class, array('label' => 'Delete'))
+            ->add('submit', SubmitType::class, ['label' => 'Delete'])
             ->getForm()
             ;
     }

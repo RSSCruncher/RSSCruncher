@@ -13,8 +13,9 @@ use Symfony\Component\Validator\Constraints\DateTime;
  * @package ArthurHoaro\RssCruncherApiBundle\Helper
  */
 class ArticleConverter {
+
     /**
-     * Convert an ItemOut to an Article
+     * Convert an Item to an Article
      *
      * @param Item $originalArticle
      *
@@ -94,4 +95,4 @@ class ArticleConverter {
 
         return $previous;
     }
-} 
+}

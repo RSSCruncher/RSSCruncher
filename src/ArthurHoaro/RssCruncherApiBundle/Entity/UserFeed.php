@@ -1,8 +1,4 @@
 <?php
-/**
- * FeedUser.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 
@@ -14,6 +10,15 @@ use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Exclude;
 
 /**
+ * A UserFeed is an association table between a Feed an a ProxyUser.
+ *
+ * A Feed is unique in the whole database: that's main idea behind this project.
+ * So we use this association table to let the user set custom labels, etc.
+ *
+ * FIXME! A fetch date needs to be added here.
+ * FIXME! Just an idea: actually link this object to User,
+ * FIXME! to share labels between apps and add another table to link UserFeed and ProxyUser.
+ *
  * @ORM\Entity
  * @ORM\Table(name="user_feed")
  *

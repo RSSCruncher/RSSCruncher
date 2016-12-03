@@ -1,16 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ahoareau
- * Date: 05/02/2015
- * Time: 11:51
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Exception;
 
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * Class FeedNotFoundException
+ *
+ * 404 HTTP exception
+ *
+ * @package ArthurHoaro\RssCruncherApiBundle\Exception
+ */
 class FeedNotFoundException extends HttpException {
     /**
      * @var int feedId

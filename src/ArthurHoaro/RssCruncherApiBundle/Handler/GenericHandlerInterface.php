@@ -4,6 +4,10 @@ namespace ArthurHoaro\RssCruncherApiBundle\Handler;
 
 use ArthurHoaro\RssCruncherApiBundle\Model\IEntity;
 
+/**
+ * Interface GenericHandlerInterface
+ * @package ArthurHoaro\RssCruncherApiBundle\Handler
+ */
 interface GenericHandlerInterface {
     /**
      * Get a Feed given the identifier

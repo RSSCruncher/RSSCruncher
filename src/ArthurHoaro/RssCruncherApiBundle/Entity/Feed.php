@@ -11,7 +11,12 @@ use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Feed
+ * Feed Entity
+ *
+ * Contains articles, and multiple UserFeed may be attached to a Feed.
+ * The Feed URL is unique and is used to attached UserFeed to an existing Feed.
+ *
+ * TODO: last sentence is actually a todo
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="ArthurHoaro\RssCruncherApiBundle\Entity\FeedRepository")

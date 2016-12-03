@@ -10,4 +10,4 @@ interface IEntity {
      * @return integer
      */
     public function getId();
-} 
+}

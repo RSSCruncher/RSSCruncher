@@ -6,57 +6,67 @@ namespace ArthurHoaro\RssCruncherApiBundle\ApiEntity;
 use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
 use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeed;
 
+/**
+ * Class ArticleDTO
+ *
+ * Article serialized for REST API.
+ *
+ * @package ArthurHoaro\RssCruncherApiBundle\ApiEntity
+ */
 class ArticleDTO implements IApiEntity
 {
     /**
-     * @var int
+     * @var int Article internal ID.
      */
     protected $id;
 
     /**
-     * @var string
+     * @var string <ID> published in feed.
      */
     protected $publicId;
 
     /**
-     * @var String
+     * @var String Article title.
      */
     protected $title;
 
     /**
-     * @var String
+     * @var String Article URI.
      */
     protected $link;
 
     /**
-     * @var String
+     * @var String Latest article content.
      */
     protected $content;
 
     /**
-     * @var string
+     * FIXME! name + email
+     * @var string Article author.
      */
     protected $author;
 
     /**
-     * @var \DateTime
+     * @var \DateTime Date of creation.
      */
     protected $publicationDate;
 
     /**
-     * @var \DateTime
+     * @var \DateTime Latest update.
      */
     protected $modificationDate;
 
     /**
-     * @var UserFeedDTO
+     * @var UserFeedDTO UserFeed attached (to get the custom feed name + uri)
      */
     protected $feed;
 
-    // WTF???
+    // WTF??? reflection fatal error without this...
     public $userFeed = null;
 
     /**
+     * Create an ArticleDTO using an Article entity.
+     *
      * @param Article  $entity
      * @param UserFeed $feed
      *
