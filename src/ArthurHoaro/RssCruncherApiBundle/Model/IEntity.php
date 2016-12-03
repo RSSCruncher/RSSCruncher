@@ -1,8 +1,4 @@
 <?php
-/**
- * IEntity.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Model;
 

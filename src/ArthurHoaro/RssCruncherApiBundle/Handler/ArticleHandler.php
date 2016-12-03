@@ -19,16 +19,18 @@ class ArticleHandler extends GenericHandler {
      * @return Article
      */
     public function save(Article $article) {
-
         $existing = $this->repository->findExistingArticle($article);
         if( $existing === null ) {
             $this->om->persist($article);
-            $this->om->flush($article);
+            $this->om->flush();
         }
         else {
             $article = ArticleConverter::convertFromPrevious($existing, $article);
             $this->om->persist($article);
-            $this->om->flush($article);
+            foreach ($article->getArticleContents() as $ac) {
+                $this->om->persist($ac);
+            }
+            $this->om->flush();
         }
 
         return $article;

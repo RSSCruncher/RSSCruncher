@@ -19,14 +19,19 @@ class ArticleRepository extends EntityRepository
      *  - second attempt on link
      *
      * @param Article $article
+     *
      * @return Article article found | null if not found
      */
     public function findExistingArticle(Article $article) {
-        if( empty($article->getFeed()) || (empty($article->getPublicId()) && empty($article->getLink())) ) return null;
+        if (empty($article->getFeed())
+            || (empty($article->getPublicId()) && empty($article->getLink()))
+        ) {
+            return null;
+        }
 
         $dql = 'SELECT a FROM ArthurHoaro\RssCruncherApiBundle\Entity\Article a WHERE a.feed = :feed AND ';
 
-        if( !empty($article->getPublicId()) ) {
+        if (! empty($article->getPublicId())) {
             $query = $this->_em->createQuery($dql . 'a.publicId = :publicId');
             $query->setParameter('publicId', $article->getPublicId());
         }
@@ -36,11 +41,24 @@ class ArticleRepository extends EntityRepository
         }
 
         $query->setParameter('feed', $article->getFeed());
+        /** @var Article[] $results */
         $results = $query->getResult();
 
-        if( !empty($results) && count($results) == 1 && is_a($results[0], 'ArthurHoaro\RssCruncherApiBundle\Model\Article') ) {
+        if (! empty($results) && count($results) == 1
+            && is_a($results[0], 'ArthurHoaro\RssCruncherApiBundle\Entity\Article')
+        ) {
             return $results[0];
         }
         return null;
+    }
+
+    public function getLastContent(Article $article)
+    {
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('c', $qb->expr()->max('c.date'))
+           ->from('ArthurHoaro\RssCruncherApiBundle\Entity\ArticleContent', 'c')
+           ->where('e.id = :articleId');
+        $qb->setParameter('articleId', $article->getId());
+        return $qb->getQuery()->getFirstResult();
     }
 }

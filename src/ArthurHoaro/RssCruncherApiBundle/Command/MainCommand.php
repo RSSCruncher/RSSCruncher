@@ -32,16 +32,18 @@ class MainCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $logger = $this->getContainer()->get('logger');
+        $queue = $this->getContainer()->get('arthur_hoaro_rss_cruncher_api.queue_manager')->getManager();
         while (true) {
-            $queue = $this->getContainer()->get('arthur_hoaro_rss_cruncher_api.queue_manager')->getManager();
 
             // Feed update queue
-            $message = $queue->receive('update');
-            error_log(var_export($message, true));
-            if ($message instanceof Message && $message->getContent() instanceof Feed) {
-                // update
-                $this->refreshFeed($message->getContent());
-                $queue->deleteMessage($message);
+            $messages = $queue->receiveMessages('update');
+            error_log(var_export($messages, true));
+            foreach ($messages as $message) {
+                if ($message instanceof Message && $message->getContent() instanceof Feed) {
+                    // update
+                    $this->refreshFeed($message->getContent());
+                    $queue->deleteMessage($message);
+                }
             }
             sleep(1);
         }
@@ -51,7 +53,7 @@ class MainCommand extends ContainerAwareCommand
     {
         $items = $this->getContainer()->get('arthur_hoaro_rss_cruncher_api.feed.handler')->refreshFeed(
             $feed->getId(),
-            $this->getContainer()->get('debril.reader')
+            $this->getContainer()->get('feedio')
         );
 
         $validator = $this->getContainer()->get('validator');

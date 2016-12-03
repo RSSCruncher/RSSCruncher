@@ -12,8 +12,6 @@ use ArthurHoaro\RssCruncherApiBundle\Form\ArticleType;
 use ArthurHoaro\RssCruncherApiBundle\Form\UserFeedType;
 use ArthurHoaro\RssCruncherApiBundle\Helper\ArticleConverter;
 use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
-use Debril\RssAtomBundle\Protocol\FeedReader;
-use Debril\RssAtomBundle\Protocol\FeedIn;
 use Liip\FunctionalTestBundle\Tests\App\Entity\User;
 
 

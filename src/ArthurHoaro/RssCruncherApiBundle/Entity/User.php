@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ahoareau
- * Date: 06/02/2015
- * Time: 11:25
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 

@@ -13,8 +13,8 @@ use ArthurHoaro\RssCruncherApiBundle\Form\ArticleType;
 use ArthurHoaro\RssCruncherApiBundle\Form\UserFeedType;
 use ArthurHoaro\RssCruncherApiBundle\Helper\ArticleConverter;
 use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
-use Debril\RssAtomBundle\Protocol\FeedReader;
-use Debril\RssAtomBundle\Protocol\FeedIn;
+use FeedIo\FeedIo;
+use FeedIo\Filter\ModifiedSince;
 use Liip\FunctionalTestBundle\Tests\App\Entity\User;
 use Symfony\Component\Form\FormInterface;
 
@@ -56,6 +56,20 @@ class FeedHandler extends GenericHandler {
         ));
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * Only if it's enabled.
+     */
+    public function get($id)
+    {
+        $res = $this->select($id);
+        if (count($res) == 1) {
+            return $res[0];
+        }
+        return null;
+    }
+
 //    /**
 //     * @param ProxyUser $user
 //     * @param int       $limit
@@ -71,34 +85,30 @@ class FeedHandler extends GenericHandler {
     /**
      * Refresh items of a feed
      *
-     * @param int $id
-     * @param FeedReader $reader
+     * @param Feed   $feed
+     * @param FeedIo $reader
+     *
      * @return array $items - list of refreshed feeds
+     *
      * @throws FeedNotFoundException
      */
-    public function refreshFeed($id, FeedReader $reader) {
-        if(empty($id)) throw new FeedNotFoundException();
-
-        $feed = $this->select($id);
-        if (count($feed) > 0 )  {
-            return $this->refresh(array_shift($feed), $reader);
-        }
-        throw new FeedNotFoundException($id);
+    public function refreshFeed(Feed $feed, FeedIo $reader) {
+        return $this->refresh($feed, $reader);
     }
 
     /**
      * Refresh items of a feed
      *
      * @param Feed $feed
-     * @param FeedReader $reader
+     * @param FeedIo $reader
      * @return array $outItems
      *
      * @throws \Exception
      */
-    private function refresh(Feed $feed, FeedReader $reader) {
+    private function refresh(Feed $feed, FeedIo $reader) {
         $feedUrl = $feed->getFeedurl();
         try {
-            $readFeed = $reader->getFeedContent($feedUrl);
+            $readFeed = $reader->read($feedUrl);
         } catch(\Exception $e) {
             // An ugly trick to handle SimpleXML bad error handling... maybe to be removed
             if(strpos($e->getMessage(), 'parse') !== false) {
@@ -106,15 +116,29 @@ class FeedHandler extends GenericHandler {
             }
             else throw $e;
         }
-        $newItems = $readFeed->getItems();
+        $newItems = $readFeed->getFeed();
 
         $outItems = array();
         foreach($newItems as $value) {
             $item = ArticleConverter::convertFromRemote($value);
-            $item->setFeed($feed);
-            $outItems[] = $item;
+            if (true || $item->getModificationDate() > $feed->getDateFetch()) {
+                $item->setFeed($feed);
+                $outItems[] = $item;
+            }
         }
 
         return $outItems;
     }
-} 
+
+    /**
+     * Update the last fetch date.
+     *
+     * @param Feed $feed
+     */
+    public function updateDateFetch(Feed $feed)
+    {
+        $feed->setDateFetch(new \DateTime());
+        $this->om->persist($feed);
+        $this->om->flush();
+    }
+}

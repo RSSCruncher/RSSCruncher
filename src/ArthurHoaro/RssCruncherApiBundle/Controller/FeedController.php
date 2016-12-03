@@ -2,15 +2,19 @@
 
 namespace ArthurHoaro\RssCruncherApiBundle\Controller;
 
-use ArthurHoaro\RssCruncherApiBundle\ApiEntity\FeedDTO;
+use ArthurHoaro\RssCruncherApiBundle\ApiEntity\ArticleDTO;
+use ArthurHoaro\RssCruncherApiBundle\ApiEntity\UserFeedDTO;
+use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
 use ArthurHoaro\RssCruncherApiBundle\Entity\Feed;
 use ArthurHoaro\RssCruncherApiBundle\Entity\FeedRepository;
 use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeed;
 use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeedRepository;
+use ArthurHoaro\RssCruncherApiBundle\Exception\FeedNotFoundException;
 use ArthurHoaro\RssCruncherApiBundle\Exception\InvalidFormException;
 use ArthurHoaro\RssCruncherApiBundle\Form\FeedType;
 use ArthurHoaro\RssCruncherApiBundle\Form\UserFeedType;
 use ArthurHoaro\RssCruncherApiBundle\Handler\FeedHandler;
+use ArthurHoaro\RssCruncherApiBundle\Handler\UserFeedHandler;
 use ArthurHoaro\RssCruncherClientBundle\Entity\Client;
 use ArthurHoaro\RssCruncherClientBundle\Helper\ClientHelper;
 use FOS\RestBundle\Controller\Annotations;
@@ -61,7 +65,7 @@ class FeedController extends ApiController {
         $userFeeds = $userFeedRepository->findByProxyUser($this->getProxyUser());
         $apiFeeds = [];
         foreach ($userFeeds as $feed) {
-            $apiFeeds[] = (new FeedDTO())->setEntity($feed);
+            $apiFeeds[] = (new UserFeedDTO())->setEntity($feed);
         }
 
         return $apiFeeds;
@@ -135,7 +139,7 @@ class FeedController extends ApiController {
      *
      * @return FormTypeInterface|View
      */
-    public function postFeedsAction(Request $request)
+    public function postFeedAction(Request $request)
     {
         try {
             $handler = $this->get('arthur_hoaro_rss_cruncher_api.user_feed.handler');
@@ -331,23 +335,37 @@ class FeedController extends ApiController {
      *
      * @param int     $id      the feed id
      *
-     * @return array
+     * @return ArticleDTO[]
      *
      */
     public function getFeedRefreshAction($id) {
-        $items = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->refreshFeed(
-            $id,
-            $this->container->get('debril.reader')
+        $userFeedHandler = $this->get('arthur_hoaro_rss_cruncher_api.user_feed.handler');
+        $feedHandler = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler');
+        /** @var UserFeed $userFeed */
+        $userFeed = $userFeedHandler->get($id);
+        if (empty($userFeed)) {
+            throw new FeedNotFoundException($id);
+        }
+
+        $items = $feedHandler->refreshFeed(
+            $userFeed->getFeed(),
+            $this->container->get('feedio')
         );
 
         $validator = $this->get('validator');
 
-        foreach($items as $item) {
-            if( count($validator->validate($item)) == 0 ) {
+        foreach ($items as $item) {
+            if (count($validator->validate($item)) == 0) {
                 $articles[] = $this->container->get('arthur_hoaro_rss_cruncher_api.article.handler')->save($item);
             }
         }
 
-        return $items;
+        $feedHandler->updateDateFetch($userFeed->getFeed());
+
+        $out = [];
+        foreach ($articles as $v) {
+            $out[] = (new ArticleDTO())->setEntity($v, $userFeed);
+        }
+        return $out;
     }
 }

@@ -3,10 +3,9 @@
 namespace ArthurHoaro\RssCruncherApiBundle\ApiEntity;
 
 use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeed;
-use ArthurHoaro\RssCruncherApiBundle\Model\IEntity;
 
 
-class FeedDTO implements IApiEntity
+class UserFeedDTO implements IApiEntity
 {
     /**
      * @var integer
@@ -41,7 +40,7 @@ class FeedDTO implements IApiEntity
     /**
      * @param UserFeed $userFeed
      *
-     * @return FeedDTO
+     * @return UserFeedDTO
      */
     public function setEntity($userFeed) {
         $this->setId($userFeed->getId());

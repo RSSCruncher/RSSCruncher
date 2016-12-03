@@ -1,17 +1,19 @@
 <?php
-/**
- * FeedControllerTest.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Tests\Controller;
 
 use ArthurHoaro\RssCruncherApiBundle\Exception\FeedNotParsedException;
 use ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity\LoadArticleFeedArray;
 use ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity\LoadBasicFeedsArticlesData;
-use Debril\RssAtomBundle\Driver\DriverUnreachableResourceException;
+use Debril\RssAtomBundle\Exception\DriverUnreachableResourceException;
+use Symfony\Bundle\FrameworkBundle\Client;
 
 class FeedControllerTest extends ControllerTest {
+
+    /**
+     * @var Client
+     */
+    protected $client;
 
     public function setUp()
     {
@@ -166,7 +168,7 @@ class FeedControllerTest extends ControllerTest {
         $feeds = LoadBasicFeedsArticlesData::$feeds;
         $feedId = $feeds[LoadArticleFeedArray::VALID]->getId();
 
-        $route =  $this->getUrl('api_1_refresh_feed', array('id' => $feedId, '_format' => 'json'));
+        $route =  $this->getUrl('api_1_get_feed_refresh', array('id' => $feedId, '_format' => 'json'));
 
         $this->setUp();
         $this->client->request(
@@ -187,7 +189,7 @@ class FeedControllerTest extends ControllerTest {
     public function testJsonRefreshNotExistingFeed()
     {
         $feedId = -1;
-        $route =  $this->getUrl('api_1_refresh_feed', array('id' => $feedId, '_format' => 'json'));
+        $route =  $this->getUrl('api_1_get_feed_refresh', array('id' => $feedId, '_format' => 'json'));
 
         $this->setUp();
         $this->client->request(
@@ -205,7 +207,7 @@ class FeedControllerTest extends ControllerTest {
         $feeds = LoadBasicFeedsArticlesData::$feeds;
         $feedId = $feeds[LoadArticleFeedArray::DUMMY]->getId();
 
-        $route =  $this->getUrl('api_1_refresh_feed', array('id' => $feedId, '_format' => 'json'));
+        $route =  $this->getUrl('api_1_get_feed_refresh', array('id' => $feedId, '_format' => 'json'));
 
         $this->setUp();
         $this->client->request(
@@ -227,7 +229,7 @@ class FeedControllerTest extends ControllerTest {
         $feeds = LoadBasicFeedsArticlesData::$feeds;
         $feedId = $feeds[LoadArticleFeedArray::NOT_PARSABLE]->getId();
 
-        $route =  $this->getUrl('api_1_refresh_feed', array('id' => $feedId, '_format' => 'json'));
+        $route =  $this->getUrl('api_1_get_feed_refresh', array('id' => $feedId, '_format' => 'json'));
 
         $this->setUp();
         $this->client->request(
@@ -253,7 +255,7 @@ class FeedControllerTest extends ControllerTest {
         $this->client->request(
             'PATCH',
             $route,
-            $route,
+            [],
             array(),
             array(),
             array('CONTENT_TYPE' => 'application/json'),
@@ -265,7 +267,7 @@ class FeedControllerTest extends ControllerTest {
         $this->client->request('GET', $route, array('ACCEPT' => 'application/json'));
         $this->assertJsonResponse($this->client->getResponse(), 200);
 
-        $route = $this->getUrl('api_1_refresh_feed', array('id' => $feedId, '_format' => 'json'));
+        $route = $this->getUrl('api_1_get_feed_refresh', array('id' => $feedId, '_format' => 'json'));
         $this->client->request('PATCH', $route, array('ACCEPT' => 'application/json'));
         $this->assertJsonResponse($this->client->getResponse(), 200);
     }

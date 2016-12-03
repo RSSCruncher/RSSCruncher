@@ -10,7 +10,7 @@ use JMS\Serializer\Annotation\Exclude;
 /**
  * Article
  *
- * @ORM\Table()
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="feed_public_id", columns={"feed_id", "public_id"})})
  * @ORM\Entity(repositoryClass="ArthurHoaro\RssCruncherApiBundle\Entity\ArticleRepository")
  *
  * @ExclusionPolicy("none")
@@ -27,9 +27,9 @@ class Article implements IEntity
     private $id;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="publicId", type="integer", nullable=true, unique=true)
+     * @ORM\Column(name="public_id", type="text", nullable=true, unique=true)
      */
     private $publicId;
 
@@ -62,11 +62,19 @@ class Article implements IEntity
     private $summary;
 
     /**
-     * @var string
+     * @var ArticleContent[]
      *
-     * @ORM\Column(name="content", type="text", nullable=true)
+     * @ORM\OneToMany(targetEntity="ArticleContent", mappedBy="article", cascade={"persist", "remove"}, fetch="EXTRA_LAZY")
+     * @ORM\OrderBy({"date" = "ASC"})
+     *
+     * @Exclude
      */
-    private $content;
+    protected $articleContents;
+
+    /**
+     * @var string Last article content (API rendering).
+     */
+    protected $articleContent;
 
     /**
      * @var string
@@ -225,26 +233,50 @@ class Article implements IEntity
     }
 
     /**
-     * Set content
-     *
-     * @param string $content
-     * @return Article
+     * @return ArticleContent
      */
-    public function setContent($content)
+    public function getArticleContents()
     {
-        $this->content = $content;
-
-        return $this;
+        return $this->articleContents;
     }
 
     /**
-     * Get content
-     *
-     * @return string 
+     * @return String
      */
-    public function getContent()
+    public function getArticleContent()
     {
-        return $this->content;
+        $ac = $this->getLastArticleContent();
+        if (! empty($ac)) {
+            return $ac->getContent();
+        }
+        return null;
+    }
+
+    /**
+     * @return ArticleContent
+     */
+    public function getLastArticleContent()
+    {
+        if (count($this->articleContents) > 0) {
+            return $this->articleContents[count($this->articleContents) - 1];
+        }
+        return null;
+    }
+
+    /**
+     * @param ArticleContent $articleContents
+     */
+    public function setArticleContents($articleContents)
+    {
+        $this->articleContents = $articleContents;
+    }
+
+    /**
+     * @param ArticleContent $articleContent
+     */
+    public function addArticleContent($articleContent)
+    {
+        $this->articleContents[] = $articleContent;
     }
 
     /**

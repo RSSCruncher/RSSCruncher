@@ -1,8 +1,4 @@
 <?php
-/**
- * LoadBasicFeedsArticlesData.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity;
 
@@ -18,10 +14,8 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
     public function load(ObjectManager $manager)
     {
         $feed = new Feed();
-        $feed->setSitename('sitename');
-        $feed->setSiteurl('http://siteurl.tld');
-        $feed->setFeedname('feedname');
-        $feed->setFeedurl('http://feedurl.tld');
+        $feed->setFeedurl('https://feedurl.tld');
+        $feed->setHttps(true);
 
         $manager->persist($feed);
         $manager->flush();
@@ -70,20 +64,16 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         self::$articles[] = $article;
 
         $feed = new Feed();
-        $feed->setSitename('hoaro');
-        $feed->setSiteurl('http://hoa.ro');
-        $feed->setFeedname('hoaro feed');
         $feed->setFeedurl('http://hoa.ro/feed.php?rss');
+        $feed->setHttps(false);
 
         $manager->persist($feed);
         $manager->flush();
         self::$feeds[LoadArticleFeedArray::VALID] = $feed;
 
         $feed = new Feed();
-        $feed->setSitename('notparsable');
-        $feed->setSiteurl('http://hoa.ro');
-        $feed->setFeedname('hoaro not the feed');
         $feed->setFeedurl('http://hoa.ro');
+        $feed->setHttps(false);
 
         $manager->persist($feed);
         $manager->flush();

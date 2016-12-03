@@ -80,6 +80,13 @@ class Feed implements IEntity
      */
     protected $dateModification;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_fetch", type="datetime", nullable=true)
+     */
+    protected $dateFetch;
+
     function __construct()
     {
         $this->enabled = true;
@@ -197,5 +204,37 @@ class Feed implements IEntity
     public function getDateCreation()
     {
         return $this->dateCreation;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateModification()
+    {
+        return $this->dateModification;
+    }
+
+    /**
+     * @param \DateTime $dateModification
+     */
+    public function setDateModification($dateModification)
+    {
+        $this->dateModification = $dateModification;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateFetch()
+    {
+        return $this->dateFetch;
+    }
+
+    /**
+     * @param \DateTime $dateFetch
+     */
+    public function setDateFetch($dateFetch)
+    {
+        $this->dateFetch = $dateFetch;
     }
 }

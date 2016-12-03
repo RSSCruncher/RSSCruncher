@@ -1,14 +1,12 @@
 <?php
-/**
- * ArticleConverter.php
- * Author: arthur
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Helper;
 
 
 use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
-use Debril\RssAtomBundle\Protocol\Parser\Item;
+use ArthurHoaro\RssCruncherApiBundle\Entity\ArticleContent;
+use FeedIo\Feed\Item;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Class ArticleConverter
@@ -19,17 +17,34 @@ class ArticleConverter {
      * Convert an ItemOut to an Article
      *
      * @param Item $originalArticle
+     *
      * @return Article
      */
     public static function convertFromRemote(Item $originalArticle) {
         $convertedArticle = new Article();
-        $convertedArticle->setTitle( (string) $originalArticle->getTitle() );
-        $convertedArticle->setLink( (string) $originalArticle->getLink() );
-        $convertedArticle->setSummary( (string) $originalArticle->getSummary() );
-        $convertedArticle->setContent( (string) $originalArticle->getDescription() );
-        $convertedArticle->setPublicationDate( $originalArticle->getUpdated() );
-        $convertedArticle->setAuthorName( (string) $originalArticle->getAuthor() );
-        $convertedArticle->setPublicId( (empty($originalArticle->getPublicId())) ? (int) $originalArticle->getPublicId() : null );
+        foreach ($originalArticle->getAllElements() as $element) {
+            switch ($element->getName()) {
+                case 'published':
+                    $dt = \DateTime::createFromFormat(\DateTime::ISO8601, $element->getValue());
+                    $convertedArticle->setPublicationDate($dt);
+                    break;
+                case 'author':
+                    $convertedArticle->setAuthorName($element->getValue());
+                    break;
+            }
+        }
+        $convertedArticle->setTitle($originalArticle->getTitle());
+        $convertedArticle->setLink($originalArticle->getLink());
+        $convertedArticle->setModificationDate($originalArticle->getLastModified());
+        $id = ! empty($originalArticle->getPublicId()) ? $originalArticle->getPublicId() : null;
+        $convertedArticle->setPublicId($id);
+
+        $content = new ArticleContent();
+        $content->setArticle($convertedArticle);
+        $content->setDate(new \DateTime());
+        $content->setContent($originalArticle->getDescription());
+        $convertedArticle->addArticleContent($content);
+
         return $convertedArticle;
     }
 
@@ -39,21 +54,43 @@ class ArticleConverter {
      * @param Article $previous
      * @param Article $updated
      * @param bool $clearEmpty (default: false) - set to true to erase old data if newer is blank
+     *
      * @return Article - previous updated
      */
     public static function convertFromPrevious(Article $previous, Article $updated, $clearEmpty = false) {
-        if( !empty($updated->getTitle()) || $clearEmpty )
+        if (! empty($updated->getTitle()) || $clearEmpty) {
             $previous->setTitle($updated->getTitle());
-        if( !empty($updated->getLink()) || $clearEmpty )
+        }
+        if (! empty($updated->getLink()) || $clearEmpty) {
             $previous->setLink($updated->getLink());
-        if( !empty($updated->getSummary()) || $clearEmpty )
+        }
+        if (! empty($updated->getSummary()) || $clearEmpty) {
             $previous->setSummary($updated->getSummary());
-        if( !empty($updated->getContent()) || $clearEmpty )
-            $previous->setContent($updated->getContent());
-        if( !empty($updated->getModificationDate()) || $clearEmpty )
+        }
+        if (! empty($updated->getModificationDate()) || $clearEmpty) {
             $previous->setModificationDate($updated->getModificationDate());
-        if( !empty($updated->getAuthorName()) || $clearEmpty )
+        }
+        if (! empty($updated->getAuthorName()) || $clearEmpty) {
             $previous->setAuthorName($updated->getAuthorName());
+        }
+
+        // If empty content and erase => save blank
+        if (empty($updated->getLastArticleContent()) && $clearEmpty) {
+            $content = new ArticleContent();
+            $content->setContent(null);
+            $content->setDate(new \DateTime());
+            $content->setArticle($previous);
+            $previous->addArticleContent($content);
+        }
+        // If content different, save new content.
+        else if (
+            empty($previous->getLastArticleContent())
+            || $updated->getLastArticleContent()->getContent() !== $previous->getLastArticleContent()->getContent()
+        ) {
+            $ac = $updated->getLastArticleContent();
+            $ac->setArticle($previous);
+            $previous->addArticleContent($ac);
+        }
 
         return $previous;
     }
