@@ -381,16 +381,16 @@
         },
         {
             "name": "doctrine/common",
-            "version": "v2.6.1",
+            "version": "v2.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/common.git",
-                "reference": "a579557bc689580c19fee4e27487a67fe60defc0"
+                "reference": "7bce00698899aa2c06fe7365c76e4d78ddb15fa3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/common/zipball/a579557bc689580c19fee4e27487a67fe60defc0",
-                "reference": "a579557bc689580c19fee4e27487a67fe60defc0",
+                "url": "https://api.github.com/repos/doctrine/common/zipball/7bce00698899aa2c06fe7365c76e4d78ddb15fa3",
+                "reference": "7bce00698899aa2c06fe7365c76e4d78ddb15fa3",
                 "shasum": ""
             },
             "require": {
@@ -450,7 +450,7 @@
                 "persistence",
                 "spl"
             ],
-            "time": "2015-12-25 13:18:31"
+            "time": "2016-11-30 16:50:46"
         },
         {
             "name": "doctrine/dbal",
@@ -1122,12 +1122,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSRestBundle.git",
-                "reference": "4008820bf6a3474e088cd3c41a90e4f143e54b6f"
+                "reference": "6731a0603043ae251eeec9dde0be3abe6de68a9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSRestBundle/zipball/4008820bf6a3474e088cd3c41a90e4f143e54b6f",
-                "reference": "4008820bf6a3474e088cd3c41a90e4f143e54b6f",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSRestBundle/zipball/6731a0603043ae251eeec9dde0be3abe6de68a9d",
+                "reference": "6731a0603043ae251eeec9dde0be3abe6de68a9d",
                 "shasum": ""
             },
             "require": {
@@ -1157,12 +1157,13 @@
                 "phpoption/phpoption": "^1.1",
                 "psr/http-message": "^1.0",
                 "sensio/framework-extra-bundle": "^3.0.13",
+                "symfony/asset": "^2.7|^3.0",
                 "symfony/browser-kit": "^2.7|^3.0",
                 "symfony/css-selector": "^2.7|^3.0",
                 "symfony/dependency-injection": "^2.7|^3.0",
                 "symfony/expression-language": "~2.7|^3.0",
                 "symfony/form": "^2.7|^3.0",
-                "symfony/phpunit-bridge": "~2.7|^3.0",
+                "symfony/phpunit-bridge": "^3.2",
                 "symfony/security-bundle": "^2.7|^3.0",
                 "symfony/serializer": "^2.7.11|^3.0.4",
                 "symfony/twig-bundle": "^2.7|^3.0",
@@ -1211,7 +1212,7 @@
             "keywords": [
                 "rest"
             ],
-            "time": "2016-11-25 16:40:44"
+            "time": "2016-12-02 20:54:12"
         },
         {
             "name": "friendsofsymfony/user-bundle",
@@ -1219,12 +1220,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "28151dcb25de663c05ce26917fd6a0b5cb2787cf"
+                "reference": "507ae09e95788d23e8cdbd1b3c23b5c46dc8b5a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/28151dcb25de663c05ce26917fd6a0b5cb2787cf",
-                "reference": "28151dcb25de663c05ce26917fd6a0b5cb2787cf",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/507ae09e95788d23e8cdbd1b3c23b5c46dc8b5a1",
+                "reference": "507ae09e95788d23e8cdbd1b3c23b5c46dc8b5a1",
                 "shasum": ""
             },
             "require": {
@@ -1233,6 +1234,7 @@
                 "symfony/form": "^2.7 || ^3.0",
                 "symfony/framework-bundle": "^2.7 || ^3.0",
                 "symfony/security-bundle": "^2.7 || ^3.0",
+                "symfony/templating": "^2.7 || ^3.0",
                 "symfony/twig-bundle": "^2.7 || ^3.0"
             },
             "conflict": {
@@ -1285,7 +1287,7 @@
             "keywords": [
                 "User management"
             ],
-            "time": "2016-11-29 14:53:27"
+            "time": "2016-12-02 11:20:52"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -3468,12 +3470,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/liip/LiipFunctionalTestBundle.git",
-                "reference": "9f0f04a899dd1c643dd4ae1c7ef0c01fb73ff592"
+                "reference": "e75c1315db4c6976177d89398d51e788874835c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/liip/LiipFunctionalTestBundle/zipball/9f0f04a899dd1c643dd4ae1c7ef0c01fb73ff592",
-                "reference": "9f0f04a899dd1c643dd4ae1c7ef0c01fb73ff592",
+                "url": "https://api.github.com/repos/liip/LiipFunctionalTestBundle/zipball/e75c1315db4c6976177d89398d51e788874835c0",
+                "reference": "e75c1315db4c6976177d89398d51e788874835c0",
                 "shasum": ""
             },
             "require": {
@@ -3535,7 +3537,7 @@
             "keywords": [
                 "Symfony2"
             ],
-            "time": "2016-10-20 20:59:57"
+            "time": "2016-12-01 12:52:26"
         },
         {
             "name": "myclabs/deep-copy",

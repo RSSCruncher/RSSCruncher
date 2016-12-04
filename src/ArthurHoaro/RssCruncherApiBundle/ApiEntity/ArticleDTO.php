@@ -61,9 +61,6 @@ class ArticleDTO implements IApiEntity
      */
     protected $feed;
 
-    // WTF??? reflection fatal error without this...
-    public $userFeed = null;
-
     /**
      * Create an ArticleDTO using an Article entity.
      *

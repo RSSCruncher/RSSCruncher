@@ -45,7 +45,7 @@ class FeedRepository extends EntityRepository
             return $feed;
         }
 
-        return $this->createFeed($url, $urlObj->isHttps());
+        return $this->createFeed($cleanUrl, $urlObj->isHttps());
     }
 
     /**

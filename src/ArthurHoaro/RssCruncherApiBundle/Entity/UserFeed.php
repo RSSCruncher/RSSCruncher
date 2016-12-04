@@ -20,7 +20,10 @@ use JMS\Serializer\Annotation\Exclude;
  * FIXME! to share labels between apps and add another table to link UserFeed and ProxyUser.
  *
  * @ORM\Entity
- * @ORM\Table(name="user_feed")
+ * @ORM\Table(
+ *     name="user_feed",
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="user_feed_unique", columns={"feed_id", "proxyuser_id"})}
+ * )
  *
  * @ExclusionPolicy("none")
  */

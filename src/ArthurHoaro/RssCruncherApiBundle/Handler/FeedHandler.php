@@ -69,7 +69,8 @@ class FeedHandler extends GenericHandler {
      * @throws \Exception            DB error.
      */
     public function refreshFeed(Feed $feed, FeedIo $reader) {
-        $feedUrl = $feed->getFeedurl();
+        $feedUrl = $feed->isHttps() ? 'https' : 'http';
+        $feedUrl .= $feed->getFeedurl();
         try {
             $readFeed = $reader->read($feedUrl);
         } catch (\Exception $e) {

@@ -9,6 +9,7 @@ use ArthurHoaro\RssCruncherApiBundle\Entity\Feed;
 use ArthurHoaro\RssCruncherApiBundle\Entity\FeedRepository;
 use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeed;
 use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeedRepository;
+use ArthurHoaro\RssCruncherApiBundle\Exception\FeedExistsException;
 use ArthurHoaro\RssCruncherApiBundle\Exception\FeedNotFoundException;
 use ArthurHoaro\RssCruncherApiBundle\Exception\InvalidFormException;
 use ArthurHoaro\RssCruncherApiBundle\Form\FeedType;
@@ -152,20 +153,24 @@ class FeedController extends ApiController {
     {
         try {
             $handler = $this->get('arthur_hoaro_rss_cruncher_api.user_feed.handler');
-            /** @var UserFeed $entity */
-            $entity = $handler->post($request->request->all());
-            $entity->setProxyUser($this->getProxyUser());
-
-            // Save
-            $this->getDoctrine()->getManager()->persist($entity);
-            $this->getDoctrine()->getManager()->flush();
+            $handler->setProxyUser($this->getProxyUser());
 
             $response = new Response();
-            $response->setStatusCode(Response::HTTP_CREATED);
+
+            try {
+                $entity = $handler->post($request->request->all());
+            } catch (FeedExistsException $e) {
+                $response->setStatusCode(Response::HTTP_CONFLICT);
+                $serializer = $this->container->get('jms_serializer');
+                $format = $serializer->serialize($e->getFeed(), 'json');
+                $response->setContent($format);
+                return $response;
+            }
 
             $pms = $this->container->get('arthur_hoaro_rss_cruncher_api.queue_manager')->getManager();
             $pms->send($entity, 'update');
 
+            $response->setStatusCode(Response::HTTP_CREATED);
             return $response;
         } catch (InvalidFormException $exception) {
             return $exception->getForm();
