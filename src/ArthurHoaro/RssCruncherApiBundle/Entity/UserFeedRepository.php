@@ -2,7 +2,7 @@
 
 namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 
-
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -27,14 +27,19 @@ class UserFeedRepository extends EntityRepository
      */
     public function findByProxyUser($proxyUser, $limit = 0, $offset = 0)
     {
-        $dql  = 'SELECT f FROM ArthurHoaroRssCruncherApiBundle:UserFeed f ';
-        $dql .= 'JOIN f.proxyUsers pu ';
-        $dql .= 'WHERE pu.client = :client AND pu.user = :user ';
-        $dql .= 'AND enabled = true ';
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('f')
+            ->from('ArthurHoaroRssCruncherApiBundle:UserFeed', 'f')
+            ->join('ArthurHoaroRssCruncherApiBundle:ProxyUser', 'pu')
+            ->where('pu.client = :client AND pu.user = :user')
+            ->orderBy('f.dateCreation', 'DESC')
+            ->setParameter('client', $proxyUser->getClient())
+            ->setParameter('user', $proxyUser->getUser())
+            ->setFirstResult($offset);
 
-        $query = $this->_em->createQuery($dql);
-        $query->setParameter('client', $proxyUser->getClient());
-        $query->setParameter('user', $proxyUser->getUser());
-        return $query->getResult();
+        if ($limit > 0) {
+            $qb->setMaxResults($limit);
+        }
+        return $qb->getQuery()->getResult();
     }
 }

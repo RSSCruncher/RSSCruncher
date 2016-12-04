@@ -3,6 +3,8 @@
 namespace ArthurHoaro\RssCruncherClientBundle\Controller;
 
 
+use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser;
+use ArthurHoaro\RssCruncherApiBundle\Handler\ProxyUserHandler;
 use ArthurHoaro\RssCruncherClientBundle\Entity\Client;
 use ArthurHoaro\RssCruncherClientBundle\Form\ClientType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -48,6 +50,11 @@ class ClientController extends Controller
         if ($form->isValid()) {
             $clientManager = $this->get('fos_oauth_server.client_manager.default');
             $clientManager->updateClient($entity);
+
+            /** @var ProxyUserHandler $handler */
+            $handler = $this->container->get('arthur_hoaro_rss_cruncher_api.proxy_user.handler');
+            $handler->createUser($entity, $this->getUser());
+
             return $this->redirect(
                 $this->generateUrl(
                     'arthur_hoaro_rss_cruncher_client_show',

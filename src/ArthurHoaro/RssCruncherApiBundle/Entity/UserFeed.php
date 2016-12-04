@@ -24,6 +24,7 @@ use JMS\Serializer\Annotation\Exclude;
  *     name="user_feed",
  *     uniqueConstraints={@ORM\UniqueConstraint(name="user_feed_unique", columns={"feed_id", "proxyuser_id"})}
  * )
+ * @ORM\Entity(repositoryClass="ArthurHoaro\RssCruncherApiBundle\Entity\UserFeedRepository")
  *
  * @ExclusionPolicy("none")
  */

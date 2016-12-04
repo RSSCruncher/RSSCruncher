@@ -1,0 +1,16 @@
+parameters:
+    database_driver: pdo_pgsql
+    database_host: 127.0.0.1
+    database_port: 5432
+    database_name: rssapiut
+    database_user: postgres
+    database_password: null
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: null
+    mailer_password: null
+    locale: en
+    secret: VLgPfzA1B7P7Qj35q47Dqb9ifoxrH7lI
+    debug_toolbar: true
+    debug_redirects: false
+    use_assetic_controller: true

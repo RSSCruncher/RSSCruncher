@@ -36,11 +36,11 @@ class Client extends BaseClient
     protected $name;
 
     /**
-     * @var ProxyUser[]
+     * @var ProxyUser
      *
-     * @ORM\OneToMany(targetEntity="ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser", mappedBy="client")
+     * @ORM\OneToOne(targetEntity="ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser", mappedBy="client")
      */
-    protected $proxyUsers;
+    protected $proxyUser;
 
     /**
      * Get id
@@ -119,19 +119,22 @@ class Client extends BaseClient
     }
 
     /**
-     * @return \ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser[]
+     * Get the ProxyUser.
+     *
+     * @return ProxyUser
      */
-    public function getProxyUsers()
+    public function getProxyUser(): ProxyUser
     {
-        return $this->proxyUsers;
+        return $this->proxyUser;
     }
 
     /**
-     * @param \ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser[] $proxyUsers
+     * Set the ProxyUser.
+     *
+     * @param ProxyUser $proxyUser
      */
-    public function setProxyUsers($proxyUsers)
+    public function setProxyUser(ProxyUser $proxyUser)
     {
-        $this->proxyUsers = $proxyUsers;
+        $this->proxyUser = $proxyUser;
     }
 }
-

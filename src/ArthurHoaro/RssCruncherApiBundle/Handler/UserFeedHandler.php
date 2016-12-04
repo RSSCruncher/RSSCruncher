@@ -34,7 +34,7 @@ class UserFeedHandler extends GenericHandler {
      *
      * @return UserFeed with a valid feed atteched.
      *
-     * @throws \Exception UserProxy must be set.
+     * @throws \Exception ProxyUser must be set.
      */
     public function post(array $parameters) {
         if (empty($this->proxyUser)) {

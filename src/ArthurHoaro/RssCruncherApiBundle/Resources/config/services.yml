@@ -8,6 +8,7 @@ parameters:
   arthur_hoaro_rss_cruncher_api.article.handler.class: '%arthur_hoaro_rss_cruncher_api.handler.package%ArticleHandler'
   arthur_hoaro_rss_cruncher_api.article.class: '%arthur_hoaro_rss_cruncher_api.entity.package%Article'
   arthur_hoaro_rss_cruncher_api.article.type.class: '%arthur_hoaro_rss_cruncher_api.type.package%ArticleType'
+  arthur_hoaro_rss_cruncher_api.article.type.class: '%arthur_hoaro_rss_cruncher_api.type.package%ArticleType'
   arthur_hoaro_rss_cruncher_api.proxy_user.handler.class: '%arthur_hoaro_rss_cruncher_api.handler.package%ProxyUserHandler'
   arthur_hoaro_rss_cruncher_api.proxy_user.class: '%arthur_hoaro_rss_cruncher_api.entity.package%ProxyUser'
   arthur_hoaro_rss_cruncher_api.access_token.handler.class: '%arthur_hoaro_rss_cruncher_api.handler.package%AccessTokenHandler'

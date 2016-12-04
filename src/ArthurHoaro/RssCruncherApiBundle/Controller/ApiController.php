@@ -4,6 +4,7 @@ namespace ArthurHoaro\RssCruncherApiBundle\Controller;
 
 
 use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser;
+use ArthurHoaro\RssCruncherApiBundle\Exception\UserNotFoundException;
 use ArthurHoaro\RssCruncherApiBundle\Handler\AccessTokenHandler;
 use ArthurHoaro\RssCruncherApiBundle\Handler\ProxyUserHandler;
 use FOS\RestBundle\Controller\FOSRestController;
@@ -12,7 +13,7 @@ use FOS\RestBundle\Controller\FOSRestController;
  * Class ApiController
  *
  * Main abstract class for all API controllers.
- * Used for common helper functions, such as retrieving a UserProxy.
+ * Used for common helper functions, such as retrieving a ProxyUser.
  *
  * @package ArthurHoaro\RssCruncherApiBundle\Controller
  */
@@ -48,6 +49,13 @@ abstract class ApiController extends FOSRestController
      */
     protected function getProxyUser()
     {
+        // FIXME! Test code in core is a bad practice
+        // Firewalls are disabled in test env, so we retrieve the first ProxyUser
+        if ($this->get('kernel')->getEnvironment() === 'test') {
+            $handler = $this->container->get('arthur_hoaro_rss_cruncher_api.proxy_user.handler');
+            return $handler->all(1)[0];
+        }
+
         /** @var AccessTokenHandler $tokenHandler */
         $tokenHandler = $this->container->get('arthur_hoaro_rss_cruncher_api.access_token.handler');
         /** @var ProxyUserHandler $handler */
@@ -58,15 +66,20 @@ abstract class ApiController extends FOSRestController
             throw new \Exception('AccesToken not found');
         }
 
-        $proxyUser = $handler->getByToken($token);
+        // User isn't set if the app uses client_credentials grant access.
+        if (empty($token->getUser())) {
+            $repository = $this->getDoctrine()->getManager()->getRepository(ProxyUser::class);
+            $proxyUser = $repository->findOneBy(['client' => $token->getClient()]);
+            if (! empty($proxyUser)) {
+                return $proxyUser;
+            }
+        }
+
+        $proxyUser = $handler->getByToken($token->getUser(), $token->getClient());
         if (! empty($proxyUser)) {
             return $proxyUser;
         }
 
-        $proxyUser = $handler->createUser($token->getClient(), $token->getUser());
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($proxyUser);
-        $em->flush();
-        return $proxyUser;
+        throw new UserNotFoundException();
     }
 }

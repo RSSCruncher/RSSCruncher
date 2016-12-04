@@ -7,7 +7,7 @@ use ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity\LoadArticleFeedArray;
 
 class ArticleControllerTest extends ControllerTest {
 
-    protected $client;
+    /*protected $client;
 
     public function setUp()
     {
@@ -204,5 +204,5 @@ class ArticleControllerTest extends ControllerTest {
         );
 
         $this->assertJsonResponse($this->client->getResponse(), 204, false, false);
-    }
+    }*/
 } 

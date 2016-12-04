@@ -7,6 +7,7 @@ use ArthurHoaro\RssCruncherApiBundle\ApiEntity\UserFeedDTO;
 use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
 use ArthurHoaro\RssCruncherApiBundle\Entity\Feed;
 use ArthurHoaro\RssCruncherApiBundle\Entity\FeedRepository;
+use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser;
 use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeed;
 use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeedRepository;
 use ArthurHoaro\RssCruncherApiBundle\Exception\FeedExistsException;
@@ -61,18 +62,17 @@ class FeedController extends ApiController {
      * @param Request               $request      the request object
      * @param ParamFetcherInterface $paramFetcher param fetcher service
      *
-     * @return UserFeedDTO[] List of UserFeeds entities formatted for the API (UserFeedDTO).
+     * @return ProxyUser List of UserFeeds entities formatted for the API (UserFeedDTO).
      */
     public function getFeedsAction(Request $request, ParamFetcherInterface $paramFetcher)
     {
-        $offset = $paramFetcher->get('offset');
-        $offset = null == $offset ? 0 : $offset;
-        $limit = $paramFetcher->get('limit');
+        $offset = null == $paramFetcher->get('offset') ? 0 : (int) $paramFetcher->get('offset');
+        $limit = null == $paramFetcher->get('limit') ? 0 : (int) $paramFetcher->get('limit');
 
         $em = $this->getDoctrine()->getManager();
         /** @var UserFeedRepository $feedRepository */
         $userFeedRepository = $em->getRepository(UserFeed::class);
-        $userFeeds = $userFeedRepository->findByProxyUser($this->getProxyUser());
+        $userFeeds = $userFeedRepository->findByProxyUser($this->getProxyUser(), $limit, $offset);
         $apiFeeds = [];
         foreach ($userFeeds as $feed) {
             $apiFeeds[] = (new UserFeedDTO())->setEntity($feed);

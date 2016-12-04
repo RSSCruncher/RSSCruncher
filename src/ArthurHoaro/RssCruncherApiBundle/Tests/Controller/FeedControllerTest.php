@@ -8,35 +8,30 @@ use ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity\LoadBasicFeedsArticle
 use Debril\RssAtomBundle\Exception\DriverUnreachableResourceException;
 use Symfony\Bundle\FrameworkBundle\Client;
 
-class FeedControllerTest extends ControllerTest {
+class FeedControllerTest extends ControllerTest
+{
 
     /**
      * @var Client
      */
     protected $client;
 
+    /**
+     *
+     */
     public function setUp()
     {
-        $this->auth = array(
-            'PHP_AUTH_USER' => 'user',
-            'PHP_AUTH_PW'   => 'userpass',
-        );
-
-        $this->client = static::createClient(array(), $this->auth);
-    }
-
-    public function customSetUp($fixtures)
-    {
+        $fixtures = array('ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity\LoadBasicFeedsArticlesData');
         $this->client = static::createClient();
         $this->loadFixtures($fixtures);
     }
 
+    /**
+     *
+     */
     public function testJsonGetFeedAction()
     {
-        $fixtures = array('ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity\LoadBasicFeedsArticlesData');
-        $this->customSetUp($fixtures);
-        $feeds = LoadBasicFeedsArticlesData::$feeds;
-        $feed = array_pop($feeds);
+        $feed = LoadBasicFeedsArticlesData::$feeds[LoadArticleFeedArray::DUMMY];
 
         $route =  $this->getUrl('api_1_get_feed', array('id' => $feed->getId(), '_format' => 'json'));
 
@@ -46,18 +41,15 @@ class FeedControllerTest extends ControllerTest {
         $content = $response->getContent();
 
         $decoded = json_decode($content, true);
-        $this->assertTrue(!empty($decoded['id']) && $decoded['id'] == $feed->getId());
+        $this->assertEquals($feed->getId(), $decoded['id']);
 
     }
 
     public function testJsonGetFeedsAction()
     {
-        $fixtures = array('ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity\LoadBasicFeedsArticlesData');
-        $this->customSetUp($fixtures);
-        $feeds = LoadBasicFeedsArticlesData::$feeds;
+        $feed = LoadBasicFeedsArticlesData::$feeds[LoadArticleFeedArray::NOT_PARSABLE];
 
-        $offset = 1; $limit = 2;
-        $route =  $this->getUrl('api_1_get_feeds', array('offset' => $offset, 'limit' => $limit, '_format' => 'json'));
+        $route =  $this->getUrl('api_1_get_feeds');
         $this->client->request('GET', $route, array('ACCEPT' => 'application/json'));
 
         $response = $this->client->getResponse();
@@ -65,13 +57,12 @@ class FeedControllerTest extends ControllerTest {
 
         $content = $response->getContent();
         $decoded = json_decode($content, true);
-        $this->assertTrue(($decoded != null && $decoded != false), 'JSON invalid format');
-        $this->assertTrue(count($decoded) == $limit, 'Number of results is invalid');
-        $this->assertTrue(!empty($decoded[0]['id']) && $decoded[0]['id'] == $feeds[count($feeds) - 1 - $offset]->getId());
-
+        $this->assertTrue(($decoded != null && $decoded != false), 'JSON invalid format: '. $content);
+        $this->assertEquals(3, count($decoded), 'Number of results is invalid');
+        $this->assertEquals($feed->getId(), $decoded[0]['id']);
     }
 
-
+/*
     public function testJsonPostFeedAction()
     {
         $route =  $this->getUrl('api_1_post_feed', array('_format' => 'json'));
@@ -270,5 +261,5 @@ class FeedControllerTest extends ControllerTest {
         $route = $this->getUrl('api_1_get_feed_refresh', array('id' => $feedId, '_format' => 'json'));
         $this->client->request('PATCH', $route, array('ACCEPT' => 'application/json'));
         $this->assertJsonResponse($this->client->getResponse(), 200);
-    }
-} 
+    }*/
+}

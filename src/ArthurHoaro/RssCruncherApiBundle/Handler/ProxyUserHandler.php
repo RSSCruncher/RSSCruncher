@@ -13,16 +13,20 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class ProxyUserHandler extends GenericHandler
 {
     /**
-     * Retrieve a ProxyUser by token.
+     * Retrieve a ProxyUser for a given user and client.
      *
-     * @param AccessToken $accessToken
+     * @param ProxyUser $user
+     * @param Client    $client
      *
      * @return ProxyUser or null
      */
-    public function getByToken($accessToken)
+    public function getByToken(ProxyUser $user, Client $client)
     {
         //return $this->repository->findByToken($accessToken);
-        return $this->repository->findOneBy(['client' => $accessToken->getClient(), 'user' => $accessToken->getUser()]);
+        return $this->repository->findOneBy([
+            'user' => $user,
+            'client' => $client,
+        ]);
     }
 
     /**
@@ -39,6 +43,10 @@ class ProxyUserHandler extends GenericHandler
         $entity = parent::create();
         $entity->setClient($client);
         $entity->setUser($user);
+
+        $this->om->persist($entity);
+        $this->om->flush();
+
         return $entity;
     }
 }

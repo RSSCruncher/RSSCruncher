@@ -31,7 +31,7 @@ class ProxyUser implements IEntity
     /**
      * @var Client
      *
-     * @ORM\ManyToOne(targetEntity="ArthurHoaro\RssCruncherClientBundle\Entity\Client", inversedBy="proxyUsers")
+     * @ORM\OneToOne(targetEntity="ArthurHoaro\RssCruncherClientBundle\Entity\Client", inversedBy="proxyUser")
      * @ORM\JoinColumn(name="client_id", referencedColumnName="id")
      */
     protected $client;
@@ -47,7 +47,7 @@ class ProxyUser implements IEntity
     /**
      * @var Feed[]
      *
-     * @ORM\OneToMany(targetEntity="UserFeed", mappedBy="userProxy", fetch="EXTRA_LAZY")
+     * @ORM\OneToMany(targetEntity="UserFeed", mappedBy="proxyUser", fetch="EXTRA_LAZY")
      */
     protected $feeds;
 

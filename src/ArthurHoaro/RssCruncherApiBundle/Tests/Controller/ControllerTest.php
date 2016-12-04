@@ -1,16 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ahoareau
- * Date: 05/02/2015
- * Time: 14:42
- */
 
 namespace ArthurHoaro\RssCruncherApiBundle\Tests\Controller;
 
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 
 class ControllerTest extends WebTestCase {
+
+    /**
+     * @param $response
+     * @param int $statusCode
+     * @param bool $checkValidJson
+     * @param string $contentType
+     */
     protected function assertJsonResponse($response, $statusCode = 200, $checkValidJson =  true, $contentType = 'application/json')
     {
         $this->assertEquals(
@@ -32,6 +33,13 @@ class ControllerTest extends WebTestCase {
         }
     }
 
+    /**
+     * @param $response
+     * @param int $statusCode
+     * @param bool $checkValidJson
+     * @param string $contentType
+     * @param null $exceptionClass
+     */
     protected function assertJsonResponseException($response, $statusCode = 200, $checkValidJson =  true, $contentType = 'application/json', $exceptionClass = null)
     {
         $this->assertJsonResponse($response, $statusCode, false, $contentType);
