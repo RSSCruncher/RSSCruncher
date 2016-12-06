@@ -43,6 +43,13 @@ class Client extends BaseClient
     protected $proxyUser;
 
     /**
+     * @var ProxyUser[]
+     *
+     * @ORM\ManyToMany(targetEntity="FeedGroup", mappedBy="proxyUsers", fetch="EXTRA_LAZY")
+     */
+    protected $feedGroups;
+
+    /**
      * Get id
      *
      * @return integer

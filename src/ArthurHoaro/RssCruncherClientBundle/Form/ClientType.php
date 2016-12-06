@@ -3,12 +3,11 @@
 namespace ArthurHoaro\RssCruncherClientBundle\Form;
 
 
+use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class ClientType extends AbstractType
@@ -21,7 +20,7 @@ class ClientType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('redirectUri', TextType::class)
+            ->add('redirectUri', TextType::class, ['required' => false])
             ->add('allowedGrantType', ChoiceType::class, [
                 'choices' => [
                     'My application manages its user authentication'
@@ -31,6 +30,14 @@ class ClientType extends AbstractType
                 ],
                 'expanded' => true,
                 'multiple' => false,
+            ])
+            ->add('feedGroups', EntityType::class, [
+                'class' => 'ArthurHoaro\RssCruncherApiBundle\Entity\FeedGroup',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->orderBy('u.id', 'ASC');
+                },
+                'choice_label' => 'test'
             ])
             //->add('redirectUri', UrlType::class)
         ;

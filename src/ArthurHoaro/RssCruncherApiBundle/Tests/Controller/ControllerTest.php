@@ -27,8 +27,8 @@ class ControllerTest extends WebTestCase {
 
         if ($checkValidJson) {
             $decode = json_decode($response->getContent());
-            $this->assertTrue(($decode != null && $decode != false),
-                'is response valid json: [' . $response->getContent() . ']'
+            $this->assertTrue(($decode !== null && $decode !== false),
+                'is response valid json: "' . $response->getContent() . '"'
             );
         }
     }

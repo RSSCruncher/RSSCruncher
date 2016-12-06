@@ -98,12 +98,13 @@ class FeedController extends ApiController {
      *
      * @param int     $id      the feed id
      *
-     * @return array
+     * @return UserFeedDTO
      *
      * @throws NotFoundHttpException when feed not exist
      */
 	public function getFeedAction($id) {
-		return $this->getOr404($id);
+        $userFeed = $this->getOr404($id, $this->getProxyUser());
+		return (new UserFeedDTO())->setEntity($userFeed);
 	}
 
     /**
@@ -159,18 +160,19 @@ class FeedController extends ApiController {
 
             try {
                 $entity = $handler->post($request->request->all());
+                $response->setStatusCode(Response::HTTP_CREATED);
+                $content = (new UserFeedDTO())->setEntity($entity);
+
+                $pms = $this->container->get('arthur_hoaro_rss_cruncher_api.queue_manager')->getManager();
+                $pms->send($entity, 'update');
             } catch (FeedExistsException $e) {
                 $response->setStatusCode(Response::HTTP_CONFLICT);
-                $serializer = $this->container->get('jms_serializer');
-                $format = $serializer->serialize($e->getFeed(), 'json');
-                $response->setContent($format);
-                return $response;
+                $content = $e->getFeed();
             }
 
-            $pms = $this->container->get('arthur_hoaro_rss_cruncher_api.queue_manager')->getManager();
-            $pms->send($entity, 'update');
-
-            $response->setStatusCode(Response::HTTP_CREATED);
+            $serializer = $this->container->get('jms_serializer');
+            $content = $serializer->serialize($content, 'json');
+            $response->setContent($content);
             return $response;
         } catch (InvalidFormException $exception) {
             return $exception->getForm();
@@ -205,46 +207,12 @@ class FeedController extends ApiController {
     public function putFeedAction(Request $request, $id)
     {
         try {
+            $feed = $this->getOr404($id, $this->getProxyUser());
             $parameters = $request->request->all();
-            $feed = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->get($id);
-            if (! $feed) {
-                $statusCode = Response::HTTP_CREATED;
-            } else {
-                $statusCode = Response::HTTP_NO_CONTENT;
-            }
+            $handler = $this->get('arthur_hoaro_rss_cruncher_api.user_feed.handler');
+            $entity = $handler->put($feed, $parameters);
+            return (new UserFeedDTO())->setEntity($entity);
 
-            // Validate input.
-            /** @var FormInterface $form */
-            $form = $this->get('form.factory')->create(
-                UserFeedType::class,
-                new UserFeed(),
-                ['method' => 'PUT']
-            );
-            $form->submit($parameters);
-            if (! $form->isValid()) {
-                throw new InvalidFormException('Invalid submitted data', $form);
-            }
-            /** @var UserFeed $entity */
-            $entity = $form->getData();
-
-            $em = $this->getDoctrine()->getManager();
-            /** @var FeedRepository $feedRepository */
-            $feedRepository = $em->getRepository(Feed::class);
-            // Retrieve or create the existing Feed matching our feedurl.
-            $feed = $feedRepository->findByUrlOrCreate($parameters['feedurl']);
-
-            // Attach stuff
-            $entity->setFeed($feed);
-            $entity->setProxyUser($this->getProxyUser());
-
-            // Save
-            $em->persist($entity);
-            $em->flush();
-
-            $response = new Response();
-            $response->setStatusCode($statusCode);
-
-            return $response;
         } catch (InvalidFormException $exception) {
             return $exception->getForm();
         }
@@ -277,8 +245,8 @@ class FeedController extends ApiController {
     public function patchFeedAction(Request $request, $id)
     {
         try {
-            $feed = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->patch(
-                $this->getOr404($id),
+            $feed = $this->get('arthur_hoaro_rss_cruncher_api.user_feed.handler')->patch(
+                $this->getOr404($id, $this->getProxyUser()),
                 $request->request->all()
             );
 
@@ -287,7 +255,8 @@ class FeedController extends ApiController {
                 '_format' => $request->get('_format')
             );
 
-            return $this->routeRedirectView('api_1_get_feed', $routeOptions, Response::HTTP_NO_CONTENT);
+
+            return (new UserFeedDTO())->setEntity($feed);
         } catch (InvalidFormException $exception) {
             return $exception->getForm();
         }
@@ -315,19 +284,21 @@ class FeedController extends ApiController {
     /**
      * Fetch a IEntity or throw an 404 Exception.
      *
-     * @param mixed $id
+     * @param int       $id
+     * @param ProxyUser $proxyUser
      *
-     * @return Feed
+     * @return UserFeed
      *
      * @throws NotFoundHttpException
      */
-    protected function getOr404($id)
+    protected function getOr404($id, ProxyUser $proxyUser)
     {
-        $feed = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler')->get($id);
-        if (! $feed) {
+        $handler = $this->container->get('arthur_hoaro_rss_cruncher_api.user_feed.handler');
+        $feed = $handler->select($id, ['proxyUser' => $proxyUser]);
+        if (empty($feed)) {
             throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.',$id));
         }
-        return $feed;
+        return $feed[0];
     }
 
     /**
@@ -348,20 +319,22 @@ class FeedController extends ApiController {
      * @param int     $id      the feed id
      *
      * @return ArticleDTO[]
-     *
      */
-    public function getFeedRefreshAction($id) {
+    public function getFeedRefreshAction($id)
+    {
         $userFeedHandler = $this->get('arthur_hoaro_rss_cruncher_api.user_feed.handler');
         $feedHandler = $this->container->get('arthur_hoaro_rss_cruncher_api.feed.handler');
         /** @var UserFeed $userFeed */
-        $userFeed = $userFeedHandler->get($id);
+        $userFeed = $userFeedHandler->select($id);
         if (empty($userFeed)) {
             throw new FeedNotFoundException($id);
+        } else {
+            $userFeed = $userFeed[0];
         }
 
         $items = $feedHandler->refreshFeed(
             $userFeed->getFeed(),
-            $this->container->get('feedio')
+            new \SimplePie()
         );
 
         $validator = $this->get('validator');
@@ -380,5 +353,21 @@ class FeedController extends ApiController {
             $out[] = (new ArticleDTO())->setEntity($v, $userFeed);
         }
         return $out;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function deleteFeedAction($id)
+    {
+        /** @var UserFeedHandler $userFeedHandler */
+        $userFeedHandler = $this->get('arthur_hoaro_rss_cruncher_api.user_feed.handler');
+        $userFeed = $userFeedHandler->select($id, ['proxyUser' => $this->getProxyUser()]);
+        if (empty($userFeed)) {
+            throw new FeedNotFoundException($id);
+        } else {
+            $userFeed = $userFeed[0];
+        }
+        $userFeedHandler->disable($userFeed);
     }
 }

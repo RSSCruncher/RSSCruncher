@@ -3,6 +3,7 @@
 namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 
 use ArthurHoaro\RssCruncherApiBundle\Model\IEntity;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use ArthurHoaro\RssCruncherApiBundle\Entity\User;
 use ArthurHoaro\RssCruncherClientBundle\Entity\Client;
@@ -45,11 +46,11 @@ class ProxyUser implements IEntity
     protected $user;
 
     /**
-     * @var Feed[]
+     * @var ProxyUser[]
      *
-     * @ORM\OneToMany(targetEntity="UserFeed", mappedBy="proxyUser", fetch="EXTRA_LAZY")
+     * @ORM\ManyToMany(targetEntity="FeedGroup", mappedBy="proxyUsers", fetch="EXTRA_LAZY")
      */
-    protected $feeds;
+    protected $feedGroups;
 
     /**
      * @var \DateTime
@@ -68,6 +69,7 @@ class ProxyUser implements IEntity
     function __construct()
     {
         $this->dateCreation = new \DateTime('now');
+        $this-$this->feedGroups = new ArrayCollection();
     }
 
     /**
@@ -113,27 +115,23 @@ class ProxyUser implements IEntity
     }
 
     /**
-     * @return Feed[]
+     * Get the FeedGroups.
+     *
+     * @return ProxyUser[]
      */
-    public function getFeeds()
+    public function getFeedGroups(): array
     {
-        return $this->feeds;
+        return $this->feedGroups;
     }
 
     /**
-     * @param Feed[] $feeds
+     * Set the FeedGroups.
+     *
+     * @param ProxyUser[] $feedGroups
      */
-    public function setFeeds($feeds)
+    public function setFeedGroups(array $feedGroups)
     {
-        $this->feeds = $feeds;
-    }
-
-    /**
-     * @param Feed $feed
-     */
-    public function addFeed($feed)
-    {
-        $this->feeds[] = $feed;
+        $this->feedGroups = $feedGroups;
     }
 
     /**

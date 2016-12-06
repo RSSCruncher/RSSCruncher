@@ -4,6 +4,8 @@ namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 
 
 use ArthurHoaro\RssCruncherApiBundle\Model\IEntity;
+use ArthurHoaro\RssCruncherApiBundle\Validator\Constraints as CustomAssert;
+use ArthurHoaro\RssCruncherApiBundle\Validator\Constraints\NullableUrl;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\ExclusionPolicy;
@@ -22,7 +24,7 @@ use JMS\Serializer\Annotation\Exclude;
  * @ORM\Entity
  * @ORM\Table(
  *     name="user_feed",
- *     uniqueConstraints={@ORM\UniqueConstraint(name="user_feed_unique", columns={"feed_id", "proxyuser_id"})}
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="user_feed_unique", columns={"feed_id", "feedgroup_id"})}
  * )
  * @ORM\Entity(repositoryClass="ArthurHoaro\RssCruncherApiBundle\Entity\UserFeedRepository")
  *
@@ -42,23 +44,23 @@ class UserFeed implements IEntity
     /**
      * @var string
      *
-     * @ORM\Column(name="sitename", type="string", length=255)
+     * @ORM\Column(name="sitename", type="string", length=255, nullable=true)
      */
     protected $sitename;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="siteurl", type="string", length=2000)
+     * @ORM\Column(name="siteurl", type="string", length=2000, nullable=true)
      *
-     * @Assert\Url()
+     * @CustomAssert\NullableUrl()
      */
     protected $siteurl;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="feedname", type="string", length=255)
+     * @ORM\Column(name="feedname", type="string", length=255, nullable=true)
      */
     protected $feedname;
 
@@ -82,11 +84,11 @@ class UserFeed implements IEntity
     /**
      * @var ProxyUser
      *
-     * @ORM\ManyToOne(targetEntity="ProxyUser", inversedBy="feeds", fetch="EXTRA_LAZY")
+     * @ORM\ManyToOne(targetEntity="FeedGroup", inversedBy="feeds", fetch="EXTRA_LAZY")
      *
      * @Exclude
      */
-    protected $proxyUser;
+    protected $feedGroup;
 
     /**
      * @var \DateTime
@@ -244,6 +246,4 @@ class UserFeed implements IEntity
     {
         return $this->dateModification;
     }
-
-
 }

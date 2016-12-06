@@ -18,7 +18,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
 	        new FOS\RestBundle\FOSRestBundle(),
 	        new JMS\SerializerBundle\JMSSerializerBundle(),
-            new Debril\RssAtomBundle\DebrilRssAtomBundle(),
+            #new Debril\RssAtomBundle\DebrilRssAtomBundle(),
             new FOS\UserBundle\FOSUserBundle(),
             new FOS\OAuthServerBundle\FOSOAuthServerBundle(),
             new ArthurHoaro\RssCruncherApiBundle\ArthurHoaroRssCruncherApiBundle(),

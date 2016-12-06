@@ -19,7 +19,7 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
     static public $users = [];
 
     /**
-     * @var Feed[]
+     * @var UserFeed[]
      */
     static public $feeds = [];
 
@@ -44,7 +44,7 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         $manager->persist($proxy);
 
         $feed = new Feed();
-        $feed->setFeedurl('https://feedurl.tld/rss');
+        $feed->setFeedurl('feedurl.tld/rss');
         $feed->setHttps(true);
         $manager->persist($feed);
 
@@ -120,7 +120,7 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         self::$articles[] = $article;
 
         $feed = new Feed();
-        $feed->setFeedurl('http://hoa.ro/feed.php?rss');
+        $feed->setFeedurl('hoa.ro/feed.php?rss');
         $feed->setHttps(false);
         $manager->persist($feed);
 
@@ -138,7 +138,7 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         self::$feeds[LoadArticleFeedArray::VALID] = $userFeed;
 
         $feed = new Feed();
-        $feed->setFeedurl('http://hoa.ro');
+        $feed->setFeedurl('hoa.ro');
         $feed->setHttps(false);
 
         $userFeed = new UserFeed();
@@ -154,6 +154,42 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         $manager->persist($feed);
         $manager->flush();
         self::$feeds[LoadArticleFeedArray::NOT_PARSABLE] = $userFeed;
+
+        // Dummy client, just to make sure we don't retrieve its data
+        $client = new Client();
+        $proxy2 = new ProxyUser();
+        $proxy2->setUser($user);
+        $proxy2->setClient($client);
+        $manager->persist($client);
+        $manager->persist($proxy2);
+        $feed = new Feed();
+        $feed->setFeedurl('nope.fr/atom');
+        $feed->setHttps(false);
+        $manager->persist($feed);
+        $userFeed = new UserFeed();
+        $userFeed->setEnabled(true);
+        $userFeed->setSitename('Nope');
+        $userFeed->setSiteurl('http://nope.fr');
+        $userFeed->setFeedname('Nope feed');
+        $userFeed->setDateCreation(\DateTime::createFromFormat('Ymd', '20171011'));
+        $userFeed->setFeed($feed);
+        $userFeed->setProxyUser($proxy2);
+        $manager->persist($userFeed);
+        $article = new Article();
+        $article->setTitle('nope article');
+        $article->setPublicationDate((new \DateTime('now'))->modify('-1 day'));
+        $article->setAuthorName('Nopoleon');
+        $article->setLink('http://nope.fr/nope-nope-nope');
+        $article->setFeed($feed);
+        $manager->persist($article);
+        $articleContent = new ArticleContent();
+        $articleContent->setContent('« Nope »');
+        $articleContent->setDate(new \DateTime());
+        $articleContent->setArticle($article);
+        $manager->persist($articleContent);
+        $manager->flush();
+
+        self::$feeds[LoadArticleFeedArray::OTHER_USER] = $userFeed;
     }
 }
 
@@ -162,4 +198,5 @@ abstract class LoadArticleFeedArray
     const DUMMY = 0;
     const VALID = 1;
     const NOT_PARSABLE = 2;
+    const OTHER_USER = 3;
 }

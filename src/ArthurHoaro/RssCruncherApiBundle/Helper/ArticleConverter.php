@@ -17,33 +17,29 @@ class ArticleConverter {
     /**
      * Convert an Item to an Article
      *
-     * @param Item $originalArticle
+     * @param \SimplePie_Item $originalArticle
      *
      * @return Article
      */
-    public static function convertFromRemote(Item $originalArticle) {
+    public static function convertFromRemote(\SimplePie_Item $originalArticle) {
         $convertedArticle = new Article();
-        foreach ($originalArticle->getAllElements() as $element) {
-            switch ($element->getName()) {
-                case 'published':
-                    $dt = \DateTime::createFromFormat(\DateTime::ISO8601, $element->getValue());
-                    $convertedArticle->setPublicationDate($dt);
-                    break;
-                case 'author':
-                    $convertedArticle->setAuthorName($element->getValue());
-                    break;
-            }
+        $convertedArticle->setTitle($originalArticle->get_title());
+        $convertedArticle->setLink($originalArticle->get_link());
+        $date = $originalArticle->get_date(\DateTime::ISO8601);
+        $convertedArticle->setPublicationDate(\DateTime::createFromFormat(\DateTime::ISO8601, $date));
+        $date = $originalArticle->get_updated_date(\DateTime::ISO8601);
+        if (! empty($date)) {
+            $convertedArticle->setModificationDate(\DateTime::createFromFormat(\DateTime::ISO8601, $date));
         }
-        $convertedArticle->setTitle($originalArticle->getTitle());
-        $convertedArticle->setLink($originalArticle->getLink());
-        $convertedArticle->setModificationDate($originalArticle->getLastModified());
-        $id = ! empty($originalArticle->getPublicId()) ? $originalArticle->getPublicId() : null;
-        $convertedArticle->setPublicId($id);
+        $author = $originalArticle->get_author();
+        $convertedArticle->setAuthorName($author->get_name());
+        $convertedArticle->setAuthorEmail($author->get_email());
+        $convertedArticle->setPublicId($originalArticle->get_id());
 
         $content = new ArticleContent();
         $content->setArticle($convertedArticle);
         $content->setDate(new \DateTime());
-        $content->setContent($originalArticle->getDescription());
+        $content->setContent($originalArticle->get_description());
         $convertedArticle->addArticleContent($content);
 
         return $convertedArticle;

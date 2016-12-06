@@ -39,13 +39,18 @@ class UserFeedDTO implements IApiEntity
     protected $feedurl;
 
     /**
+     * @var bool Enabled.
+     */
+    protected $enabled;
+
+    /**
      * @param UserFeed $userFeed
      *
      * @return UserFeedDTO
      */
     public function setEntity($userFeed) {
         $this->setId($userFeed->getId());
-        $this->setSitename($userFeed->getSitename());
+        $this->setSitename($userFeed->getSitename() );
         $this->setSiteurl($userFeed->getSiteurl());
         $this->setFeedname($userFeed->getFeedname());
         $scheme = $userFeed->getFeed()->isHttps() ? 'https' : 'http';
@@ -83,7 +88,7 @@ class UserFeedDTO implements IApiEntity
      */
     public function setSitename($sitename)
     {
-        $this->sitename = $sitename;
+        $this->sitename = $sitename ? $sitename : "";
     }
 
     /**
@@ -99,7 +104,7 @@ class UserFeedDTO implements IApiEntity
      */
     public function setSiteurl($siteurl)
     {
-        $this->siteurl = $siteurl;
+        $this->siteurl = $siteurl ? $siteurl : "";
     }
 
     /**
@@ -115,7 +120,7 @@ class UserFeedDTO implements IApiEntity
      */
     public function setFeedname($feedname)
     {
-        $this->feedname = $feedname;
+        $this->feedname = $feedname ? $feedname : "";
     }
 
     /**

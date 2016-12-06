@@ -13,8 +13,7 @@ use ArthurHoaro\RssCruncherApiBundle\Form\ArticleType;
 use ArthurHoaro\RssCruncherApiBundle\Form\UserFeedType;
 use ArthurHoaro\RssCruncherApiBundle\Helper\ArticleConverter;
 use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
-use FeedIo\FeedIo;
-use FeedIo\Filter\ModifiedSince;
+use SimplePie;
 use Liip\FunctionalTestBundle\Tests\App\Entity\User;
 use Symfony\Component\Form\FormInterface;
 
@@ -61,31 +60,31 @@ class FeedHandler extends GenericHandler {
      * Refresh items of a feed
      *
      * @param Feed   $feed   to refresh.
-     * @param FeedIo $reader Service used to fetch feeds.
+     * @param SimplePie $reader Service used to fetch feeds.
      *
      * @return Article[] $items List of new Articles.
      *
      * @throws FeedNotFoundException The given Feed doesn't exist in the database.
      * @throws \Exception            DB error.
      */
-    public function refreshFeed(Feed $feed, FeedIo $reader) {
+    public function refreshFeed(Feed $feed, SimplePie $reader) {
         $feedUrl = $feed->isHttps() ? 'https' : 'http';
-        $feedUrl .= $feed->getFeedurl();
-        try {
-            $readFeed = $reader->read($feedUrl);
-        } catch (\Exception $e) {
-            // An ugly trick to handle SimpleXML bad error handling... maybe to be removed
-            if (strpos($e->getMessage(), 'parse') !== false) {
-                throw new FeedNotParsedException($feedUrl, $e);
-            }
-            else throw $e;
-        }
-        $newItems = $readFeed->getFeed();
+        $feedUrl .= '://'. $feed->getFeedurl();
 
+        $reader->set_feed_url($feedUrl);
+        $reader->set_cache_location($this->cachePath);
+        $reader->init();
+        if (! empty($reader->error())) {
+            throw new \Exception($reader->error());
+        }
+
+        $newItems = $reader->get_items();
         $outItems = array();
         foreach ($newItems as $value) {
             $item = ArticleConverter::convertFromRemote($value);
-            if (true || $item->getModificationDate() > $feed->getDateFetch()) {
+            if ($item->getPublicationDate() > $feed->getDateFetch()
+                || $item->getModificationDate() > $feed->getDateFetch()
+            ) {
                 $item->setFeed($feed);
                 $outItems[] = $item;
             }

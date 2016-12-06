@@ -42,20 +42,27 @@ class GenericHandler implements GenericHandlerInterface {
     protected $formTypeclass;
 
     /**
+     * @var string
+     */
+    protected $cachePath;
+
+    /**
      * GenericHandler constructor.
      *
      * @param ObjectManager        $om
      * @param IEntity              $entityClass
      * @param FormFactoryInterface $formFactory
      * @param string               $formTypeClass
+     * @param string               $cachePath
      */
-    public function __construct($om, $entityClass, $formFactory, $formTypeClass)
+    public function __construct($om, $entityClass, $formFactory, $formTypeClass, $cachePath = null)
     {
         $this->om = $om;
         $this->entityClass = $entityClass;
         $this->repository = $this->om->getRepository($this->entityClass);
         $this->formFactory = $formFactory;
         $this->formTypeclass = $formTypeClass;
+        $this->cachePath = $cachePath;
     }
 
     /**
@@ -101,16 +108,20 @@ class GenericHandler implements GenericHandlerInterface {
     }
 
     /**
-     * Edit a Entity, or create if not exist.
+     * Edit an Entity and return after update.
      *
      * @param IEntity $entity
-     * @param array         $parameters
+     * @param array   $parameters
      *
      * @return IEntity
      */
     public function put(IEntity $entity, array $parameters)
     {
-        return $this->processForm($entity, $parameters, 'PUT');
+        $entity = $this->processForm($entity, $parameters, 'PUT');
+        $this->om->persist($entity);
+        $this->om->flush();
+
+        return $entity;
     }
 
     /**
@@ -123,7 +134,11 @@ class GenericHandler implements GenericHandlerInterface {
      */
     public function patch(IEntity $entity, array $parameters)
     {
-        return $this->processForm($entity, $parameters, 'PATCH');
+        $entity = $this->processForm($entity, $parameters, 'PATCH');
+        $this->om->persist($entity);
+        $this->om->flush();
+
+        return $entity;
     }
 
     /**
@@ -154,4 +169,4 @@ class GenericHandler implements GenericHandlerInterface {
     {
         return new $this->entityClass();
     }
-} 
+}

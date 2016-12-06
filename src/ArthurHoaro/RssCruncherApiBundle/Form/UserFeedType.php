@@ -32,7 +32,10 @@ class UserFeedType extends AbstractType {
     {
         $builder
             ->add('sitename')
-            ->add('siteurl', UrlType::class, ['default_protocol' => 'http'])
+            ->add('siteurl', UrlType::class, [
+                'default_protocol' => 'http',
+                'required' => false,
+            ])
             ->add('feedname')
             ->add('feedurl', UrlType::class, [
                 'mapped' => false,
