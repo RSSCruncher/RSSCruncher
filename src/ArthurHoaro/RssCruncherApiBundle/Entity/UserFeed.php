@@ -21,12 +21,11 @@ use JMS\Serializer\Annotation\Exclude;
  * FIXME! Just an idea: actually link this object to User,
  * FIXME! to share labels between apps and add another table to link UserFeed and ProxyUser.
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="ArthurHoaro\RssCruncherApiBundle\Entity\UserFeedRepository")
  * @ORM\Table(
  *     name="user_feed",
  *     uniqueConstraints={@ORM\UniqueConstraint(name="user_feed_unique", columns={"feed_id", "feedgroup_id"})}
  * )
- * @ORM\Entity(repositoryClass="ArthurHoaro\RssCruncherApiBundle\Entity\UserFeedRepository")
  *
  * @ExclusionPolicy("none")
  */
@@ -44,25 +43,25 @@ class UserFeed implements IEntity
     /**
      * @var string
      *
-     * @ORM\Column(name="sitename", type="string", length=255, nullable=true)
+     * @ORM\Column(name="site_name", type="string", length=255, nullable=true)
      */
-    protected $sitename;
+    protected $siteName;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="siteurl", type="string", length=2000, nullable=true)
+     * @ORM\Column(name="site_url", type="string", length=2000, nullable=true)
      *
      * @CustomAssert\NullableUrl()
      */
-    protected $siteurl;
+    protected $siteUrl;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="feedname", type="string", length=255, nullable=true)
+     * @ORM\Column(name="feed_name", type="string", length=255, nullable=true)
      */
-    protected $feedname;
+    protected $feedName;
 
     /**
      * @var boolean
@@ -82,7 +81,7 @@ class UserFeed implements IEntity
     protected $feed;
 
     /**
-     * @var ProxyUser
+     * @var FeedGroup
      *
      * @ORM\ManyToOne(targetEntity="FeedGroup", inversedBy="feeds", fetch="EXTRA_LAZY")
      *
@@ -122,49 +121,49 @@ class UserFeed implements IEntity
     /**
      * @return string
      */
-    public function getSitename()
+    public function getSiteName()
     {
-        return $this->sitename;
+        return $this->siteName;
     }
 
     /**
-     * @param string $sitename
+     * @param string $siteName
      */
-    public function setSitename($sitename)
+    public function setSiteName($siteName)
     {
-        $this->sitename = $sitename;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSiteurl()
-    {
-        return $this->siteurl;
-    }
-
-    /**
-     * @param string $siteurl
-     */
-    public function setSiteurl($siteurl)
-    {
-        $this->siteurl = $siteurl;
+        $this->siteName = $siteName;
     }
 
     /**
      * @return string
      */
-    public function getFeedname()
+    public function getSiteUrl()
     {
-        return $this->feedname;
+        return $this->siteUrl;
     }
 
     /**
-     * @param string $feedname
+     * @param string $siteUrl
      */
-    public function setFeedname($feedname)
+    public function setSiteUrl($siteUrl)
     {
-        $this->feedname = $feedname;
+        $this->siteUrl = $siteUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFeedName()
+    {
+        return $this->feedName;
+    }
+
+    /**
+     * @param string $feedName
+     */
+    public function setFeedName($feedName)
+    {
+        $this->feedName = $feedName;
     }
 
     /**
@@ -184,19 +183,23 @@ class UserFeed implements IEntity
     }
 
     /**
-     * @return ProxyUser
+     * Get the FeedGroup.
+     *
+     * @return FeedGroup
      */
-    public function getProxyUser()
+    public function getFeedGroup(): FeedGroup
     {
-        return $this->proxyUser;
+        return $this->feedGroup;
     }
 
     /**
-     * @param ProxyUser $proxyUser
+     * Set the FeedGroup.
+     *
+     * @param FeedGroup $feedGroup
      */
-    public function setProxyUser($proxyUser)
+    public function setFeedGroup(FeedGroup $feedGroup)
     {
-        $this->proxyUser = $proxyUser;
+        $this->feedGroup = $feedGroup;
     }
 
     /**

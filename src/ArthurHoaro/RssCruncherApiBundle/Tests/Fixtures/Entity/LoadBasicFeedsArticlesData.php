@@ -5,6 +5,7 @@ namespace ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity;
 use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
 use ArthurHoaro\RssCruncherApiBundle\Entity\ArticleContent;
 use ArthurHoaro\RssCruncherApiBundle\Entity\Feed;
+use ArthurHoaro\RssCruncherApiBundle\Entity\FeedGroup;
 use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser;
 use ArthurHoaro\RssCruncherApiBundle\Entity\User;
 use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeed;
@@ -43,19 +44,26 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         $manager->persist($client);
         $manager->persist($proxy);
 
+        $feedGroup = new FeedGroup();
+        $feedGroup->setName('group1');
+        $feedGroup->addProxyUser($proxy);
+        $manager->persist($feedGroup);
+        $proxy->setMainFeedGroup($feedGroup);
+        $manager->persist($proxy);
+
         $feed = new Feed();
-        $feed->setFeedurl('feedurl.tld/rss');
+        $feed->setFeedUrl('feedUrl.tld/rss');
         $feed->setHttps(true);
         $manager->persist($feed);
 
         $userFeed = new UserFeed();
         $userFeed->setEnabled(true);
-        $userFeed->setSitename('foo website');
-        $userFeed->setSiteurl('http://foo.com');
-        $userFeed->setFeedname('foo feed');
+        $userFeed->setSiteName('foo website');
+        $userFeed->setSiteUrl('http://foo.com');
+        $userFeed->setFeedName('foo feed');
         $userFeed->setDateCreation(\DateTime::createFromFormat('Ymd', '20161010'));
         $userFeed->setFeed($feed);
-        $userFeed->setProxyUser($proxy);
+        $userFeed->setFeedGroup($feedGroup);
         $manager->persist($userFeed);
 
         $manager->flush();
@@ -120,35 +128,35 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         self::$articles[] = $article;
 
         $feed = new Feed();
-        $feed->setFeedurl('hoa.ro/feed.php?rss');
+        $feed->setFeedUrl('hoa.ro/feed.php?rss');
         $feed->setHttps(false);
         $manager->persist($feed);
 
         $userFeed = new UserFeed();
         $userFeed->setEnabled(true);
-        $userFeed->setSitename('Hoaro');
-        $userFeed->setSiteurl('http://hoa.ro');
-        $userFeed->setFeedname('Hoaro feed');
+        $userFeed->setSiteName('Hoaro');
+        $userFeed->setSiteUrl('http://hoa.ro');
+        $userFeed->setFeedName('Hoaro feed');
         $userFeed->setDateCreation(\DateTime::createFromFormat('Ymd', '20161011'));
         $userFeed->setFeed($feed);
-        $userFeed->setProxyUser($proxy);
+        $userFeed->setFeedGroup($feedGroup);
         $manager->persist($userFeed);
 
         $manager->flush();
         self::$feeds[LoadArticleFeedArray::VALID] = $userFeed;
 
         $feed = new Feed();
-        $feed->setFeedurl('hoa.ro');
+        $feed->setFeedUrl('hoa.ro');
         $feed->setHttps(false);
 
         $userFeed = new UserFeed();
         $userFeed->setEnabled(true);
-        $userFeed->setSitename('blop');
-        $userFeed->setSiteurl('http://blop.blip');
-        $userFeed->setFeedname('blop feed');
+        $userFeed->setSiteName('blop');
+        $userFeed->setSiteUrl('http://blop.blip');
+        $userFeed->setFeedName('blop feed');
         $userFeed->setDateCreation(\DateTime::createFromFormat('Ymd', '20161012'));
         $userFeed->setFeed($feed);
-        $userFeed->setProxyUser($proxy);
+        $userFeed->setFeedGroup($feedGroup);
         $manager->persist($userFeed);
 
         $manager->persist($feed);
@@ -160,20 +168,25 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         $proxy2 = new ProxyUser();
         $proxy2->setUser($user);
         $proxy2->setClient($client);
+        $feedGroup2 = new FeedGroup();
+        $feedGroup2->setName('group2');
+        $feedGroup2->addProxyUser($proxy2);
+        $proxy2->setMainFeedGroup($feedGroup2);
         $manager->persist($client);
         $manager->persist($proxy2);
+        $manager->persist($feedGroup2);
         $feed = new Feed();
-        $feed->setFeedurl('nope.fr/atom');
+        $feed->setFeedUrl('nope.fr/atom');
         $feed->setHttps(false);
         $manager->persist($feed);
         $userFeed = new UserFeed();
         $userFeed->setEnabled(true);
-        $userFeed->setSitename('Nope');
-        $userFeed->setSiteurl('http://nope.fr');
-        $userFeed->setFeedname('Nope feed');
+        $userFeed->setSiteName('Nope');
+        $userFeed->setSiteUrl('http://nope.fr');
+        $userFeed->setFeedName('Nope feed');
         $userFeed->setDateCreation(\DateTime::createFromFormat('Ymd', '20171011'));
         $userFeed->setFeed($feed);
-        $userFeed->setProxyUser($proxy2);
+        $userFeed->setFeedGroup($feedGroup2);
         $manager->persist($userFeed);
         $article = new Article();
         $article->setTitle('nope article');

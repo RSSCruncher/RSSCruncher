@@ -30,7 +30,8 @@ class UserFeedRepository extends EntityRepository
         $qb = $this->_em->createQueryBuilder();
         $qb->select('f')
             ->from('ArthurHoaroRssCruncherApiBundle:UserFeed', 'f')
-            ->join('f.proxyUser', 'pu')
+            ->join('f.feedGroup', 'fg')
+            ->join('fg.proxyUsers', 'pu')
             ->where('pu.client = :client AND pu.user = :user')
             ->orderBy('f.dateCreation', 'DESC')
             ->setParameter('client', $proxyUser->getClient())

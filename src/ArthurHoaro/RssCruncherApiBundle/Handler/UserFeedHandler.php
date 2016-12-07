@@ -46,19 +46,19 @@ class UserFeedHandler extends GenericHandler {
 
         /** @var FeedRepository $feedRepository */
         $feedRepository = $this->om->getRepository(Feed::class);
-        // Retrieve or create the existing Feed matching our feedurl.
-        $feed = $feedRepository->findByUrlOrCreate($parameters['feedurl']);
+        // Retrieve or create the existing Feed matching our feedUrl.
+        $feed = $feedRepository->findByUrlOrCreate($parameters['feed_url']);
 
         $userFeed = $this->repository->findOneBy([
             'feed' => $feed->getId(),
-            'proxyUser' => $this->proxyUser->getId(),
+            'feedGroup' => $this->proxyUser->getMainFeedGroup()->getId(),
         ]);
         if (! empty($userFeed)) {
             throw new FeedExistsException($userFeed);
         }
 
         $entity->setFeed($feed);
-        $entity->setProxyUser($this->proxyUser);
+        $entity->setFeedGroup($this->proxyUser->getMainFeedGroup());
         $this->om->persist($entity);
         $this->om->flush();
 
@@ -80,8 +80,8 @@ class UserFeedHandler extends GenericHandler {
 
         /** @var FeedRepository $feedRepository */
         $feedRepository = $this->om->getRepository(Feed::class);
-        // Retrieve or create the existing Feed matching our feedurl.
-        $feed = $feedRepository->findByUrlOrCreate($parameters['feedurl']);
+        // Retrieve or create the existing Feed matching our feedUrl.
+        $feed = $feedRepository->findByUrlOrCreate($parameters['feed_url']);
 
         $entity->setFeed($feed);
         $this->om->persist($entity);
@@ -100,15 +100,15 @@ class UserFeedHandler extends GenericHandler {
      */
     public function patch(IEntity $entity, array $parameters)
     {
-        if (empty($parameters['feedurl'])) {
-            $parameters['feedurl'] = $entity->getFeed()->getFeedurl();
+        if (empty($parameters['feed_url'])) {
+            $parameters['feed_url'] = $entity->getFeed()->getFeedurl();
         }
         $entity = $this->processForm($entity, $parameters, 'PATCH');
 
         /** @var FeedRepository $feedRepository */
         $feedRepository = $this->om->getRepository(Feed::class);
-        // Retrieve or create the existing Feed matching our feedurl.
-        $feed = $feedRepository->findByUrlOrCreate($parameters['feedurl']);
+        // Retrieve or create the existing Feed matching our feedUrl.
+        $feed = $feedRepository->findByUrlOrCreate($parameters['feed_url']);
         $entity->setFeed($feed);
 
 

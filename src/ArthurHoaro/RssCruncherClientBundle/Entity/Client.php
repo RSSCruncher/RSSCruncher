@@ -36,18 +36,11 @@ class Client extends BaseClient
     protected $name;
 
     /**
-     * @var ProxyUser
-     *
-     * @ORM\OneToOne(targetEntity="ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser", mappedBy="client")
-     */
-    protected $proxyUser;
-
-    /**
      * @var ProxyUser[]
      *
-     * @ORM\ManyToMany(targetEntity="FeedGroup", mappedBy="proxyUsers", fetch="EXTRA_LAZY")
+     * @ORM\OneToMany(targetEntity="ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser", mappedBy="client")
      */
-    protected $feedGroups;
+    protected $proxyUser;
 
     /**
      * Get id

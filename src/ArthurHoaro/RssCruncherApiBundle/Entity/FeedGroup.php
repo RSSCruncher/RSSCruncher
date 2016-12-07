@@ -17,6 +17,8 @@ use JMS\Serializer\Annotation\Exclude;
  */
 class FeedGroup implements IEntity
 {
+    const DEFAULT = 'default';
+
     /**
      * @var integer
      *
@@ -113,6 +115,16 @@ class FeedGroup implements IEntity
     public function setProxyUsers(array $proxyUsers)
     {
         $this->proxyUsers = $proxyUsers;
+    }
+
+    /**
+     * Add a ProxyUser.
+     *
+     * @param ProxyUser $proxyUser
+     */
+    public function addProxyUser(ProxyUser $proxyUser)
+    {
+        $this->proxyUsers[] = $proxyUser;
     }
 
     /**

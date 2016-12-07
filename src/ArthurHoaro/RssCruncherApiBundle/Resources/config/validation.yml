@@ -1,39 +1,39 @@
 ArthurHoaro\RssCruncherApiBundle\Entity\UserFeed:
   properties:
-#    sitename:
+#    siteName:
 #      - NotBlank: ~
 #      - NotNull: ~
 #      - Length:
 #          min: 1
 #          max: 50
-#          minMessage: "Your sitename must be at least  characters length"
-#          maxMessage: "Your sitename cannot be longer than  characters length"
-#    siteurl:
+#          minMessage: "Your siteName must be at least  characters length"
+#          maxMessage: "Your siteName cannot be longer than  characters length"
+#    siteUrl:
 #      - NotBlank: ~
 #      - NotNull: ~
 #      - Url: ~
 #      - Length:
 #          min: 5
 #          max: 2000
-#          minMessage: "Your siteurl must be at least {{ limit }} characters length"
-#          maxMessage: "Your siteurl cannot be longer than {{ limit }} characters length"
-#    feedname:
+#          minMessage: "Your siteUrl must be at least {{ limit }} characters length"
+#          maxMessage: "Your siteUrl cannot be longer than {{ limit }} characters length"
+#    feedName:
 #      - NotBlank: ~
 #      - NotNull: ~
 #      - Length:
 #          min: 1
 #          max: 50
-#          minMessage: "Your feedname must be at least {{ limit }} characters length"
-#          maxMessage: "Your feedname cannot be longer than {{ limit }} characters length"
-#    feedurl:
+#          minMessage: "Your feedName must be at least {{ limit }} characters length"
+#          maxMessage: "Your feedName cannot be longer than {{ limit }} characters length"
+#    feedUrl:
 #      - NotBlank: ~
 #      - NotNull: ~
 #      - Url: ~
 #      - Length:
 #          min: 5
 #          max: 2000
-#          minMessage: "Your siteurl must be at least {{ limit }} characters length"
-#          maxMessage: "Your siteurl cannot be longer than {{ limit }} characters length"
+#          minMessage: "Your siteUrl must be at least {{ limit }} characters length"
+#          maxMessage: "Your siteUrl cannot be longer than {{ limit }} characters length"
 ArthurHoaro\RssCruncherApiBundle\Entity\Article:
   properties:
     title:

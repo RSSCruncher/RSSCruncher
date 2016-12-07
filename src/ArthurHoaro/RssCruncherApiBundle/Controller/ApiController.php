@@ -4,6 +4,7 @@ namespace ArthurHoaro\RssCruncherApiBundle\Controller;
 
 
 use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser;
+use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUserRepository;
 use ArthurHoaro\RssCruncherApiBundle\Exception\UserNotFoundException;
 use ArthurHoaro\RssCruncherApiBundle\Handler\AccessTokenHandler;
 use ArthurHoaro\RssCruncherApiBundle\Handler\ProxyUserHandler;
@@ -36,8 +37,7 @@ abstract class ApiController extends FOSRestController
      */
     protected function getToken()
     {
-        $token = $this->container->get('security.token_storage')->getToken();
-        return $token->getToken();
+        return $this->get('security.token_storage')->getToken()->getToken();
     }
 
     /**
@@ -52,18 +52,18 @@ abstract class ApiController extends FOSRestController
         // FIXME! Test code in core is a bad practice
         // Firewalls are disabled in test env, so we retrieve the first ProxyUser
         if ($this->get('kernel')->getEnvironment() === 'test') {
-            $handler = $this->container->get('arthur_hoaro_rss_cruncher_api.proxy_user.handler');
+            $handler = $this->get('arthur_hoaro_rss_cruncher_api.proxy_user.handler');
             return $handler->all(1)[0];
         }
 
         /** @var AccessTokenHandler $tokenHandler */
-        $tokenHandler = $this->container->get('arthur_hoaro_rss_cruncher_api.access_token.handler');
-        /** @var ProxyUserHandler $handler */
-        $handler = $this->container->get('arthur_hoaro_rss_cruncher_api.proxy_user.handler');
+        $tokenHandler = $this->get('arthur_hoaro_rss_cruncher_api.access_token.handler');
+        /** @var ProxyUserRepository $handler */
+        $proxyUserRepo = $this->getDoctrine()->getManager()->getRepository(ProxyUser::class);
         
         $token = $tokenHandler->getByToken($this->getToken());
         if (empty($token)) {
-            throw new \Exception('AccesToken not found');
+            throw new \Exception('AccessToken not found');
         }
 
         // User isn't set if the app uses client_credentials grant access.
@@ -75,7 +75,7 @@ abstract class ApiController extends FOSRestController
             }
         }
 
-        $proxyUser = $handler->getByToken($token->getUser(), $token->getClient());
+        $proxyUser = $proxyUserRepo->findByUserClient($token->getUser(), $token->getClient());
         if (! empty($proxyUser)) {
             return $proxyUser;
         }

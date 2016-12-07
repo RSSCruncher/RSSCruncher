@@ -31,13 +31,13 @@ class UserFeedType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('sitename')
-            ->add('siteurl', UrlType::class, [
+            ->add('site_name')
+            ->add('site_url', UrlType::class, [
                 'default_protocol' => 'http',
                 'required' => false,
             ])
-            ->add('feedname')
-            ->add('feedurl', UrlType::class, [
+            ->add('feed_name')
+            ->add('feed_url', UrlType::class, [
                 'mapped' => false,
                 'constraints' => [
                     new NotNull(),
@@ -46,8 +46,8 @@ class UserFeedType extends AbstractType {
                     new Length([
                         'min' => 5,
                         'max' => 2000,
-                        'minMessage' => 'Your siteurl must be at least {{ limit }} characters length',
-                        'maxMessage' => 'Your siteurl cannot be longer than {{ limit }} characters length',
+                        'minMessage' => 'Your siteUrl must be at least {{ limit }} characters length',
+                        'maxMessage' => 'Your siteUrl cannot be longer than {{ limit }} characters length',
                     ])
                 ]
             ]);

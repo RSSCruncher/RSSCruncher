@@ -12,7 +12,7 @@ class ArticleHandlerTest extends \PHPUnit_Framework_TestCase {
 
     /** @var ArticleHandler */
     protected $articleHandler;
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit_Framework_MockObject_MockObject  */
     protected $om;
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $repository;
@@ -23,10 +23,10 @@ class ArticleHandlerTest extends \PHPUnit_Framework_TestCase {
             $this->markTestSkipped('Doctrine Common has to be installed for this test to run.');
         }
 
-        $class = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
-        $this->om = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-        $this->repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
-        $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
+        $class = $this->getMockBuilder('Doctrine\Common\Persistence\Mapping\ClassMetadata')->getMock();
+        $this->om = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')->getMock();
+        $this->repository = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')->getMock();
+        $this->formFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactoryInterface')->getMock();
 
         $this->om->expects($this->any())
             ->method('getRepository')
@@ -49,7 +49,7 @@ class ArticleHandlerTest extends \PHPUnit_Framework_TestCase {
             ->with($this->equalTo($id))
             ->will($this->returnValue($article));
         $this->articleHandler = $this->createArticleHandler($this->om, static::ARTICLE_CLASS, $this->formFactory, static::ARTICLE_TYPE_CLASS);
-        $this->articleHandler->get($id);
+        $article = $this->articleHandler->get($id);
     }
 
     protected function createArticleHandler($objectManager, $articleClass, $formFactory, $articleTypeClass)

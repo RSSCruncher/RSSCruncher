@@ -128,7 +128,7 @@ class ArticleControllerTest extends ControllerTest {
             array(),
             array(),
             array('CONTENT_TYPE' => 'application/json'),
-            '{"siteurl":"siteurl2","articlename":"articlename2","articleurl":"articleurl2"}'
+            '{"siteUrl":"siteurl2","articlename":"articlename2","articleurl":"articleurl2"}'
         );
 
         $this->assertJsonResponse($this->client->getResponse(), 400, true);

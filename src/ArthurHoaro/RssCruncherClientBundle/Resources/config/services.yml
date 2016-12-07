@@ -2,3 +2,8 @@ services:
 #    arthur_hoaro_rss_cruncher_client.example:
 #        class: ArthurHoaro\RssCruncherClientBundle\Example
 #        arguments: [@service_id, "plain_value", %parameter%]
+  form.type.user:
+    class: ArthurHoaro\RssCruncherClientBundle\Form\ClientType
+    arguments: ["@security.token_storage"]
+    tags:
+      - { name: form.type, alias: arthurhoaro_rsscruncherclientbundle_client }

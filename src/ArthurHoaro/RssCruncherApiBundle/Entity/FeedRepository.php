@@ -25,7 +25,7 @@ class FeedRepository extends EntityRepository
      */
     public function findByUrl($url) {
         return $this->findOneBy([
-            'feedurl' => $url,
+            'feedUrl' => $url,
             'enabled' => true,
         ]);
     }
@@ -59,7 +59,7 @@ class FeedRepository extends EntityRepository
     private function createFeed($cleanUrl, $isHttps)
     {
         $entity = new Feed();
-        $entity->setFeedurl($cleanUrl);
+        $entity->setFeedUrl($cleanUrl);
         $entity->setHttps($isHttps);
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();

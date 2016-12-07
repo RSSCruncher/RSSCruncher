@@ -21,27 +21,27 @@ class UserFeedDTO implements IApiEntity
     /**
      * @var string Custom site name set by the user.
      */
-    protected $sitename;
+    protected $siteName;
 
     /**
      * @var string Custom site URL set by the user.
      */
-    protected $siteurl;
+    protected $siteUrl;
 
     /**
      * @var string Custom feed name set by the user.
      */
-    protected $feedname;
+    protected $feedName;
 
     /**
      * @var string Unique feed URL (from the feed table).
      */
-    protected $feedurl;
+    protected $feedUrl;
 
     /**
-     * @var bool Enabled.
+     * @var FeedGroupDTO
      */
-    protected $enabled;
+    protected $feedGroup;
 
     /**
      * @param UserFeed $userFeed
@@ -50,16 +50,19 @@ class UserFeedDTO implements IApiEntity
      */
     public function setEntity($userFeed) {
         $this->setId($userFeed->getId());
-        $this->setSitename($userFeed->getSitename() );
-        $this->setSiteurl($userFeed->getSiteurl());
-        $this->setFeedname($userFeed->getFeedname());
+        $this->setSiteName($userFeed->getSiteName() );
+        $this->setSiteUrl($userFeed->getSiteUrl());
+        $this->setFeedName($userFeed->getFeedName());
         $scheme = $userFeed->getFeed()->isHttps() ? 'https' : 'http';
-        $this->setFeedurl($scheme . '://' . $userFeed->getFeed()->getFeedurl());
+        $this->setFeedUrl($scheme . '://' . $userFeed->getFeed()->getFeedUrl());
+        $this->setFeedGroup((new FeedGroupDTO())->setEntity($userFeed->getFeedGroup()));
 
         return $this;
     }
 
     /**
+     * Get the Id.
+     *
      * @return int
      */
     public function getId()
@@ -68,74 +71,136 @@ class UserFeedDTO implements IApiEntity
     }
 
     /**
+     * Set the Id.
+     *
      * @param int $id
+     *
+     * @return UserFeedDTO
      */
     public function setId($id)
     {
         $this->id = $id;
+
+        return $this;
     }
 
     /**
+     * Get the SiteName.
+     *
      * @return string
      */
-    public function getSitename()
+    public function getSiteName()
     {
-        return $this->sitename;
+        return $this->siteName;
     }
 
     /**
-     * @param string $sitename
+     * Set the SiteName.
+     *
+     * @param string $siteName
+     *
+     * @return UserFeedDTO
      */
-    public function setSitename($sitename)
+    public function setSiteName($siteName)
     {
-        $this->sitename = $sitename ? $sitename : "";
+        $this->siteName = $siteName ? $siteName : '';
+
+        return $this;
     }
 
     /**
+     * Get the SiteUrl.
+     *
      * @return string
      */
-    public function getSiteurl()
+    public function getSiteUrl()
     {
-        return $this->siteurl;
+        return $this->siteUrl;
     }
 
     /**
-     * @param string $siteurl
+     * Set the SiteUrl.
+     *
+     * @param string $siteUrl
+     *
+     * @return UserFeedDTO
      */
-    public function setSiteurl($siteurl)
+    public function setSiteUrl($siteUrl)
     {
-        $this->siteurl = $siteurl ? $siteurl : "";
+        $this->siteUrl = $siteUrl ? $siteUrl : '';
+
+        return $this;
     }
 
     /**
+     * Get the FeedName.
+     *
      * @return string
      */
-    public function getFeedname()
+    public function getFeedName()
     {
-        return $this->feedname;
+        return $this->feedName;
     }
 
     /**
-     * @param string $feedname
+     * Set the FeedName.
+     *
+     * @param string $feedName
+     *
+     * @return UserFeedDTO
      */
-    public function setFeedname($feedname)
+    public function setFeedName($feedName)
     {
-        $this->feedname = $feedname ? $feedname : "";
+        $this->feedName = $feedName ? $feedName : '';
+
+        return $this;
     }
 
     /**
+     * Get the FeedUrl.
+     *
      * @return string
      */
-    public function getFeedurl()
+    public function getFeedUrl()
     {
-        return $this->feedurl;
+        return $this->feedUrl;
     }
 
     /**
-     * @param string $feedurl
+     * Set the FeedUrl.
+     *
+     * @param string $feedUrl
+     *
+     * @return UserFeedDTO
      */
-    public function setFeedurl($feedurl)
+    public function setFeedUrl($feedUrl)
     {
-        $this->feedurl = $feedurl;
+        $this->feedUrl = $feedUrl ? $feedUrl : '';
+
+        return $this;
+    }
+
+    /**
+     * Get the FeedGroup.
+     *
+     * @return FeedGroupDTO
+     */
+    public function getFeedGroup()
+    {
+        return $this->feedGroup;
+    }
+
+    /**
+     * Set the FeedGroup.
+     *
+     * @param FeedGroupDTO $feedGroup
+     *
+     * @return UserFeedDTO
+     */
+    public function setFeedGroup($feedGroup)
+    {
+        $this->feedGroup = $feedGroup ? $feedGroup : '';
+
+        return $this;
     }
 }

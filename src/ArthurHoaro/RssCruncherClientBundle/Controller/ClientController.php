@@ -3,11 +3,13 @@
 namespace ArthurHoaro\RssCruncherClientBundle\Controller;
 
 
+use ArthurHoaro\RssCruncherApiBundle\Entity\FeedGroup;
 use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser;
 use ArthurHoaro\RssCruncherApiBundle\Handler\ProxyUserHandler;
 use ArthurHoaro\RssCruncherClientBundle\Entity\Client;
 use ArthurHoaro\RssCruncherClientBundle\Form\ClientType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Exception\OutOfBoundsException;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,12 +50,40 @@ class ClientController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+
+
             $clientManager = $this->get('fos_oauth_server.client_manager.default');
             $clientManager->updateClient($entity);
 
-            /** @var ProxyUserHandler $handler */
-            $handler = $this->container->get('arthur_hoaro_rss_cruncher_api.proxy_user.handler');
-            $handler->createUser($entity, $this->getUser());
+            if ($entity->getAllowedGrantType() == 'client_credentials') {
+                /** @var FeedGroup[] $feedGroups */
+                $feedGroups = $form->get('syncFeedGroups')->getData();
+                /** @var ProxyUserHandler $handler */
+                $handler = $this->container->get('arthur_hoaro_rss_cruncher_api.proxy_user.handler');
+                $proxyUser = $handler->createUser($entity, $this->getUser());
+
+                $groupsRepo = $this->getDoctrine()->getRepository(FeedGroup::class);
+                foreach ($feedGroups as $feedGroup) {
+                    $doctrineEntity = $groupsRepo->find($feedGroup->getId());
+                    $doctrineEntity->addProxyUser($proxyUser);
+                    $this->getDoctrine()->getManager()->persist($doctrineEntity);
+                }
+
+                /** @var FeedGroup $feedGroups */
+                $mainFeedGroup = $form->get('mainFeedGroup')->getData();
+                if ($mainFeedGroup != null) {
+                    $mainFeedGroup = $groupsRepo->find($mainFeedGroup->getId());
+                } else {
+                    $mainFeedGroup = new FeedGroup();
+                    $mainFeedGroup->addProxyUser($proxyUser);
+                    $mainFeedGroup->setName($entity->getName());
+                    $this->getDoctrine()->getManager()->persist($mainFeedGroup);
+                }
+
+                $proxyUser->setMainFeedGroup($mainFeedGroup);
+                $this->getDoctrine()->getManager()->persist($proxyUser);
+                $this->getDoctrine()->getManager()->flush();
+            }
 
             return $this->redirect(
                 $this->generateUrl(

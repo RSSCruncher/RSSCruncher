@@ -14,8 +14,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * This is an abstraction to this notion, to have a single User class.
  * UniqueEntity({"client_id", "user_id"})
  *
- * @ORM\Entity
- * @ORM\Table(name="proxy_user", indexes={@ORM\Index(name="client_user", columns={"client_id", "user_id"})})
+ * @ORM\Entity(repositoryClass="ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUserRepository")
+ * @ORM\Table(
+ *     name="proxy_user",
+ *     indexes={@ORM\Index(name="client_user", columns={"client_id", "user_id"})},
+ *
+ * )
  */
 class ProxyUser implements IEntity
 {
@@ -32,7 +36,7 @@ class ProxyUser implements IEntity
     /**
      * @var Client
      *
-     * @ORM\OneToOne(targetEntity="ArthurHoaro\RssCruncherClientBundle\Entity\Client", inversedBy="proxyUser")
+     * @ORM\ManyToOne(targetEntity="ArthurHoaro\RssCruncherClientBundle\Entity\Client", inversedBy="proxyUser")
      * @ORM\JoinColumn(name="client_id", referencedColumnName="id")
      */
     protected $client;
@@ -46,11 +50,19 @@ class ProxyUser implements IEntity
     protected $user;
 
     /**
-     * @var ProxyUser[]
+     * @var FeedGroup[]
      *
      * @ORM\ManyToMany(targetEntity="FeedGroup", mappedBy="proxyUsers", fetch="EXTRA_LAZY")
      */
     protected $feedGroups;
+
+    /**
+     * @var FeedGroup
+     *
+     * @ORM\ManyToOne(targetEntity="FeedGroup")
+     * @ORM\JoinColumn(name="main_feed_group", referencedColumnName="id")
+     */
+    protected $mainFeedGroup;
 
     /**
      * @var \DateTime
@@ -69,7 +81,7 @@ class ProxyUser implements IEntity
     function __construct()
     {
         $this->dateCreation = new \DateTime('now');
-        $this-$this->feedGroups = new ArrayCollection();
+        $this->feedGroups = new ArrayCollection();
     }
 
     /**
@@ -133,6 +145,27 @@ class ProxyUser implements IEntity
     {
         $this->feedGroups = $feedGroups;
     }
+
+    /**
+     * Get the MainFeedGroup.
+     *
+     * @return FeedGroup
+     */
+    public function getMainFeedGroup(): FeedGroup
+    {
+        return $this->mainFeedGroup;
+    }
+
+    /**
+     * Set the MainFeedGroup.
+     *
+     * @param FeedGroup $mainFeedGroup
+     */
+    public function setMainFeedGroup(FeedGroup $mainFeedGroup)
+    {
+        $this->mainFeedGroup = $mainFeedGroup;
+    }
+
 
     /**
      * @param \DateTime $dateCreation

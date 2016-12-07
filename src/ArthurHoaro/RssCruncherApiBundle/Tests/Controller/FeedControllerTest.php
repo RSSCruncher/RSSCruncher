@@ -17,7 +17,7 @@ class FeedControllerTest extends ControllerTest
     /**
      * Number of fields in a feed.
      */
-    const NB_FEED_FIELDS = 5;
+    const NB_FEED_FIELDS = 6;
 
     /**
      * Number of fields in an article.
@@ -57,10 +57,10 @@ class FeedControllerTest extends ControllerTest
         // Number of fields.
         $this->assertEquals(self::NB_FEED_FIELDS, count($decoded));
         $this->assertEquals($feed->getId(), $decoded['id']);
-        $this->assertEquals($feed->getSitename(), $decoded['sitename']);
-        $this->assertEquals($feed->getSiteurl(), $decoded['siteurl']);
-        $this->assertEquals($feed->getFeedname(), $decoded['feedname']);
-        $this->assertEquals('https://'. $feed->getFeed()->getFeedurl(), $decoded['feedurl']);
+        $this->assertEquals($feed->getSiteName(), $decoded['site_name']);
+        $this->assertEquals($feed->getSiteUrl(), $decoded['site_url']);
+        $this->assertEquals($feed->getFeedName(), $decoded['feed_name']);
+        $this->assertEquals('https://'. $feed->getFeed()->getFeedUrl(), $decoded['feed_url']);
     }
 
     /**
@@ -110,10 +110,10 @@ class FeedControllerTest extends ControllerTest
         $first = $decoded[0];
         $this->assertEquals(self::NB_FEED_FIELDS, count($first));
         $this->assertEquals($feed->getId(), $first['id']);
-        $this->assertEquals($feed->getSitename(), $first['sitename']);
-        $this->assertEquals($feed->getSiteurl(), $first['siteurl']);
-        $this->assertEquals($feed->getFeedname(), $first['feedname']);
-        $this->assertEquals('http://'. $feed->getFeed()->getFeedurl(), $first['feedurl']);
+        $this->assertEquals($feed->getSiteName(), $first['site_name']);
+        $this->assertEquals($feed->getSiteUrl(), $first['site_url']);
+        $this->assertEquals($feed->getFeedName(), $first['feed_name']);
+        $this->assertEquals('http://'. $feed->getFeed()->getFeedUrl(), $first['feed_url']);
 
         $feed = LoadBasicFeedsArticlesData::$feeds[LoadArticleFeedArray::VALID];
         $this->assertEquals($feed->getId(), $decoded[1]['id']);
@@ -146,10 +146,10 @@ class FeedControllerTest extends ControllerTest
         $first = $decoded[0];
         $this->assertEquals(self::NB_FEED_FIELDS, count($first));
         $this->assertEquals($feed->getId(), $first['id']);
-        $this->assertEquals($feed->getSitename(), $first['sitename']);
-        $this->assertEquals($feed->getSiteurl(), $first['siteurl']);
-        $this->assertEquals($feed->getFeedname(), $first['feedname']);
-        $this->assertEquals('http://'. $feed->getFeed()->getFeedurl(), $first['feedurl']);
+        $this->assertEquals($feed->getSiteName(), $first['site_name']);
+        $this->assertEquals($feed->getSiteUrl(), $first['site_url']);
+        $this->assertEquals($feed->getFeedName(), $first['feed_name']);
+        $this->assertEquals('http://'. $feed->getFeed()->getFeedUrl(), $first['feed_url']);
     }
 
     /**
@@ -178,10 +178,10 @@ class FeedControllerTest extends ControllerTest
         $first = $decoded[0];
         $this->assertEquals(self::NB_FEED_FIELDS, count($first));
         $this->assertEquals($feed->getId(), $first['id']);
-        $this->assertEquals($feed->getSitename(), $first['sitename']);
-        $this->assertEquals($feed->getSiteurl(), $first['siteurl']);
-        $this->assertEquals($feed->getFeedname(), $first['feedname']);
-        $this->assertEquals('http://'. $feed->getFeed()->getFeedurl(), $first['feedurl']);
+        $this->assertEquals($feed->getSiteName(), $first['site_name']);
+        $this->assertEquals($feed->getSiteUrl(), $first['site_url']);
+        $this->assertEquals($feed->getFeedName(), $first['feed_name']);
+        $this->assertEquals('http://'. $feed->getFeed()->getFeedUrl(), $first['feed_url']);
 
         $feed = LoadBasicFeedsArticlesData::$feeds[LoadArticleFeedArray::VALID];
         $this->assertEquals($feed->getId(), $decoded[1]['id']);
@@ -196,10 +196,10 @@ class FeedControllerTest extends ControllerTest
     public function testJsonPostFeedAction()
     {
         $data = [
-            'sitename' => 'sitename1',
-            'siteurl' => 'http://sitename1.tld',
-            'feedname' => 'feedname1',
-            'feedurl' => 'http://sitename1.tld/feed',
+            'site_name' => 'sitename1',
+            'site_url' => 'http://sitename1.tld',
+            'feed_name' => 'feedname1',
+            'feed_url' => 'http://sitename1.tld/feed',
         ];
 
         $route = $this->getUrl('api_1_post_feed', ['_format' => 'json']);
@@ -212,10 +212,10 @@ class FeedControllerTest extends ControllerTest
         $id = $decoded['id'];
         $this->assertEquals(self::NB_FEED_FIELDS, count($decoded));
         $this->assertTrue(is_int($id));
-        $this->assertEquals($data['sitename'], $decoded['sitename']);
-        $this->assertEquals($data['siteurl'], $decoded['siteurl']);
-        $this->assertEquals($data['feedname'], $decoded['feedname']);
-        $this->assertEquals($data['feedurl'], $decoded['feedurl']);
+        $this->assertEquals($data['site_name'], $decoded['site_name']);
+        $this->assertEquals($data['site_url'], $decoded['site_url']);
+        $this->assertEquals($data['feed_name'], $decoded['feed_name']);
+        $this->assertEquals($data['feed_url'], $decoded['feed_url']);
 
         $this->client->request('POST', $route, [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($data));
         $response = $this->client->getResponse();
@@ -224,10 +224,10 @@ class FeedControllerTest extends ControllerTest
         $decoded = json_decode($content, true);
         $this->assertEquals(self::NB_FEED_FIELDS, count($decoded));
         $this->assertEquals($id, $decoded['id']);
-        $this->assertEquals($data['sitename'], $decoded['sitename']);
-        $this->assertEquals($data['siteurl'], $decoded['siteurl']);
-        $this->assertEquals($data['feedname'], $decoded['feedname']);
-        $this->assertEquals($data['feedurl'], $decoded['feedurl']);
+        $this->assertEquals($data['site_name'], $decoded['site_name']);
+        $this->assertEquals($data['site_url'], $decoded['site_url']);
+        $this->assertEquals($data['feed_name'], $decoded['feed_name']);
+        $this->assertEquals($data['feed_url'], $decoded['feed_url']);
     }
 
     /**
@@ -237,8 +237,8 @@ class FeedControllerTest extends ControllerTest
     {
         // FeedName missing
         $data = [
-            'sitename' => 'sitename1',
-            'siteurl' => 'http://sitename1.tld',
+            'site_name' => 'sitename1',
+            'site_url' => 'http://sitename1.tld',
         ];
         $route =  $this->getUrl('api_1_post_feed', ['_format' => 'json']);
         $this->client->request('POST', $route, [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($data));
@@ -255,10 +255,10 @@ class FeedControllerTest extends ControllerTest
     {
         // FeedName missing
         $data = [
-            'sitename' => 'sitename1',
-            'siteurl' => 'http://sitename1.tld',
-            'feedname' => 'feedname1',
-            'feedurl' => 'http://sitename1.tld/feed',
+            'site_name' => 'sitename1',
+            'site_url' => 'http://sitename1.tld',
+            'feed_name' => 'feedname1',
+            'feed_url' => 'http://sitename1.tld/feed',
         ];
         $route =  $this->getUrl('api_1_post_feed', ['_format' => 'json']);
         $this->client->request('POST', $route, [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($data));
@@ -271,10 +271,10 @@ class FeedControllerTest extends ControllerTest
     public function testPutFeedExisting()
     {
         $data = [
-            'sitename' => 'whatever',
-            'siteurl' => 'http://whatever.com',
-            'feedname' => 'whatever',
-            'feedurl' => 'https://feedurl.tld/rss',
+            'site_name' => 'whatever',
+            'site_url' => 'http://whatever.com',
+            'feed_name' => 'whatever',
+            'feed_url' => 'https://feedUrl.tld/rss',
         ];
 
         $feed = LoadBasicFeedsArticlesData::$feeds[LoadArticleFeedArray::DUMMY];
@@ -287,10 +287,10 @@ class FeedControllerTest extends ControllerTest
 
         $this->assertEquals(self::NB_FEED_FIELDS, count($decoded));
         $this->assertEquals($feed->getId(), $decoded['id']);
-        $this->assertEquals($data['sitename'], $decoded['sitename']);
-        $this->assertEquals($data['siteurl'], $decoded['siteurl']);
-        $this->assertEquals($data['feedname'], $decoded['feedname']);
-        $this->assertEquals($data['feedurl'], $decoded['feedurl']);
+        $this->assertEquals($data['site_name'], $decoded['site_name']);
+        $this->assertEquals($data['site_url'], $decoded['site_url']);
+        $this->assertEquals($data['feed_name'], $decoded['feed_name']);
+        $this->assertEquals($data['feed_url'], $decoded['feed_url']);
     }
 
     /**
@@ -299,10 +299,10 @@ class FeedControllerTest extends ControllerTest
     public function testPutFeedExistingPartial()
     {
         $data = [
-            'sitename' => 'whatever',
-            'siteurl' => 'http://whatever.com',
-            //'feedname' => 'whatever',
-            'feedurl' => 'https://feedurl.tld/rss',
+            'site_name' => 'whatever',
+            'site_url' => 'http://whatever.com',
+            //'feed_name' => 'whatever',
+            'feed_url' => 'https://feedUrl.tld/rss',
         ];
 
         $feed = LoadBasicFeedsArticlesData::$feeds[LoadArticleFeedArray::DUMMY];
@@ -315,10 +315,10 @@ class FeedControllerTest extends ControllerTest
 
         $this->assertEquals(self::NB_FEED_FIELDS, count($decoded));
         $this->assertEquals($feed->getId(), $decoded['id']);
-        $this->assertEquals($data['sitename'], $decoded['sitename']);
-        $this->assertEquals($data['siteurl'], $decoded['siteurl']);
-        $this->assertEmpty($decoded['feedname']);
-        $this->assertEquals($data['feedurl'], $decoded['feedurl']);
+        $this->assertEquals($data['site_name'], $decoded['site_name']);
+        $this->assertEquals($data['site_url'], $decoded['site_url']);
+        $this->assertEmpty($decoded['feed_name']);
+        $this->assertEquals($data['feed_url'], $decoded['feed_url']);
     }
 
     /**
@@ -327,10 +327,10 @@ class FeedControllerTest extends ControllerTest
     public function testPutUserFeedExistingNewFeed()
     {
         $data = [
-            'sitename' => 'whatever',
-            'siteurl' => 'http://whatever.com',
-            'feedname' => 'whatever',
-            'feedurl' => 'https://newfeed.tld/rss',
+            'site_name' => 'whatever',
+            'site_url' => 'http://whatever.com',
+            'feed_name' => 'whatever',
+            'feed_url' => 'https://newfeed.tld/rss',
         ];
 
         $feed = LoadBasicFeedsArticlesData::$feeds[LoadArticleFeedArray::DUMMY];
@@ -343,10 +343,10 @@ class FeedControllerTest extends ControllerTest
 
         $this->assertEquals(self::NB_FEED_FIELDS, count($decoded));
         $this->assertEquals($feed->getId(), $decoded['id']);
-        $this->assertEquals($data['sitename'], $decoded['sitename']);
-        $this->assertEquals($data['siteurl'], $decoded['siteurl']);
-        $this->assertEquals($data['feedname'], $decoded['feedname']);
-        $this->assertEquals($data['feedurl'], $decoded['feedurl']);
+        $this->assertEquals($data['site_name'], $decoded['site_name']);
+        $this->assertEquals($data['site_url'], $decoded['site_url']);
+        $this->assertEquals($data['feed_name'], $decoded['feed_name']);
+        $this->assertEquals($data['feed_url'], $decoded['feed_url']);
     }
 
     /**
@@ -355,10 +355,10 @@ class FeedControllerTest extends ControllerTest
     public function testPutFeed404()
     {
         $data = [
-            'sitename' => 'whatever',
-            'siteurl' => 'http://whatever.com',
-            'feedname' => 'whatever',
-            'feedurl' => 'https://newfeed.tld/rss',
+            'site_name' => 'whatever',
+            'site_url' => 'http://whatever.com',
+            'feed_name' => 'whatever',
+            'feed_url' => 'https://newfeed.tld/rss',
         ];
 
         $feed = LoadBasicFeedsArticlesData::$feeds[LoadArticleFeedArray::DUMMY];
@@ -376,7 +376,7 @@ class FeedControllerTest extends ControllerTest
     public function testJsonPatchFeedAction()
     {
         $data = [
-            'sitename' => 'patched sitename',
+            'site_name' => 'patched siteName',
         ];
         $feed = LoadBasicFeedsArticlesData::$feeds[LoadArticleFeedArray::DUMMY];
 
@@ -390,10 +390,10 @@ class FeedControllerTest extends ControllerTest
 
         $this->assertEquals(self::NB_FEED_FIELDS, count($decoded));
         $this->assertEquals($feed->getId(), $decoded['id']);
-        $this->assertEquals($data['sitename'], $decoded['sitename']);
-        $this->assertEquals($feed->getSiteurl(), $decoded['siteurl']);
-        $this->assertEquals($feed->getFeedname(), $decoded['feedname']);
-        $this->assertEquals('https://'. $feed->getFeed()->getFeedurl(), $decoded['feedurl']);
+        $this->assertEquals($data['site_name'], $decoded['site_name']);
+        $this->assertEquals($feed->getSiteUrl(), $decoded['site_url']);
+        $this->assertEquals($feed->getFeedName(), $decoded['feed_name']);
+        $this->assertEquals('https://'. $feed->getFeed()->getFeedUrl(), $decoded['feed_url']);
     }
 
     /**

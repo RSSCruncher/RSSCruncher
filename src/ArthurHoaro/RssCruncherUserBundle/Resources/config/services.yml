@@ -3,7 +3,9 @@ services:
     class: FOS\UserBundle\Controller\SecurityController
     calls:
       - [setContainer, ["@service_container"]]
-#    arguments: [%request%]
-#    arthur_hoaro_rss_cruncher_user.example:
-#        class: ArthurHoaro\RssCruncherUserBundle\Example
-#        arguments: [@service_id, "plain_value", %parameter%]
+  oauth_event_listener:
+    class:  ArthurHoaro\RssCruncherUserBundle\EventListener\OAuthEventListener
+    arguments: ["@doctrine.orm.entity_manager"]
+    tags:
+      - { name: kernel.event_listener, event: fos_oauth_server.post_authorization_process, method: onPostAuthorizationProcess }
+

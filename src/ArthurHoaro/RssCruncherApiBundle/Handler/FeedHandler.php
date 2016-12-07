@@ -69,7 +69,7 @@ class FeedHandler extends GenericHandler {
      */
     public function refreshFeed(Feed $feed, SimplePie $reader) {
         $feedUrl = $feed->isHttps() ? 'https' : 'http';
-        $feedUrl .= '://'. $feed->getFeedurl();
+        $feedUrl .= '://'. $feed->getFeedUrl();
 
         $reader->set_feed_url($feedUrl);
         $reader->set_cache_location($this->cachePath);

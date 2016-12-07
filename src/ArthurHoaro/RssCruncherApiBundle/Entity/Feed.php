@@ -37,11 +37,11 @@ class Feed implements IEntity
     /**
      * @var string
      *
-     * @ORM\Column(name="feedurl", type="string", length=2000)
+     * @ORM\Column(name="feed_url", type="string", length=2000)
      *
      * @Assert\Url()
      */
-    private $feedurl;
+    private $feedUrl;
 
     /**
      * @var boolean
@@ -109,26 +109,26 @@ class Feed implements IEntity
     }
 
     /**
-     * Set feedurl
+     * Set feedUrl
      *
-     * @param string $feedurl
+     * @param string $feedUrl
      * @return Feed
      */
-    public function setFeedurl($feedurl)
+    public function setFeedUrl($feedUrl)
     {
-        $this->feedurl = $feedurl;
+        $this->feedUrl = $feedUrl;
 
         return $this;
     }
 
     /**
-     * Get feedurl
+     * Get feedUrl
      *
      * @return string 
      */
-    public function getFeedurl()
+    public function getFeedUrl()
     {
-        return $this->feedurl;
+        return $this->feedUrl;
     }
 
     /**

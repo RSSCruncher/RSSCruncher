@@ -84,7 +84,7 @@ class ArticleDTO implements IApiEntity
             $this->setFeed((new UserFeedDTO())->setEntity($feed));
         } else {
             $dto = new UserFeedDTO();
-            $dto->setFeedurl($entity->getFeed()->getFeedurl());
+            $dto->setFeedurl($entity->getFeed()->getFeedUrl());
             $this->setFeed($dto);
         }
 
