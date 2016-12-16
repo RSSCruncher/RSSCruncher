@@ -4,6 +4,7 @@ namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 
 use ArthurHoaro\RssCruncherApiBundle\Model\IEntity;
 use ArthurHoaro\RssCruncherClientBundle\Entity\Client;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Exclude;
@@ -51,6 +52,8 @@ class Feed implements IEntity
     private $https;
 
     /**
+     * @var Article[]
+     *
      * @ORM\OneToMany(targetEntity="Article", mappedBy="feed", fetch="EXTRA_LAZY")
      *
      * @Exclude
@@ -96,6 +99,14 @@ class Feed implements IEntity
     {
         $this->enabled = true;
         $this->dateCreation = new \DateTime('now');
+        $this->userFeeds = new ArrayCollection();
+        $this->articles = new ArrayCollection();
+    }
+
+    public function update()
+    {
+        $this->dateModification = new \DateTime();
+        return $this;
     }
 
     /**
@@ -164,7 +175,15 @@ class Feed implements IEntity
     }
 
     /**
-     * @return mixed
+     * @param Article $article
+     */
+    public function addArticle($article)
+    {
+        $this->articles[] = $article;
+    }
+
+    /**
+     * @return UserFeed[]
      */
     public function getUserFeeds()
     {
@@ -172,11 +191,19 @@ class Feed implements IEntity
     }
 
     /**
-     * @param mixed $userFeeds
+     * @param UserFeed[] $userFeeds
      */
     public function setUserFeeds($userFeeds)
     {
         $this->userFeeds = $userFeeds;
+    }
+
+    /**
+     * @param UserFeed $userFeed
+     */
+    public function addUserFeed($userFeed)
+    {
+        $this->userFeeds[] = $userFeed;
     }
 
     /**

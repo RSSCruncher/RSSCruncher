@@ -120,7 +120,7 @@ class ArticleDTO implements IApiEntity
      */
     public function setPublicId($publicId)
     {
-        $this->publicId = $publicId;
+        $this->publicId = ! empty($publicId) ? $publicId : '';
     }
 
     /**
@@ -136,7 +136,7 @@ class ArticleDTO implements IApiEntity
      */
     public function setTitle($title)
     {
-        $this->title = $title;
+        $this->title = ! empty($title) ? $title : '';
     }
 
     /**
@@ -152,7 +152,7 @@ class ArticleDTO implements IApiEntity
      */
     public function setLink($link)
     {
-        $this->link = $link;
+        $this->link = ! empty($link) ? $link : '';
     }
 
     /**
@@ -168,7 +168,7 @@ class ArticleDTO implements IApiEntity
      */
     public function setContent($content)
     {
-        $this->content = $content;
+        $this->content = ! empty($content) ? $content : '';
     }
 
     /**
@@ -184,7 +184,7 @@ class ArticleDTO implements IApiEntity
      */
     public function setAuthor($author)
     {
-        $this->author = $author;
+        $this->author = ! empty($author) ? $author : '';
     }
 
     /**
@@ -200,7 +200,7 @@ class ArticleDTO implements IApiEntity
      */
     public function setPublicationDate($publicationDate)
     {
-        $this->publicationDate = $publicationDate;
+        $this->publicationDate = ! empty($publicationDate) ? $publicationDate : '';
     }
 
     /**
@@ -216,7 +216,7 @@ class ArticleDTO implements IApiEntity
      */
     public function setModificationDate($modificationDate)
     {
-        $this->modificationDate = $modificationDate;
+        $this->modificationDate = ! empty($modificationDate) ? $modificationDate : '';
     }
 
     /**

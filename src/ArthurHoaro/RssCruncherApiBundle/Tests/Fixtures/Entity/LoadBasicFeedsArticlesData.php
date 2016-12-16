@@ -5,6 +5,7 @@ namespace ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity;
 use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
 use ArthurHoaro\RssCruncherApiBundle\Entity\ArticleContent;
 use ArthurHoaro\RssCruncherApiBundle\Entity\Feed;
+use ArthurHoaro\RssCruncherApiBundle\Entity\FeedCategory;
 use ArthurHoaro\RssCruncherApiBundle\Entity\FeedGroup;
 use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser;
 use ArthurHoaro\RssCruncherApiBundle\Entity\User;
@@ -29,6 +30,12 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
      */
     static public $articles = [];
 
+    /**
+     * @var FeedCategory[]
+     */
+    static public $categories = [];
+
+    /** FIXME! unreadable */
     public function load(ObjectManager $manager)
     {
         $user = new User();
@@ -48,13 +55,18 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         $feedGroup->setName('group1');
         $feedGroup->addProxyUser($proxy);
         $manager->persist($feedGroup);
-        $proxy->setMainFeedGroup($feedGroup);
+        $proxy->setFeedGroup($feedGroup);
         $manager->persist($proxy);
 
+        $cat1 = $this->createCategory($manager, 'cat1', $feedGroup);
+        $cat1->setDateModification(new \DateTime('+2secs'));
+        $cat2 = $this->createCategory($manager, 'cat2', $feedGroup);
+        $cat3 = $this->createCategory($manager, 'cat3', $feedGroup);
+
         $feed = new Feed();
-        $feed->setFeedUrl('feedUrl.tld/rss');
+        $feed->setFeedUrl('feedurl.tld/rss');
         $feed->setHttps(true);
-        $manager->persist($feed);
+
 
         $userFeed = new UserFeed();
         $userFeed->setEnabled(true);
@@ -64,10 +76,13 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         $userFeed->setDateCreation(\DateTime::createFromFormat('Ymd', '20161010'));
         $userFeed->setFeed($feed);
         $userFeed->setFeedGroup($feedGroup);
+        $userFeed->setCategory($cat1);
+        $feed->addUserFeed($userFeed);
+        $manager->persist($feed);
         $manager->persist($userFeed);
 
         $manager->flush();
-        self::$users[] = $userFeed;
+        self::$users[] = $proxy;
         self::$feeds[LoadArticleFeedArray::DUMMY] = $userFeed;
 
         $article = new Article();
@@ -79,17 +94,20 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         $article->setAuthorEmail('victor@hu.go');
         $article->setLink('http://dummy.hu.go/article1');
         $article->setFeed($feed);
-        $manager->persist($article);
+        $feed->addArticle($article);
 
         $articleContent = new ArticleContent();
         $articleContent->setContent('Article content... that\'s soooo interesting.');
         $articleContent->setDate(new \DateTime());
         $articleContent->setArticle($article);
+        $article->addArticleContent($articleContent);
+        $manager->persist($article);
+        $manager->persist($feed);
         $manager->persist($articleContent);
 
         $manager->flush();
 
-        self::$articles[] = $article;
+        self::$articles[0] = $article;
 
         $article = new Article();
         $article->setTitle('article2');
@@ -107,7 +125,7 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
 
         $manager->flush();
 
-        self::$articles[] = $article;
+        self::$articles[1] = $article;
 
         $article = new Article();
         $article->setTitle('article3');
@@ -125,7 +143,7 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
 
         $manager->flush();
 
-        self::$articles[] = $article;
+        self::$articles[2] = $article;
 
         $feed = new Feed();
         $feed->setFeedUrl('hoa.ro/feed.php?rss');
@@ -140,6 +158,7 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         $userFeed->setDateCreation(\DateTime::createFromFormat('Ymd', '20161011'));
         $userFeed->setFeed($feed);
         $userFeed->setFeedGroup($feedGroup);
+        $userFeed->setCategory($cat2);
         $manager->persist($userFeed);
 
         $manager->flush();
@@ -171,7 +190,8 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         $feedGroup2 = new FeedGroup();
         $feedGroup2->setName('group2');
         $feedGroup2->addProxyUser($proxy2);
-        $proxy2->setMainFeedGroup($feedGroup2);
+        $cat4 = $this->createCategory($manager, 'cat not used', $feedGroup2);
+        $proxy2->setFeedGroup($feedGroup2);
         $manager->persist($client);
         $manager->persist($proxy2);
         $manager->persist($feedGroup2);
@@ -187,6 +207,7 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         $userFeed->setDateCreation(\DateTime::createFromFormat('Ymd', '20171011'));
         $userFeed->setFeed($feed);
         $userFeed->setFeedGroup($feedGroup2);
+        $userFeed->setCategory($cat4);
         $manager->persist($userFeed);
         $article = new Article();
         $article->setTitle('nope article');
@@ -203,13 +224,62 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         $manager->flush();
 
         self::$feeds[LoadArticleFeedArray::OTHER_USER] = $userFeed;
+
+        $disabledFeed = new Feed();
+        $disabledFeed->setEnabled(false);
+        $disabledFeed->setFeedUrl('disabled.fr/atom');
+        $disabledFeed->setHttps(false);
+
+        $userFeed = new UserFeed();
+        $userFeed->setEnabled(false);
+        $userFeed->setSiteName('Disabled');
+        $userFeed->setSiteUrl('http://disabled.fr');
+        $userFeed->setFeedName('Disabled UserFeed');
+        $userFeed->setDateCreation(\DateTime::createFromFormat('Ymd', '20161201'));
+        $userFeed->setFeed($disabledFeed);
+        $userFeed->setFeedGroup($feedGroup);
+        $manager->persist($disabledFeed);
+        $manager->persist($userFeed);
+        $manager->flush();
+
+        self::$feeds[LoadArticleFeedArray::DOUBLE_DISABLED] = $userFeed;
+
+        $userFeed = new UserFeed();
+        $userFeed->setEnabled(false);
+        $userFeed->setSiteName('Disabled UserFeed-Enabled Feed');
+        $userFeed->setSiteUrl('http://disabled.fr');
+        $userFeed->setFeedName('Disabled UserFeed');
+        $userFeed->setDateCreation(\DateTime::createFromFormat('Ymd', '20161201'));
+        $userFeed->setFeed($feed);
+        $userFeed->setFeedGroup($feedGroup);
+        $manager->persist($userFeed);
+        $manager->flush();
+
+        self::$feeds[LoadArticleFeedArray::UFEED_DISABLED] = $userFeed;
+
+        self::$categories = [$cat1, $cat2, $cat3, $cat4];
+    }
+
+    protected function createCategory($manager, $name, $feedGroup)
+    {
+        $cat = new FeedCategory($feedGroup);
+        $cat->setFeedGroup($feedGroup);
+        $cat->setName($name);
+        $cat->setDateCreation(new \DateTime());
+        $manager->persist($cat);
+
+
+
+        return $cat;
     }
 }
 
-abstract class LoadArticleFeedArray
+interface LoadArticleFeedArray
 {
     const DUMMY = 0;
     const VALID = 1;
     const NOT_PARSABLE = 2;
     const OTHER_USER = 3;
+    const DOUBLE_DISABLED = 4;
+    const UFEED_DISABLED = 5;
 }

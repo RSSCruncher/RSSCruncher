@@ -26,7 +26,11 @@ class ArticleConverter {
         $convertedArticle->setTitle($originalArticle->get_title());
         $convertedArticle->setLink($originalArticle->get_link());
         $date = $originalArticle->get_date(\DateTime::ISO8601);
-        $convertedArticle->setPublicationDate(\DateTime::createFromFormat(\DateTime::ISO8601, $date));
+        if (! empty($date)) {
+            $convertedArticle->setPublicationDate(\DateTime::createFromFormat(\DateTime::ISO8601, $date));
+        } else {
+            $convertedArticle->setPublicationDate(new \DateTime());
+        }
         $date = $originalArticle->get_updated_date(\DateTime::ISO8601);
         if (! empty($date)) {
             $convertedArticle->setModificationDate(\DateTime::createFromFormat(\DateTime::ISO8601, $date));

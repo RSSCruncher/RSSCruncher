@@ -50,19 +50,12 @@ class ProxyUser implements IEntity
     protected $user;
 
     /**
-     * @var FeedGroup[]
-     *
-     * @ORM\ManyToMany(targetEntity="FeedGroup", mappedBy="proxyUsers", fetch="EXTRA_LAZY")
-     */
-    protected $feedGroups;
-
-    /**
      * @var FeedGroup
      *
-     * @ORM\ManyToOne(targetEntity="FeedGroup")
-     * @ORM\JoinColumn(name="main_feed_group", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="FeedGroup", inversedBy="proxyUsers")
+     * @ORM\JoinColumn(name="feed_group_id", referencedColumnName="id")
      */
-    protected $mainFeedGroup;
+    protected $feedGroup;
 
     /**
      * @var \DateTime
@@ -80,8 +73,13 @@ class ProxyUser implements IEntity
 
     function __construct()
     {
-        $this->dateCreation = new \DateTime('now');
-        $this->feedGroups = new ArrayCollection();
+        $this->dateCreation = new \DateTime();
+    }
+
+    public function update()
+    {
+        $this->dateModification = new \DateTime();
+        return $this;
     }
 
     /**
@@ -127,47 +125,6 @@ class ProxyUser implements IEntity
     }
 
     /**
-     * Get the FeedGroups.
-     *
-     * @return ProxyUser[]
-     */
-    public function getFeedGroups(): array
-    {
-        return $this->feedGroups;
-    }
-
-    /**
-     * Set the FeedGroups.
-     *
-     * @param ProxyUser[] $feedGroups
-     */
-    public function setFeedGroups(array $feedGroups)
-    {
-        $this->feedGroups = $feedGroups;
-    }
-
-    /**
-     * Get the MainFeedGroup.
-     *
-     * @return FeedGroup
-     */
-    public function getMainFeedGroup(): FeedGroup
-    {
-        return $this->mainFeedGroup;
-    }
-
-    /**
-     * Set the MainFeedGroup.
-     *
-     * @param FeedGroup $mainFeedGroup
-     */
-    public function setMainFeedGroup(FeedGroup $mainFeedGroup)
-    {
-        $this->mainFeedGroup = $mainFeedGroup;
-    }
-
-
-    /**
      * @param \DateTime $dateCreation
      */
     public function setDateCreation($dateCreation)
@@ -197,5 +154,29 @@ class ProxyUser implements IEntity
     public function getDateModification()
     {
         return $this->dateModification;
+    }
+
+    /**
+     * Get the FeedGroup.
+     *
+     * @return FeedGroup
+     */
+    public function getFeedGroup()
+    {
+        return $this->feedGroup;
+    }
+
+    /**
+     * Set the FeedGroup.
+     *
+     * @param FeedGroup $feedGroup
+     *
+     * @return ProxyUser
+     */
+    public function setFeedGroup($feedGroup)
+    {
+        $this->feedGroup = $feedGroup;
+
+        return $this;
     }
 }

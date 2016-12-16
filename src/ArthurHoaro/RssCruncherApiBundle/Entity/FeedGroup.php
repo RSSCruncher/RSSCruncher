@@ -36,10 +36,9 @@ class FeedGroup implements IEntity
     protected $name;
 
     /**
-     * @var ProxyUser[]
+     * @var ProxyUser
      *
-     * @ORM\ManyToMany(targetEntity="ProxyUser", inversedBy="feedGroups", fetch="EXTRA_LAZY")
-     * @ORM\JoinTable(name="feedgroup_user")
+     * @ORM\OneToMany(targetEntity="ProxyUser", mappedBy="feedGroup", fetch="EXTRA_LAZY")
      */
     protected $proxyUsers;
 
@@ -55,6 +54,12 @@ class FeedGroup implements IEntity
      */
     public function __construct() {
         $this->proxyUsers = new ArrayCollection();
+        $this->feeds = new ArrayCollection();
+    }
+
+    public function update()
+    {
+        return $this;
     }
 
     /**
@@ -100,9 +105,9 @@ class FeedGroup implements IEntity
     /**
      * Get the ProxyUsers.
      *
-     * @return ProxyUser[]
+     * @return ProxyUser
      */
-    public function getProxyUsers(): array
+    public function getProxyUsers()
     {
         return $this->proxyUsers;
     }
@@ -110,22 +115,31 @@ class FeedGroup implements IEntity
     /**
      * Set the ProxyUsers.
      *
-     * @param ProxyUser[] $proxyUsers
+     * @param ProxyUser $proxyUsers
+     *
+     * @return FeedGroup
      */
-    public function setProxyUsers(array $proxyUsers)
+    public function setProxyUsers($proxyUsers)
     {
         $this->proxyUsers = $proxyUsers;
+
+        return $this;
     }
 
     /**
      * Add a ProxyUser.
      *
      * @param ProxyUser $proxyUser
+     *
+     * @return FeedGroup
      */
-    public function addProxyUser(ProxyUser $proxyUser)
+    public function addProxyUser($proxyUser)
     {
         $this->proxyUsers[] = $proxyUser;
+
+        return $this;
     }
+
 
     /**
      * Get the UserFeeds.
@@ -134,7 +148,7 @@ class FeedGroup implements IEntity
      */
     public function getUserFeeds(): array
     {
-        return $this->userFeeds;
+        return $this->feeds;
     }
 
     /**
@@ -144,6 +158,16 @@ class FeedGroup implements IEntity
      */
     public function setUserFeeds(array $userFeeds)
     {
-        $this->userFeeds = $userFeeds;
+        $this->feeds = $userFeeds;
+    }
+
+    /**
+     * Add a UserFeed
+     *
+     * @param UserFeed $userFeed
+     */
+    public function addUserFeed(UserFeed $userFeed)
+    {
+        $this->feeds[] = $userFeed;
     }
 }

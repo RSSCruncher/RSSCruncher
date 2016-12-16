@@ -22,7 +22,7 @@ class FeedControllerTest extends ControllerTest
     /**
      * Number of fields in an article.
      */
-    const NB_ARTICLE_FIELDS = 7;
+    const NB_ARTICLE_FIELDS = 9;
 
     /**
      * @var Client

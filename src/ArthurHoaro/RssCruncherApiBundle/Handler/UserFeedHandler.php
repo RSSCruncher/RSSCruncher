@@ -3,6 +3,7 @@
 namespace ArthurHoaro\RssCruncherApiBundle\Handler;
 
 use ArthurHoaro\RssCruncherApiBundle\Entity\Feed;
+use ArthurHoaro\RssCruncherApiBundle\Entity\FeedCategory;
 use ArthurHoaro\RssCruncherApiBundle\Entity\FeedRepository;
 use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser;
 use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeed;
@@ -49,16 +50,26 @@ class UserFeedHandler extends GenericHandler {
         // Retrieve or create the existing Feed matching our feedUrl.
         $feed = $feedRepository->findByUrlOrCreate($parameters['feed_url']);
 
+        if (! empty($parameters['category'])) {
+            /** @var FeedRepository $feedRepository */
+            $categoryRepo = $this->om->getRepository(FeedCategory::class);
+            // Retrieve or create the existing Feed matching our feedUrl.
+            $category = $categoryRepo->findByNameOrCreate($parameters['category'], $this->proxyUser->getFeedGroup());
+        }
+
         $userFeed = $this->repository->findOneBy([
             'feed' => $feed->getId(),
-            'feedGroup' => $this->proxyUser->getMainFeedGroup()->getId(),
+            'feedGroup' => $this->proxyUser->getFeedGroup()->getId(),
         ]);
         if (! empty($userFeed)) {
             throw new FeedExistsException($userFeed);
         }
 
         $entity->setFeed($feed);
-        $entity->setFeedGroup($this->proxyUser->getMainFeedGroup());
+        $entity->setFeedGroup($this->proxyUser->getFeedGroup());
+        if (! empty($category)) {
+            $entity->setCategory($category);
+        }
         $this->om->persist($entity);
         $this->om->flush();
 
@@ -124,10 +135,10 @@ class UserFeedHandler extends GenericHandler {
      * @param int   $id     Feed ID.
      * @param array $params Additional parameters.
      *
-     * @return array List containing the Feed found or null.
+     * @return UserFeed List containing the Feed found or null.
      */
-    public function select($id, $params = array()) {
-        return $this->repository->findBy(array_merge(
+    public function get($id, $params = []) {
+        return $this->repository->findOneBy(array_merge(
             [
                 'id' => $id,
                 'enabled' => true,

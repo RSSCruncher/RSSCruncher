@@ -2,68 +2,72 @@
 
 namespace ArthurHoaro\RssCruncherApiBundle\Tests\Handler;
 
+use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
+use ArthurHoaro\RssCruncherApiBundle\Entity\ArticleContent;
 use ArthurHoaro\RssCruncherApiBundle\Entity\Feed;
+use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeed;
 use ArthurHoaro\RssCruncherApiBundle\Form\FeedType;
+use ArthurHoaro\RssCruncherApiBundle\Handler\ArticleHandler;
 use ArthurHoaro\RssCruncherApiBundle\Handler\FeedHandler;
+use ArthurHoaro\RssCruncherApiBundle\Handler\UserFeedHandler;
+use ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity\LoadArticleFeedArray;
+use ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity\LoadBasicFeedsArticlesData;
+use Doctrine\ORM\EntityManager;
+use Liip\FunctionalTestBundle\Test\WebTestCase;
 
-class FeedHandlerTest extends \PHPUnit_Framework_TestCase {
-    const FEED_CLASS = 'ArthurHoaro\RssCruncherApiBundle\Tests\Handler\DummyFeed';
-    const FEED_TYPE_CLASS = 'ArthurHoaro\RssCruncherApiBundle\Tests\Handler\DummyFeedType';
+class FeedHandlerTest extends WebTestCase {
+    /**
+     * @var EntityManager
+     */
+    private $_em;
 
-    /** @var FeedHandler */
-    protected $feedHandler;
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $om;
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $repository;
+    /**
+     * @var UserFeedHandler
+     */
+    private $feedHandler;
 
-    public function setUp()
+    protected function setUp()
     {
-        if (!interface_exists('Doctrine\Common\Persistence\ObjectManager')) {
-            $this->markTestSkipped('Doctrine Common has to be installed for this test to run.');
-        }
+        $kernel = static::createKernel();
+        $kernel->boot();
+        $this->_em = $kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $this->feedHandler = $kernel->getContainer()->get('arthur_hoaro_rss_cruncher_api.feed.handler');
 
-        $class = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
-        $this->om = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-        $this->repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
-        $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
-
-        $this->om->expects($this->any())
-            ->method('getRepository')
-            ->with($this->equalTo(static::FEED_CLASS))
-            ->will($this->returnValue($this->repository));
-        $this->om->expects($this->any())
-            ->method('getClassMetadata')
-            ->with($this->equalTo(static::FEED_CLASS))
-            ->will($this->returnValue($class));
-        $class->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue(static::FEED_CLASS));
+        $fixtures = array('ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity\LoadBasicFeedsArticlesData');
+        $this->loadFixtures($fixtures);
     }
 
-    public function testGet()
+    /**
+     * Rollback changes.
+     */
+    public function tearDown()
     {
-        $id = 1;
-        $feed = $this->getFeed();
-        $this->repository->expects($this->once())->method('find')
-            ->with($this->equalTo($id))
-            ->will($this->returnValue($feed));
-        $this->feedHandler = $this->createFeedHandler($this->om, static::FEED_CLASS, $this->formFactory, static::FEED_TYPE_CLASS);
-        $this->feedHandler->get($id);
     }
 
-    protected function createFeedHandler($objectManager, $feedClass, $formFactory, $feedTypeClass)
+    public function testSelectFeed()
     {
-        return new FeedHandler($objectManager, $feedClass, $formFactory, $feedTypeClass);
+        $feed = LoadBasicFeedsArticlesData::$feeds[LoadArticleFeedArray::DUMMY]->getFeed();
+        /** @var Feed $loaded */
+        $loaded = $this->feedHandler->select($feed->getId())[0];
+
+        $this->assertEquals($feed->getId(), $loaded->getId());
+        $this->assertEquals($feed->getFeedUrl(), $loaded->getFeedUrl());
+        $this->assertEquals($feed->getUserFeeds()[0]->getId(), $loaded->getUserFeeds()[0]->getId());
+        $this->assertEquals($feed->getArticles()[0]->getId(), $loaded->getArticles()[0]->getId());
+        $this->assertEquals($feed->getDateCreation(), $loaded->getDateCreation());
+        $this->assertEquals($feed->getDateFetch(), $loaded->getDateFetch());
+        $this->assertEquals($feed->getDateModification(), $loaded->getDateModification());
     }
-    
-    protected function getFeed()
+
+    public function testSelectDisabledFeed()
     {
-        $feedClass = static::FEED_CLASS;
-        return new $feedClass();
+        $feed = LoadBasicFeedsArticlesData::$feeds[LoadArticleFeedArray::DOUBLE_DISABLED]->getFeed();
+        $this->assertEmpty($this->feedHandler->select($feed->getId()));
+    }
+
+    public function testGetDisabledFeed()
+    {
+        $feed = LoadBasicFeedsArticlesData::$feeds[LoadArticleFeedArray::DOUBLE_DISABLED]->getFeed();
+        $this->assertEmpty($this->feedHandler->get($feed->getId()));
     }
 }
-
-class DummyFeed extends Feed {}
-
-class DummyFeedType extends FeedType {}

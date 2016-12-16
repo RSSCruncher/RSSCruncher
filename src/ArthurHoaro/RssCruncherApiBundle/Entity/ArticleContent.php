@@ -54,6 +54,10 @@ class ArticleContent implements IEntity
      */
     protected $date;
 
+    public function update()
+    {
+        return $this;
+    }
 
     /**
      * @return int id

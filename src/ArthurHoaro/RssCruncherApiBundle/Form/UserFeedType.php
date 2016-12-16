@@ -50,6 +50,9 @@ class UserFeedType extends AbstractType {
                         'maxMessage' => 'Your siteUrl cannot be longer than {{ limit }} characters length',
                     ])
                 ]
+            ])
+            ->add('category', TextType::class, [
+                'required' => false,
             ]);
         ;
     }

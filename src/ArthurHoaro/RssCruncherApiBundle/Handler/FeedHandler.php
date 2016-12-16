@@ -82,12 +82,12 @@ class FeedHandler extends GenericHandler {
         $outItems = array();
         foreach ($newItems as $value) {
             $item = ArticleConverter::convertFromRemote($value);
-            if ($item->getPublicationDate() > $feed->getDateFetch()
+            /*if ($item->getPublicationDate() > $feed->getDateFetch()
                 || $item->getModificationDate() > $feed->getDateFetch()
-            ) {
+            ) {*/
                 $item->setFeed($feed);
                 $outItems[] = $item;
-            }
+            //}
         }
 
         return $outItems;

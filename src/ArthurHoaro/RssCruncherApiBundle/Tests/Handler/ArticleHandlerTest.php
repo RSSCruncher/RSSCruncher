@@ -3,67 +3,213 @@
 namespace ArthurHoaro\RssCruncherApiBundle\Tests\Handler;
 
 use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
-use ArthurHoaro\RssCruncherApiBundle\Form\ArticleType;
+use ArthurHoaro\RssCruncherApiBundle\Entity\ArticleContent;
+use ArthurHoaro\RssCruncherApiBundle\Entity\Feed;
+use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeed;
+use ArthurHoaro\RssCruncherApiBundle\Form\FeedType;
 use ArthurHoaro\RssCruncherApiBundle\Handler\ArticleHandler;
+use ArthurHoaro\RssCruncherApiBundle\Handler\FeedHandler;
+use ArthurHoaro\RssCruncherApiBundle\Handler\UserFeedHandler;
+use ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity\LoadArticleFeedArray;
+use ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity\LoadBasicFeedsArticlesData;
+use Doctrine\ORM\EntityManager;
+use Liip\FunctionalTestBundle\Test\WebTestCase;
 
-class ArticleHandlerTest extends \PHPUnit_Framework_TestCase {
-    const ARTICLE_CLASS = 'ArthurHoaro\RssCruncherApiBundle\Tests\Handler\DummyArticle';
-    const ARTICLE_TYPE_CLASS = 'ArthurHoaro\RssCruncherApiBundle\Tests\Handler\DummyArticleType';
+class ArticleHandlerTest extends WebTestCase {
+    /**
+     * @var EntityManager
+     */
+    private $_em;
 
-    /** @var ArticleHandler */
-    protected $articleHandler;
-    /** @var \PHPUnit_Framework_MockObject_MockObject  */
-    protected $om;
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $repository;
+    /**
+     * @var ArticleHandler
+     */
+    private $articleHandler;
 
-    public function setUp()
+    /**
+     * @var UserFeedHandler
+     */
+    private $feedHandler;
+
+    protected function setUp()
     {
-        if (!interface_exists('Doctrine\Common\Persistence\ObjectManager')) {
-            $this->markTestSkipped('Doctrine Common has to be installed for this test to run.');
-        }
+        $kernel = static::createKernel();
+        $kernel->boot();
+        $this->_em = $kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $this->articleHandler = $kernel->getContainer()->get('arthur_hoaro_rss_cruncher_api.article.handler');
+        $this->feedHandler = $kernel->getContainer()->get('arthur_hoaro_rss_cruncher_api.user_feed.handler');
 
-        $class = $this->getMockBuilder('Doctrine\Common\Persistence\Mapping\ClassMetadata')->getMock();
-        $this->om = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')->getMock();
-        $this->repository = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')->getMock();
-        $this->formFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactoryInterface')->getMock();
-
-        $this->om->expects($this->any())
-            ->method('getRepository')
-            ->with($this->equalTo(static::ARTICLE_CLASS))
-            ->will($this->returnValue($this->repository));
-        $this->om->expects($this->any())
-            ->method('getClassMetadata')
-            ->with($this->equalTo(static::ARTICLE_CLASS))
-            ->will($this->returnValue($class));
-        $class->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue(static::ARTICLE_CLASS));
+        $fixtures = array('ArthurHoaro\RssCruncherApiBundle\Tests\Fixtures\Entity\LoadBasicFeedsArticlesData');
+        $this->loadFixtures($fixtures);
     }
 
-    public function testGet()
+    /**
+     * Rollback changes.
+     */
+    public function tearDown()
     {
-        $id = 1;
-        $article = $this->getArticle();
-        $this->repository->expects($this->once())->method('find')
-            ->with($this->equalTo($id))
-            ->will($this->returnValue($article));
-        $this->articleHandler = $this->createArticleHandler($this->om, static::ARTICLE_CLASS, $this->formFactory, static::ARTICLE_TYPE_CLASS);
+    }
+
+    public function testSaveGetNewFullArticle()
+    {
+        $article = new Article();
+        $feed = LoadBasicFeedsArticlesData::$feeds[LoadArticleFeedArray::DUMMY];
+        /** @var UserFeed $feed */
+        $feed = $this->feedHandler->get($feed->getId());
+
+        $article->setFeed($feed->getFeed());
+        $article->setTitle($title = 'Foo Bar!');
+        $article->setAuthorEmail($email = 'john@doe.com');
+        $article->setAuthorName($name = 'John Doe');
+        $article->setLink($link = 'http://foo.bar');
+        $article->setPublicId($publicId = 'http://doe.com/permalink/123');
+        $article->setPublicationDate($date = new \DateTime());
+
+        $articleContent = new ArticleContent();
+        $articleContent->setArticle($article);
+        $articleContent->setDate($date);
+        $articleContent->setContent($content = '<div>content</div>');
+
+        $article->addArticleContent($articleContent);
+
+        $article = $this->articleHandler->save($article);
+        $id = $article->getId();
+        $articleContentId = $article->getLastArticleContent()->getId();
+
+        /** @var Article $article */
         $article = $this->articleHandler->get($id);
+
+        $this->assertEquals($id, $article->getId());
+        $this->assertEquals($articleContentId, $article->getLastArticleContent()->getId());
+        $this->assertEquals($title, $article->getTitle());
+        $this->assertEquals($email, $article->getAuthorEmail());
+        $this->assertEquals($name, $article->getAuthorName());
+        $this->assertEquals($link, $article->getLink());
+        $this->assertEquals($publicId, $article->getPublicId());
+        $this->assertEquals($date, $article->getPublicationDate());
+        $this->assertEquals($feed->getFeed()->getId(), $article->getFeed()->getId());
+        $this->assertEquals($id, $article->getLastArticleContent()->getArticle()->getId());
+        $this->assertEquals($content, $article->getLastArticleContent()->getContent());
+        $this->assertEquals($date, $article->getLastArticleContent()->getDate());
     }
 
-    protected function createArticleHandler($objectManager, $articleClass, $formFactory, $articleTypeClass)
+    public function testSaveGetFullArticleExactCopy()
     {
-        return new ArticleHandler($objectManager, $articleClass, $formFactory, $articleTypeClass);
+        $article = new Article();
+        $feed = LoadBasicFeedsArticlesData::$feeds[LoadArticleFeedArray::DUMMY];
+        /** @var UserFeed $feed */
+        $feed = $this->feedHandler->get($feed->getId());
+
+        $article->setFeed($feed->getFeed());
+        $article->setTitle($title = 'Foo Bar!');
+        $article->setAuthorEmail($email = 'john@doe.com');
+        $article->setAuthorName($name = 'John Doe');
+        $article->setLink($link = 'http://foo.bar');
+        $article->setPublicId($publicId = 'http://doe.com/permalink/123');
+        $article->setPublicationDate($date = new \DateTime());
+
+        $articleContent = new ArticleContent();
+        $articleContent->setArticle($article);
+        $articleContent->setDate($date);
+        $articleContent->setContent($content = '<div>content</div>');
+
+        $article->addArticleContent($articleContent);
+
+        $article = $this->articleHandler->save($article);
+        $id = $article->getId();
+        $contentId = $article->getLastArticleContent()->getId();
+        $article = $this->articleHandler->save($article);
+
+        /** @var Article $article */
+        $article = $this->articleHandler->get($id);
+
+        $this->assertEquals($id, $article->getId());
+        $this->assertEquals($contentId, $article->getLastArticleContent()->getId());
+        $this->assertEquals($title, $article->getTitle());
+        $this->assertEquals($email, $article->getAuthorEmail());
+        $this->assertEquals($name, $article->getAuthorName());
+        $this->assertEquals($link, $article->getLink());
+        $this->assertEquals($publicId, $article->getPublicId());
+        $this->assertEquals($date, $article->getPublicationDate());
+        $this->assertEquals($feed->getFeed()->getId(), $article->getFeed()->getId());
+        $this->assertEquals($id, $article->getLastArticleContent()->getArticle()->getId());
+        $this->assertEquals($content, $article->getLastArticleContent()->getContent());
+        $this->assertEquals($date, $article->getLastArticleContent()->getDate());
     }
-    
-    protected function getArticle()
+
+    public function testSaveGetMinimalArticle()
     {
-        $articleClass = static::ARTICLE_CLASS;
-        return new $articleClass();
+        $article = new Article();
+        $feed = LoadBasicFeedsArticlesData::$feeds[LoadArticleFeedArray::DUMMY];
+        /** @var UserFeed $feed */
+        $feed = $this->feedHandler->get($feed->getId());
+
+        $article->setFeed($feed->getFeed());
+        $article->setTitle($title = 'Foo Bar!');
+        $article->setLink($link = 'http://foo.bar');
+        $article->setPublicationDate($date = new \DateTime());
+
+        $article = $this->articleHandler->save($article);
+        $id = $article->getId();
+        /** @var Article $article */
+        $article = $this->articleHandler->get($id);
+
+        $this->assertEquals($id, $article->getId());
+        $this->assertEquals($title, $article->getTitle());
+        $this->assertEquals(null, $article->getAuthorEmail());
+        $this->assertEquals(null, $article->getAuthorName());
+        $this->assertEquals($link, $article->getLink());
+        $this->assertEquals(null, $article->getPublicId());
+        $this->assertEquals($date, $article->getPublicationDate());
+        $this->assertEquals($feed->getFeed()->getId(), $article->getFeed()->getId());
+        $this->assertEquals(null, $article->getLastArticleContent());
+    }
+
+    public function testSaveGetArticleNewContent()
+    {
+        $article = new Article();
+        $feed = LoadBasicFeedsArticlesData::$feeds[LoadArticleFeedArray::DUMMY];
+        /** @var UserFeed $feed */
+        $feed = $this->feedHandler->get($feed->getId());
+
+        $article->setFeed($feed->getFeed());
+        $article->setTitle($title = 'Foo Bar!');
+        $article->setLink($link = 'http://foo.bar');
+        $article->setPublicId($publicId = 'http://doe.com/permalink/123');
+        $article->setPublicationDate($date = new \DateTime());
+
+        $articleContent = new ArticleContent();
+        $articleContent->setArticle($article);
+        $articleContent->setDate($date);
+        $articleContent->setContent($content1 = '<div>content1</div>');
+
+        $article->addArticleContent($articleContent);
+
+        $article = $this->articleHandler->save($article);
+
+        $articleContent = new ArticleContent();
+        $articleContent->setArticle($article);
+        $articleContent->setDate($date2 = new \DateTime());
+        $articleContent->setContent($content2 = '<div>content2</div>');
+
+        $article->addArticleContent($articleContent);
+
+        /** @var Article $article */
+        $article = $this->articleHandler->save($article);
+        $id = $article->getId();
+        $contentId = $article->getLastArticleContent()->getId();
+        /** @var Article $article */
+        $article = $this->articleHandler->get($id);
+
+        $this->assertEquals($id, $article->getId());
+        $this->assertEquals($contentId, $article->getLastArticleContent()->getId());
+        $this->assertEquals($title, $article->getTitle());
+        $this->assertEquals($link, $article->getLink());
+        $this->assertEquals($publicId, $article->getPublicId());
+        $this->assertEquals($date, $article->getPublicationDate());
+        $this->assertEquals($feed->getFeed()->getId(), $article->getFeed()->getId());
+        $this->assertEquals($id, $article->getLastArticleContent()->getArticle()->getId());
+        $this->assertEquals($content2, $article->getLastArticleContent()->getContent());
+        $this->assertEquals($date2, $article->getLastArticleContent()->getDate());
     }
 }
-
-class DummyArticle extends Article {}
-
-class DummyArticleType extends ArticleType {}

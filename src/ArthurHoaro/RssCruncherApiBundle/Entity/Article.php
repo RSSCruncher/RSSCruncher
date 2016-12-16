@@ -66,17 +66,17 @@ class Article implements IEntity
     /**
      * @var ArticleContent[]
      *
-     * @ORM\OneToMany(targetEntity="ArticleContent", mappedBy="article", cascade={"persist", "remove"}, fetch="EXTRA_LAZY")
+     * @ORM\OneToMany(
+     *     targetEntity="ArticleContent",
+     *     mappedBy="article",
+     *     cascade={"persist", "remove"},
+     *     fetch="EXTRA_LAZY"
+     * )
      * @ORM\OrderBy({"date" = "ASC"})
      *
      * @Exclude
      */
     protected $articleContents;
-
-    /**
-     * @var string Last article content (API rendering).
-     */
-    protected $articleContent;
 
     /**
      * @var string
@@ -111,6 +111,12 @@ class Article implements IEntity
      * @ORM\Column(name="feed_id", type="integer")
      */
     protected $feedId;
+
+    public function update()
+    {
+        $this->modificationDate = new \DateTime();
+        return $this;
+    }
 
     /**
      * Get id

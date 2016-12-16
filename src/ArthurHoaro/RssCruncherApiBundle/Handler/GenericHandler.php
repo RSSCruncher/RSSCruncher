@@ -118,6 +118,7 @@ class GenericHandler implements GenericHandlerInterface {
     public function put(IEntity $entity, array $parameters)
     {
         $entity = $this->processForm($entity, $parameters, 'PUT');
+        $entity->update();
         $this->om->persist($entity);
         $this->om->flush();
 
@@ -135,6 +136,7 @@ class GenericHandler implements GenericHandlerInterface {
     public function patch(IEntity $entity, array $parameters)
     {
         $entity = $this->processForm($entity, $parameters, 'PATCH');
+        $entity->update();
         $this->om->persist($entity);
         $this->om->flush();
 

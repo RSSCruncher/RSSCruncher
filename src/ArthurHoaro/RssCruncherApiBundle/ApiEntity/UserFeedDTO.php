@@ -2,6 +2,7 @@
 
 namespace ArthurHoaro\RssCruncherApiBundle\ApiEntity;
 
+use ArthurHoaro\RssCruncherApiBundle\Entity\FeedCategory;
 use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeed;
 
 /**
@@ -41,7 +42,12 @@ class UserFeedDTO implements IApiEntity
     /**
      * @var FeedGroupDTO
      */
-    protected $feedGroup;
+    //protected $feedGroup;
+
+    /**
+     * @var string
+     */
+    protected $category;
 
     /**
      * @param UserFeed $userFeed
@@ -55,7 +61,8 @@ class UserFeedDTO implements IApiEntity
         $this->setFeedName($userFeed->getFeedName());
         $scheme = $userFeed->getFeed()->isHttps() ? 'https' : 'http';
         $this->setFeedUrl($scheme . '://' . $userFeed->getFeed()->getFeedUrl());
-        $this->setFeedGroup((new FeedGroupDTO())->setEntity($userFeed->getFeedGroup()));
+        //$this->setFeedGroup((new FeedGroupDTO())->setEntity($userFeed->getFeedGroup()));
+        $this->setCategory($userFeed->getCategory());
 
         return $this;
     }
@@ -185,10 +192,10 @@ class UserFeedDTO implements IApiEntity
      *
      * @return FeedGroupDTO
      */
-    public function getFeedGroup()
+    /*public function getFeedGroup()
     {
         return $this->feedGroup;
-    }
+    }*/
 
     /**
      * Set the FeedGroup.
@@ -197,9 +204,37 @@ class UserFeedDTO implements IApiEntity
      *
      * @return UserFeedDTO
      */
-    public function setFeedGroup($feedGroup)
+    /*public function setFeedGroup($feedGroup)
     {
         $this->feedGroup = $feedGroup ? $feedGroup : '';
+
+        return $this;
+    }*/
+
+    /**
+     * Get the Category.
+     *
+     * @return mixed
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * Set the Category.
+     *
+     * @param mixed $category
+     *
+     * @return UserFeedDTO
+     */
+    public function setCategory($category)
+    {
+        if ($category != null) {
+            $this->category = $category->getName();
+        } else {
+            $this->category = '';
+        }
 
         return $this;
     }

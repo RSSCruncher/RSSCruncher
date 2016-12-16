@@ -56,31 +56,24 @@ class ClientController extends Controller
             $clientManager->updateClient($entity);
 
             if ($entity->getAllowedGrantType() == 'client_credentials') {
-                /** @var FeedGroup[] $feedGroups */
-                $feedGroups = $form->get('syncFeedGroups')->getData();
                 /** @var ProxyUserHandler $handler */
                 $handler = $this->container->get('arthur_hoaro_rss_cruncher_api.proxy_user.handler');
                 $proxyUser = $handler->createUser($entity, $this->getUser());
 
                 $groupsRepo = $this->getDoctrine()->getRepository(FeedGroup::class);
-                foreach ($feedGroups as $feedGroup) {
-                    $doctrineEntity = $groupsRepo->find($feedGroup->getId());
-                    $doctrineEntity->addProxyUser($proxyUser);
-                    $this->getDoctrine()->getManager()->persist($doctrineEntity);
-                }
 
-                /** @var FeedGroup $feedGroups */
+                /** @var FeedGroup $mainFeedGroup */
                 $mainFeedGroup = $form->get('mainFeedGroup')->getData();
                 if ($mainFeedGroup != null) {
                     $mainFeedGroup = $groupsRepo->find($mainFeedGroup->getId());
                 } else {
                     $mainFeedGroup = new FeedGroup();
-                    $mainFeedGroup->addProxyUser($proxyUser);
+                    $mainFeedGroup->setProxyUser($proxyUser);
                     $mainFeedGroup->setName($entity->getName());
                     $this->getDoctrine()->getManager()->persist($mainFeedGroup);
                 }
 
-                $proxyUser->setMainFeedGroup($mainFeedGroup);
+                $proxyUser->setFeedGroup($mainFeedGroup);
                 $this->getDoctrine()->getManager()->persist($proxyUser);
                 $this->getDoctrine()->getManager()->flush();
             }

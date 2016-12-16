@@ -90,6 +90,13 @@ class UserFeed implements IEntity
     protected $feedGroup;
 
     /**
+     * @var FeedCategory
+     *
+     * @ORM\ManyToOne(targetEntity="FeedCategory", inversedBy="feeds", fetch="EXTRA_LAZY")
+     */
+    protected $category;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="date_creation", type="datetime")
@@ -106,6 +113,12 @@ class UserFeed implements IEntity
     function __construct()
     {
         $this->dateCreation = new \DateTime('now');
+    }
+
+    public function update()
+    {
+        $this->dateModification = new \DateTime();
+        return $this;
     }
 
     /**
@@ -248,5 +261,29 @@ class UserFeed implements IEntity
     public function getDateModification()
     {
         return $this->dateModification;
+    }
+
+    /**
+     * Get the Category.
+     *
+     * @return FeedCategory
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * Set the Category.
+     *
+     * @param FeedCategory $category
+     *
+     * @return UserFeed
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
+
+        return $this;
     }
 }

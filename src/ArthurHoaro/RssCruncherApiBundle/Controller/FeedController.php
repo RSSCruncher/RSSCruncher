@@ -269,11 +269,11 @@ class FeedController extends ApiController {
     protected function getOr404($id, ProxyUser $proxyUser)
     {
         $handler = $this->get('arthur_hoaro_rss_cruncher_api.user_feed.handler');
-        $feed = $handler->select($id, ['feedGroup' => $proxyUser->getMainFeedGroup()]);
+        $feed = $handler->get($id, ['feedGroup' => $proxyUser->getFeedGroup()]);
         if (empty($feed)) {
             throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.', $id));
         }
-        return $feed[0];
+        return $feed;
     }
 
     /**
@@ -300,11 +300,11 @@ class FeedController extends ApiController {
         $userFeedHandler = $this->get('arthur_hoaro_rss_cruncher_api.user_feed.handler');
         $feedHandler = $this->get('arthur_hoaro_rss_cruncher_api.feed.handler');
         /** @var UserFeed $userFeed */
-        $userFeed = $userFeedHandler->select($id, ['feedGroup' => $this->getProxyUser()->getMainFeedGroup()]);
+        $userFeed = $userFeedHandler->get($id, ['feedGroup' => $this->getProxyUser()->getFeedGroup()]);
         if (empty($userFeed)) {
             throw new FeedNotFoundException($id);
         } else {
-            $userFeed = $userFeed[0];
+            $userFeed = $userFeed;
         }
 
         $items = $feedHandler->refreshFeed(
@@ -337,11 +337,9 @@ class FeedController extends ApiController {
     {
         /** @var UserFeedHandler $userFeedHandler */
         $userFeedHandler = $this->get('arthur_hoaro_rss_cruncher_api.user_feed.handler');
-        $userFeed = $userFeedHandler->select($id, ['feedGroup' => $this->getProxyUser()->getMainFeedGroup()]);
+        $userFeed = $userFeedHandler->get($id, ['feedGroup' => $this->getProxyUser()->getFeedGroup()]);
         if (empty($userFeed)) {
             throw new FeedNotFoundException($id);
-        } else {
-            $userFeed = $userFeed[0];
         }
         $userFeedHandler->disable($userFeed);
     }

@@ -46,7 +46,6 @@ class MainCommand extends ContainerAwareCommand
 
             // Feed update queue
             $messages = $queue->receiveMessages('update');
-            error_log(var_export($messages, true));
             foreach ($messages as $message) {
                 if ($message instanceof Message && $message->getContent() instanceof Feed) {
                     // update

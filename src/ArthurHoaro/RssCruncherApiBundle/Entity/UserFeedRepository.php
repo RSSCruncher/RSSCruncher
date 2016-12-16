@@ -28,14 +28,17 @@ class UserFeedRepository extends EntityRepository
     public function findByProxyUser($proxyUser, $limit = 0, $offset = 0)
     {
         $qb = $this->_em->createQueryBuilder();
-        $qb->select('f')
-            ->from('ArthurHoaroRssCruncherApiBundle:UserFeed', 'f')
-            ->join('f.feedGroup', 'fg')
+        $qb->select('uf')
+            ->from('ArthurHoaroRssCruncherApiBundle:UserFeed', 'uf')
+            ->join('uf.feedGroup', 'fg')
             ->join('fg.proxyUsers', 'pu')
+            ->join('uf.feed', 'f')
             ->where('pu.client = :client AND pu.user = :user')
-            ->orderBy('f.dateCreation', 'DESC')
+            ->andWhere('uf.enabled = :enabled and f.enabled = :enabled')
+            ->orderBy('uf.dateCreation', 'DESC')
             ->setParameter('client', $proxyUser->getClient())
             ->setParameter('user', $proxyUser->getUser())
+            ->setParameter('enabled', true)
             ->setFirstResult($offset);
 
         if ($limit > 0) {

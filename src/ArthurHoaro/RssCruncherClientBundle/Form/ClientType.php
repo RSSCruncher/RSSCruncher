@@ -54,27 +54,12 @@ class ClientType extends AbstractType
                 'expanded' => true,
                 'multiple' => false,
             ])
-            ->add('syncFeedGroups', EntityType::class, [
-                'label' => 'Sync feeds with existing groups',
-                'class' => 'ArthurHoaro\RssCruncherApiBundle\Entity\FeedGroup',
-                'query_builder' => function (EntityRepository $er) use ($user) {
-                    return $er->createQueryBuilder('fg')
-                        ->join('fg.proxyUsers', 'pu')
-                        ->where('pu.user = :user')
-                        ->orderBy('fg.id', 'ASC')
-                        ->setParameter('user', $user);
-                },
-                'mapped' => false,
-                'multiple' => true,
-                'expanded' => true,
-                'choice_label' => 'name',
-            ])
             ->add('mainFeedGroup', EntityType::class, [
-                'label' => 'Default (add new feeds to this group)',
+                'label' => 'Sync my feeds with group',
                 'class' => 'ArthurHoaro\RssCruncherApiBundle\Entity\FeedGroup',
                 'query_builder' => function (EntityRepository $er) use ($user) {
                     return $er->createQueryBuilder('fg')
-                        ->join('fg.proxyUsers', 'pu')
+                        ->join('fg.proxyUser', 'pu')
                         ->where('pu.user = :user')
                         ->orderBy('fg.id', 'ASC')
                         ->setParameter('user', $user);
