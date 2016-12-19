@@ -2,8 +2,15 @@
 
 namespace ArthurHoaro\RssCruncherApiBundle\Controller;
 
+use ArthurHoaro\RssCruncherApiBundle\ApiEntity\ArticleContentDTO;
+use ArthurHoaro\RssCruncherApiBundle\ApiEntity\ArticleDTO;
+use ArthurHoaro\RssCruncherApiBundle\ApiEntity\ArticleHistoryDTO;
+use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
+use ArthurHoaro\RssCruncherApiBundle\Entity\ArticleContent;
+use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser;
 use ArthurHoaro\RssCruncherApiBundle\Exception\InvalidFormException;
 use ArthurHoaro\RssCruncherApiBundle\Form\ArticleType;
+use ArthurHoaro\RssCruncherApiBundle\Handler\ArticleHandler;
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Request\ParamFetcherInterface;
@@ -22,7 +29,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  *
  * @package ArthurHoaro\RssCruncherApiBundle\Controller
  */
-class ArticleController extends FOSRestController {
+class ArticleController extends ApiController {
     /**
      * List all articles.
      *
@@ -47,11 +54,22 @@ class ArticleController extends FOSRestController {
      */
     public function getArticlesAction(Request $request, ParamFetcherInterface $paramFetcher)
     {
-        $offset = $paramFetcher->get('offset');
-        $offset = null == $offset ? 0 : $offset;
-        $limit = $paramFetcher->get('limit');
+        $offset = null == $paramFetcher->get('offset') ? 0 : (int) $paramFetcher->get('offset');
+        $limit = null == $paramFetcher->get('limit') ? 0 : (int) $paramFetcher->get('limit');
 
-        return $this->container->get('arthur_hoaro_rss_cruncher_api.article.handler')->all($limit, $offset);
+        $repo = $this->getDoctrine()->getRepository(Article::class);
+        $userFeeds = $repo->findUserFeedArticles($this->getProxyUser()->getFeedGroup(), $offset, $limit);
+        $out = [];
+        foreach ($userFeeds as $userFeed) {
+            foreach ($userFeed->getFeed()->getArticles() as $article) {
+                $out[] = (new ArticleDTO())->setEntity($article, $userFeed);
+            }
+        }
+        // Sort by date asc
+        usort($out, function($a, $b) {
+            return $a->getPublicationDate() < $b->getPublicationDate() ? 1 : -1;
+        });
+        return $out;
     }
     
     /**
@@ -71,186 +89,72 @@ class ArticleController extends FOSRestController {
      *
      * @param int     $id      the feed id
      *
-     * @return array
+     * @return ArticleDTO
      *
      * @throws NotFoundHttpException when feed not exist
      */
-	public function getArticleAction($id) {
-		return $this->getOr404($id);
+	public function getArticleAction($id)
+    {
+	    /** @var Article $article */
+		$article = $this->getOr404($id, $this->getProxyUser());
+		return (new ArticleDTO())->setEntity($article, $article->getFeed()->getUserFeeds()[0]);
 	}
+
+    /**
+     * @Annotations\Route("/articles/{id}/history", requirements={"id" = "\d+"})
+     * @Annotations\QueryParam(name="offset", requirements="\d+", description="Offset from which to start listing feeds.")
+     * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="How many feeds to return.")
+     *
+     * @param ParamFetcherInterface $paramFetcher
+     * @return ArticleHistoryDTO
+     */
+	public function getArticleHistoryAction(ParamFetcherInterface $paramFetcher, $id)
+    {
+        $offset = null == $paramFetcher->get('offset') ? 0 : (int) $paramFetcher->get('offset');
+        $limit = null == $paramFetcher->get('limit') ? 0 : (int) $paramFetcher->get('limit');
+
+        /** @var Article $article */
+        $article = $this->getOr404($id, $this->getProxyUser());
+        $repo = $this->getDoctrine()->getRepository(ArticleContent::class);
+        $history = $repo->findBy([
+                'article' => $article
+            ],
+            [
+                'date' => 'DESC'
+            ],
+            $limit,
+            $offset
+        );
+
+        $dto = new ArticleHistoryDTO();
+        $dto->setArticle((new ArticleDTO())->setEntity($article, $article->getFeed()->getUserFeeds()[0]));
+        $contents = [];
+        foreach ($history as $content)
+        {
+            $contents[] = (new ArticleContentDTO())->setEntity($content);
+        }
+        $dto->setHistory($contents);
+        return $dto;
+    }
 
     /**
      * Fetch a IEntity or throw an 404 Exception.
      *
-     * @param mixed $id
+     * @param int       $id
+     * @param ProxyUser $proxyUser
      *
      * @return \ArthurHoaro\RssCruncherApiBundle\Model\IEntity
      *
      * @throws NotFoundHttpException
      */
-    protected function getOr404($id)
+    protected function getOr404($id, ProxyUser $proxyUser)
     {
-        if (!($feed = $this->container->get('arthur_hoaro_rss_cruncher_api.article.handler')->get($id))) {
-            throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.',$id));
+        /** @var ArticleHandler $handler */
+        $handler = $this->get('arthur_hoaro_rss_cruncher_api.article.handler');
+        $handler->setFeedGroup($proxyUser->getFeedGroup());
+        if (! ($article = $handler->get($id))) {
+            throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.', $id));
         }
-        return $feed;
-    }
-
-    /**
-     * Create a Article from the submitted data.
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   description = "Creates a new feed from the submitted data.",
-     *   input = "ArthurHoaro\RssCruncherApiBundle\Form\ArticleType",
-     *   statusCodes = {
-     *     200 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
-     *   }
-     * )
-     *
-     * @Annotations\View(
-     *  template = "AcmeBlogBundle:Article:newArticle.html.twig",
-     *  statusCode = Response::HTTP_BAD_REQUEST,
-     *  templateVar = "form"
-     * )
-     *
-     * @param Request $request the request object
-     *
-     * @return FormTypeInterface|View
-     */
-    public function postArticleAction(Request $request)
-    {
-        try {
-            // Hey Feed handler create a new Feed.
-            $newFeed = $this->container->get('arthur_hoaro_rss_cruncher_api.article.handler')->post(
-                $request->request->all()
-            );
-
-            $routeOptions = array(
-                'id' => $newFeed->getId(),
-                '_format' => $request->get('_format')
-            );
-
-            return $this->routeRedirectView('api_1_get_article', $routeOptions, Response::HTTP_CREATED);
-        } catch (InvalidFormException $exception) {
-            return $exception->getForm();
-        }
-    }
-
-    /**
-     * Update existing Article from the submitted data or create a new article at a specific location.
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   input = "ArthurHoaro\RssCruncherApiBundle\Form\ArticleType",
-     *   statusCodes = {
-     *     201 = "Returned when the Article is created",
-     *     204 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
-     *   }
-     * )
-     *
-     * @Annotations\View(
-     *  template = "AcmeBlogBundle:Article:editArticle.html.twig",
-     *  templateVar = "form"
-     * )
-     *
-     * @param Request $request the request object
-     * @param int     $id      the article id
-     *
-     * @return FormTypeInterface|View
-     *
-     * @throws NotFoundHttpException when feed not exist
-     */
-    public function putArticleAction(Request $request, $id)
-    {
-        try {
-            if (!($article = $this->container->get('arthur_hoaro_rss_cruncher_api.article.handler')->get($id))) {
-                $statusCode = Response::HTTP_CREATED;
-                $article = $this->container->get('arthur_hoaro_rss_cruncher_api.article.handler')->post(
-                    $request->request->all()
-                );
-            } else {
-                $statusCode = Response::HTTP_NO_CONTENT;
-                $article = $this->container->get('arthur_hoaro_rss_cruncher_api.article.handler')->put(
-                    $article,
-                    $request->request->all()
-                );
-            }
-
-            $routeOptions = array(
-                'id' => $article->getId(),
-                '_format' => $request->get('_format')
-            );
-
-            return $this->routeRedirectView('api_1_get_article', $routeOptions, $statusCode);
-
-        } catch (InvalidFormException $exception) {
-            return $exception->getForm();
-        }
-    }
-
-    /**
-     * Update existing article from the submitted data or create a new article at a specific location.
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   input = "ArthurHoaro\RssCruncherApiBundle\Form\ArticleType",
-     *   statusCodes = {
-     *     204 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
-     *   }
-     * )
-     *
-     * @Annotations\View(
-     *  template = "AcmeBlogBundle:Article:editArticle.html.twig",
-     *  templateVar = "form"
-     * )
-     *
-     * @param Request $request the request object
-     * @param int     $id      the article id
-     *
-     * @return FormTypeInterface|View
-     *
-     * @throws NotFoundHttpException when article not exist
-     */
-    public function patchArticleAction(Request $request, $id)
-    {
-        try {
-            $article = $this->container->get('arthur_hoaro_rss_cruncher_api.article.handler')->patch(
-                $this->getOr404($id),
-                $request->request->all()
-            );
-
-            $routeOptions = array(
-                'id' => $article->getId(),
-                '_format' => $request->get('_format')
-            );
-
-            return $this->routeRedirectView('api_1_get_article', $routeOptions, Response::HTTP_NO_CONTENT);
-
-        } catch (InvalidFormException $exception) {
-            return $exception->getForm();
-        }
-    }
-
-    /**
-     * Presents the form to use to create a new article.
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   statusCodes = {
-     *     200 = "Returned when successful"
-     *   }
-     * )
-     *
-     * @Annotations\View()
-     *
-     * @return FormTypeInterface
-     */
-    public function newArticleAction()
-    {
-        return $this->createForm(new ArticleType());
+        return $article;
     }
 }

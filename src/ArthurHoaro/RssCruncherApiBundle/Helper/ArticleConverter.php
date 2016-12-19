@@ -36,8 +36,10 @@ class ArticleConverter {
             $convertedArticle->setModificationDate(\DateTime::createFromFormat(\DateTime::ISO8601, $date));
         }
         $author = $originalArticle->get_author();
-        $convertedArticle->setAuthorName($author->get_name());
-        $convertedArticle->setAuthorEmail($author->get_email());
+        if ($author != null) {
+            $convertedArticle->setAuthorName($author->get_name());
+            $convertedArticle->setAuthorEmail($author->get_email());
+        }
         $convertedArticle->setPublicId($originalArticle->get_id());
 
         $content = new ArticleContent();

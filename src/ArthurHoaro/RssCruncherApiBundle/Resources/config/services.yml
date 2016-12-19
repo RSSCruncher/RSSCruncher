@@ -20,6 +20,9 @@ parameters:
   arthur_hoaro_rss_cruncher_api.category.type.class: '%arthur_hoaro_rss_cruncher_api.type.package%FeedCategoryType'
   database_dsn: 'pgsql:'
 services:
+  simplepie:
+    class: 'SimplePie'
+    arguments: []
   arthur_hoaro_rss_cruncher_api.feed.handler:
     class: '%arthur_hoaro_rss_cruncher_api.feed.handler.class%'
     arguments:

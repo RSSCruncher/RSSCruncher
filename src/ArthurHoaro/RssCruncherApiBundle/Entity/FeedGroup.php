@@ -115,7 +115,7 @@ class FeedGroup implements IEntity
     /**
      * Set the ProxyUsers.
      *
-     * @param ProxyUser $proxyUsers
+     * @param ProxyUser[] $proxyUsers
      *
      * @return FeedGroup
      */

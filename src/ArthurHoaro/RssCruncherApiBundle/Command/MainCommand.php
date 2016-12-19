@@ -3,6 +3,7 @@
 namespace ArthurHoaro\RssCruncherApiBundle\Command;
 
 use ArthurHoaro\RssCruncherApiBundle\Entity\Feed;
+use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeed;
 use SimplePMS\Message;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -47,10 +48,20 @@ class MainCommand extends ContainerAwareCommand
             // Feed update queue
             $messages = $queue->receiveMessages('update');
             foreach ($messages as $message) {
-                if ($message instanceof Message && $message->getContent() instanceof Feed) {
+                if (! $message instanceof Message) {
+                    continue;
+                }
+
+                if ($message->getContent() instanceof UserFeed) {
+                    $content = $message->getContent()->getFeed();
+                } else {
+                    $content = $message->getContent();
+                }
+
+                if ($content instanceof Feed) {
                     // update
-                    $this->refreshFeed($message->getContent());
-                    $queue->deleteMessage($message);
+                    $this->refreshFeed($content);
+                    //$queue->deleteMessage($message);
                 }
             }
             sleep(1);
@@ -64,10 +75,13 @@ class MainCommand extends ContainerAwareCommand
      */
     protected function refreshFeed(Feed $feed)
     {
+        $em = $this->getContainer()->get('doctrine');
+        $repo = $em->getRepository(Feed::class);
+        $feed = $repo->find($feed->getId());
         $feedHandler = $this->getContainer()->get('arthur_hoaro_rss_cruncher_api.feed.handler');
         $items = $feedHandler->refreshFeed(
             $feed,
-            $this->getContainer()->get('feedio')
+            $this->getContainer()->get('simplepie')
         );
 
         $validator = $this->getContainer()->get('validator');

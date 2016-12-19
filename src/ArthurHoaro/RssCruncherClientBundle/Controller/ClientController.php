@@ -57,7 +57,7 @@ class ClientController extends Controller
 
             if ($entity->getAllowedGrantType() == 'client_credentials') {
                 /** @var ProxyUserHandler $handler */
-                $handler = $this->container->get('arthur_hoaro_rss_cruncher_api.proxy_user.handler');
+                $handler = $this->get('arthur_hoaro_rss_cruncher_api.proxy_user.handler');
                 $proxyUser = $handler->createUser($entity, $this->getUser());
 
                 $groupsRepo = $this->getDoctrine()->getRepository(FeedGroup::class);
@@ -68,7 +68,7 @@ class ClientController extends Controller
                     $mainFeedGroup = $groupsRepo->find($mainFeedGroup->getId());
                 } else {
                     $mainFeedGroup = new FeedGroup();
-                    $mainFeedGroup->setProxyUser($proxyUser);
+                    $mainFeedGroup->addProxyUser($proxyUser);
                     $mainFeedGroup->setName($entity->getName());
                     $this->getDoctrine()->getManager()->persist($mainFeedGroup);
                 }

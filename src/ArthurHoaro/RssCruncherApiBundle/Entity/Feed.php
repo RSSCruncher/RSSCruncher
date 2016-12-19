@@ -61,6 +61,8 @@ class Feed implements IEntity
     protected $articles;
 
     /**
+     * @var UserFeed[]
+     *
      * @ORM\OneToMany(targetEntity="UserFeed", mappedBy="feed", fetch="EXTRA_LAZY")
      *
      * @Exclude

@@ -51,4 +51,50 @@ class ArticleRepository extends EntityRepository
         }
         return null;
     }
+
+    /**
+     * @param FeedGroup $feedGroup
+     * @param int       $offset
+     * @param int       $limit
+     *
+     * @return UserFeed[]
+     */
+    public function findUserFeedArticles($feedGroup, $offset = 0, $limit = 0)
+    {
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('uf, f, a')
+            ->from('ArthurHoaroRssCruncherApiBundle:UserFeed', 'uf')
+            ->join('uf.feed', 'f')
+            ->join('f.articles', 'a')
+            ->where('uf.feedGroup = :feedGroup')
+            ->andWhere('uf.enabled = :enabled and f.enabled = :enabled')
+            ->orderBy('a.publicationDate', 'DESC')
+            ->setParameter('feedGroup', $feedGroup)
+            ->setParameter('enabled', true)
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param int       $id
+     * @param FeedGroup $feedGroup
+     *
+     * @return UserFeed[]
+     */
+    public function findArticle($id, $feedGroup)
+    {
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('a, f, uf')
+            ->from('ArthurHoaroRssCruncherApiBundle:Article', 'a')
+            ->join('a.feed', 'f')
+            ->join('f.userFeeds', 'uf')
+            ->where('a.id = :id')
+            ->andWhere('uf.feedGroup = :feedGroup')
+            ->andWhere('uf.enabled = :enabled and f.enabled = :enabled')
+            ->setParameter('id', $id)
+            ->setParameter('feedGroup', $feedGroup)
+            ->setParameter('enabled', true);
+        return $qb->getQuery()->getSingleResult();
+    }
 }

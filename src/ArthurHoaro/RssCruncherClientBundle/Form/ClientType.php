@@ -59,7 +59,7 @@ class ClientType extends AbstractType
                 'class' => 'ArthurHoaro\RssCruncherApiBundle\Entity\FeedGroup',
                 'query_builder' => function (EntityRepository $er) use ($user) {
                     return $er->createQueryBuilder('fg')
-                        ->join('fg.proxyUser', 'pu')
+                        ->join('fg.proxyUsers', 'pu')
                         ->where('pu.user = :user')
                         ->orderBy('fg.id', 'ASC')
                         ->setParameter('user', $user);

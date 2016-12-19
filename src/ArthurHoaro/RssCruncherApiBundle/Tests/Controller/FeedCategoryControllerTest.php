@@ -238,7 +238,7 @@ class FeedCategoryControllerTest extends ControllerTest
         $this->assertEquals($ref->getId(), $cat['id']);
         $this->assertEquals($data['name'], $cat['name']);
         $this->assertEquals($ref->getDateCreation()->format(\DateTime::ISO8601), $cat['created']);
-        $this->assertTrue((new \DateTime('-1sec')) < \DateTime::createFromFormat(\DateTime::ISO8601, $cat['updated']));
+        $this->assertTrue((new \DateTime('-2sec')) < \DateTime::createFromFormat(\DateTime::ISO8601, $cat['updated']));
 
         $route =  $this->getUrl('api_1_put_category', ['id' => $data['name']]);
         $data = ['name' => 'renamed again'];

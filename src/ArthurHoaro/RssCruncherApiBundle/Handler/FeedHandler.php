@@ -67,7 +67,8 @@ class FeedHandler extends GenericHandler {
      * @throws FeedNotFoundException The given Feed doesn't exist in the database.
      * @throws \Exception            DB error.
      */
-    public function refreshFeed(Feed $feed, SimplePie $reader) {
+    public function refreshFeed(Feed $feed, SimplePie $reader)
+    {
         $feedUrl = $feed->isHttps() ? 'https' : 'http';
         $feedUrl .= '://'. $feed->getFeedUrl();
 

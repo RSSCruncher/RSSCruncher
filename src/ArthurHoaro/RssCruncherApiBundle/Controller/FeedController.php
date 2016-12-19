@@ -303,13 +303,11 @@ class FeedController extends ApiController {
         $userFeed = $userFeedHandler->get($id, ['feedGroup' => $this->getProxyUser()->getFeedGroup()]);
         if (empty($userFeed)) {
             throw new FeedNotFoundException($id);
-        } else {
-            $userFeed = $userFeed;
         }
 
         $items = $feedHandler->refreshFeed(
             $userFeed->getFeed(),
-            new \SimplePie()
+            $this->get('simplepie')
         );
 
         $validator = $this->get('validator');
