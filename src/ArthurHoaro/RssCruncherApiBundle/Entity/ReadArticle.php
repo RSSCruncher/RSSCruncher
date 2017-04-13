@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Class ReadArticle
  *
  * @ORM\Table()
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="ArthurHoaro\RssCruncherApiBundle\Entity\ReadArticleRepository")
  *
  * @package ArthurHoaro\RssCruncherApiBundle\Entity
  */

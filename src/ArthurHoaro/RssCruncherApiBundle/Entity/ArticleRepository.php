@@ -3,6 +3,7 @@
 namespace ArthurHoaro\RssCruncherApiBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NoResultException;
 
 /**
  * ArticleRepository
@@ -62,10 +63,11 @@ class ArticleRepository extends EntityRepository
     public function findUserFeedArticles($feedGroup, $offset = 0, $limit = 0)
     {
         $qb = $this->_em->createQueryBuilder();
-        $qb->select('uf, f, a')
+        $qb->select('uf, f, a, ar')
             ->from('ArthurHoaroRssCruncherApiBundle:UserFeed', 'uf')
             ->join('uf.feed', 'f')
             ->join('f.articles', 'a')
+            ->leftJoin('a.readArticles', 'ar')
             ->where('uf.feedGroup = :feedGroup')
             ->andWhere('uf.enabled = :enabled and f.enabled = :enabled')
             ->orderBy('a.publicationDate', 'DESC')
@@ -95,6 +97,10 @@ class ArticleRepository extends EntityRepository
             ->setParameter('id', $id)
             ->setParameter('feedGroup', $feedGroup)
             ->setParameter('enabled', true);
-        return $qb->getQuery()->getSingleResult();
+        try {
+            return $qb->getQuery()->getSingleResult();
+        } catch (NoResultException $e) {
+            return null;
+        }
     }
 }

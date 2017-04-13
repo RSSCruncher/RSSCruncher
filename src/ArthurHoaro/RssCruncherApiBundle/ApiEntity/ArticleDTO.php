@@ -4,6 +4,7 @@ namespace ArthurHoaro\RssCruncherApiBundle\ApiEntity;
 
 
 use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
+use ArthurHoaro\RssCruncherApiBundle\Entity\ReadArticle;
 use ArthurHoaro\RssCruncherApiBundle\Entity\UserFeed;
 
 /**
@@ -62,6 +63,11 @@ class ArticleDTO implements IApiEntity
     protected $feed;
 
     /**
+     * @var bool read
+     */
+    protected $read;
+
+    /**
      * Create an ArticleDTO using an Article entity.
      *
      * @param Article  $entity
@@ -79,6 +85,7 @@ class ArticleDTO implements IApiEntity
         $this->setAuthor($entity->getAuthorEmail());
         $this->setPublicationDate($entity->getPublicationDate());
         $this->setModificationDate($entity->getModificationDate());
+        $this->setRead($entity->getReadArticles());
 
         if ($feed != null) {
             $this->setFeed((new UserFeedDTO())->setEntity($feed));
@@ -233,5 +240,25 @@ class ArticleDTO implements IApiEntity
     public function setFeed($feed)
     {
         $this->feed = $feed;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isRead()
+    {
+        return $this->read;
+    }
+
+    /**
+     * @param ReadArticle[] $read
+     */
+    public function setRead($read)
+    {
+        if (count($read) > 0) {
+            $this->read = $read[0]->isRead();
+        } else {
+            $this->read = false;
+        }
     }
 }

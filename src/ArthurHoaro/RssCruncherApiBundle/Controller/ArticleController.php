@@ -8,9 +8,11 @@ use ArthurHoaro\RssCruncherApiBundle\ApiEntity\ArticleHistoryDTO;
 use ArthurHoaro\RssCruncherApiBundle\Entity\Article;
 use ArthurHoaro\RssCruncherApiBundle\Entity\ArticleContent;
 use ArthurHoaro\RssCruncherApiBundle\Entity\ProxyUser;
+use ArthurHoaro\RssCruncherApiBundle\Entity\ReadArticle;
 use ArthurHoaro\RssCruncherApiBundle\Exception\InvalidFormException;
 use ArthurHoaro\RssCruncherApiBundle\Form\ArticleType;
 use ArthurHoaro\RssCruncherApiBundle\Handler\ArticleHandler;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Request\ParamFetcherInterface;
@@ -126,15 +128,39 @@ class ArticleController extends ApiController {
             $offset
         );
 
-        $dto = new ArticleHistoryDTO();
-        $dto->setArticle((new ArticleDTO())->setEntity($article, $article->getFeed()->getUserFeeds()[0]));
         $contents = [];
         foreach ($history as $content)
         {
             $contents[] = (new ArticleContentDTO())->setEntity($content);
         }
-        $dto->setHistory($contents);
-        return $dto;
+        return $contents;
+    }
+
+    /**
+     * @Annotations\Route("/articles/{id}/read", requirements={"id" = "\d+"})
+     */
+    public function postArticleReadAction($id)
+    {
+        /** @var Article $article */
+        $article = $this->getOr404($id, $this->getProxyUser());
+
+        $read = new ReadArticle();
+        $read->setArticle($article);
+        $read->setUserFeed($article->getFeed()->getUserFeeds()[0]);
+        $read->setRead(true);
+
+        try {
+            $this->getDoctrine()->getManager()->persist($read);
+            $this->getDoctrine()->getManager()->flush();
+        } catch (UniqueConstraintViolationException $e) {}
+    }
+
+    public function deleteArticleReadAction($id)
+    {
+        $repo = $this->getDoctrine()->getRepository(ReadArticle::class);
+        $readArticle = $repo->findOneByArticle($id, $this->getProxyUser());
+        $this->getDoctrine()->getManager()->remove($readArticle);
+        $this->getDoctrine()->getManager()->flush();
     }
 
     /**

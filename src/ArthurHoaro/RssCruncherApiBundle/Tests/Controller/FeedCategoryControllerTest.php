@@ -63,7 +63,7 @@ class FeedCategoryControllerTest extends ControllerTest
     {
         $ref = LoadBasicFeedsArticlesData::$categories[1];
 
-        $route =  $this->getUrl('api_1_get_categories', ['id' => $ref->getId()]);
+        $route =  $this->getUrl('api_1_get_categories');
         $this->client->request('GET', $route, [
             'limit' => '1',
             'offset' => '1',
@@ -535,7 +535,7 @@ class FeedCategoryControllerTest extends ControllerTest
         $this->assertEquals($articleRef->getLink(), $article['link']);
         $this->assertEquals($articleRef->getLastArticleContent()->getContent(), $article['content']);
         $this->assertEquals($articleRef->getPublicationDate()->format(\DateTime::ISO8601), $article['publication_date']);
-        if (! empty($ref->getDateModification())) {
+        if (! empty($articleRef->getModificationDate())) {
             $this->assertEquals($articleRef->getModificationDate()->format(\DateTime::ISO8601), $article['modification_date']);
         } else {
             $this->assertEmpty($article['modification_date']);

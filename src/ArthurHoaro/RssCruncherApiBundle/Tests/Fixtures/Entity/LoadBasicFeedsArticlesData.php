@@ -118,10 +118,19 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         $manager->persist($article);
 
         $articleContent = new ArticleContent();
-        $articleContent->setContent('Article2 content...');
+        $articleContent->setContent('Article2 first content...');
+        $articleContent->setDate(new \DateTime('-1 hour'));
+        $articleContent->setArticle($article);
+        $article->addArticleContent($articleContent);
+        $manager->persist($articleContent);
+
+        $articleContent = new ArticleContent();
+        $articleContent->setContent('Article2 new content...');
         $articleContent->setDate(new \DateTime());
         $articleContent->setArticle($article);
+        $article->addArticleContent($articleContent);
         $manager->persist($articleContent);
+        $manager->persist($article);
 
         $manager->flush();
 
@@ -133,12 +142,13 @@ class LoadBasicFeedsArticlesData implements FixtureInterface {
         $article->setAuthorName('Baudelaire');
         $article->setLink('http://link.io/example');
         $article->setFeed($feed);
-        $manager->persist($article);
 
         $articleContent = new ArticleContent();
         $articleContent->setContent('Article3 content...');
         $articleContent->setDate(new \DateTime());
         $articleContent->setArticle($article);
+        $article->addArticleContent($articleContent);
+        $manager->persist($article);
         $manager->persist($articleContent);
 
         $manager->flush();

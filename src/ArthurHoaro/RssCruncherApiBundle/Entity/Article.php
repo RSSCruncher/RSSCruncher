@@ -108,6 +108,14 @@ class Article implements IEntity
     protected $feed;
 
     /**
+     * @var ReadArticle[]
+     *
+     * @ORM\OneToMany(targetEntity="ReadArticle", mappedBy="article")
+     */
+    protected $readArticles;
+
+    /**
+     * FIXME!
      * @ORM\Column(name="feed_id", type="integer")
      */
     protected $feedId;
@@ -378,5 +386,21 @@ class Article implements IEntity
     public function getFeedId()
     {
         return $this->feedId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReadArticles()
+    {
+        return $this->readArticles;
+    }
+
+    /**
+     * @param mixed $readArticles
+     */
+    public function setReadArticles($readArticles)
+    {
+        $this->readArticles = $readArticles;
     }
 }
